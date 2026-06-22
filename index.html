@@ -168,19 +168,22 @@
 
     /* Select mode */
     .card.selectable { cursor: pointer; user-select: none; }
+    .card.selectable .card-inner { border-color: #4a9eff66; }
     .card.selectable:hover .card-inner { border-color: #4a9eff; }
     .card.selected .card-inner { border-color: #e74c3c !important; box-shadow: 0 0 16px rgba(231,76,60,0.5) !important; }
-    .card.selected .select-check { opacity: 1 !important; }
+    .card.selected .select-check { opacity: 1 !important; background: #e74c3c; border-color: #e74c3c; }
     .select-check {
       position: absolute; top: 8px; right: 8px; z-index: 10;
       width: 24px; height: 24px; border-radius: 50%;
-      background: #e74c3c; color: #fff;
+      background: rgba(0,0,0,0.4); color: #fff;
+      border: 2px solid rgba(255,255,255,0.6);
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 700;
-      opacity: 0; transition: opacity 0.15s;
+      opacity: 0; transition: opacity 0.15s, background 0.15s, border-color 0.15s;
       pointer-events: none;
-      box-shadow: 0 2px 8px rgba(231,76,60,0.6);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
+    .card.selectable .select-check { opacity: 1; }
     .btn-select-mode.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff; }
     .btn-delete-selected {
       background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #e74c3c;
@@ -214,6 +217,7 @@
       animation-delay: var(--card-delay, 0ms);
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       position: relative;
+      height: 100%;
     }
     .card-inner {
       background: var(--surface);
@@ -223,6 +227,7 @@
       display: flex; flex-direction: column;
       transition: border-color 0.2s;
       will-change: transform;
+      height: 100%;
     }
     .card:hover { transform: scale(1.03); }
     .card:hover .card-inner { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
@@ -1789,8 +1794,9 @@ function getFiltered() {
 // ── Card HTML ─────────────────────────────────────────────────────────────────
 function starsDisplay(n) { return `${n}★`; }
 
-function cardHTML(c, index = 0) {
-  const delay     = Math.min(index * 40, 600);
+function cardHTML(c, index = 0, animate = true) {
+  const delay     = animate ? Math.min(index * 40, 600) : 0;
+  const animStyle = animate ? `--card-delay:${delay}ms` : 'animation:none';
   const icon      = CLASS_ICONS[c.class] || '❓';
   const src       = portraitPath(c.portraitKey);
   const rankLevel = [c.rank ? `R${c.rank}` : null, c.level ? `L${c.level}` : null, c.ascension || null].filter(Boolean).join(' · ') || '—';
@@ -1804,7 +1810,7 @@ function cardHTML(c, index = 0) {
 
   const selectAttr = selectMode ? `selectable${selectedIds.has(c.id) ? ' selected' : ''}` : '';
   return `
-    <div class="card ${selectAttr}" data-class="${c.class}" data-stars="${c.stars}" data-id="${c.id}" style="--card-delay:${delay}ms"
+    <div class="card ${selectAttr}" data-class="${c.class}" data-stars="${c.stars}" data-id="${c.id}" style="${animStyle}"
       ${selectMode ? `onclick="toggleCardSelect('${c.id}')"` : ''}>
       <div class="card-inner">
         <div class="card-portrait">
@@ -1824,10 +1830,10 @@ function cardHTML(c, index = 0) {
           ${c.tags?.length ? `<div class="card-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color}40;background:${color}18">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
           ${c.notes ? `<div class="card-notes">${escHtml(c.notes)}</div>` : ''}
         </div>
-        ${selectMode ? '' : `<div class="card-actions">
-          <button onclick="openModal('${c.id}')">✏️ Edit</button>
-          <button class="btn-delete" onclick="deleteChampion('${c.id}')">🗑️ Remove</button>
-        </div>`}
+        ${selectMode ? `<div class="card-actions">
+          <button onclick="event.stopPropagation();openModal('${c.id}')">✏️ Edit</button>
+          <button class="btn-delete" onclick="event.stopPropagation();deleteChampion('${c.id}')">🗑️ Remove</button>
+        </div>` : ''}
       </div>
     </div>`;
 }
@@ -1861,6 +1867,7 @@ function unplayableCardHTML(c) {
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
+let hasRenderedOnce = false;
 function render() {
   const grid = document.getElementById('grid');
   syncTagFilter();
@@ -1895,7 +1902,8 @@ function render() {
       </div>`;
     return;
   }
-  grid.innerHTML = list.map((c, i) => cardHTML(c, i)).join('');
+  grid.innerHTML = list.map((c, i) => cardHTML(c, i, !hasRenderedOnce)).join('');
+  hasRenderedOnce = true;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -2132,7 +2140,9 @@ let selectedIds = new Set();
 function toggleSelectMode() {
   selectMode = !selectMode;
   selectedIds.clear();
-  document.getElementById('btn-select').classList.toggle('active', selectMode);
+  const btn = document.getElementById('btn-select');
+  btn.classList.toggle('active', selectMode);
+  btn.textContent = selectMode ? '✕ Cancel Select' : '☑ Select';
   document.getElementById('btn-delete-selected').classList.toggle('visible', false);
   document.getElementById('selected-count').textContent = '0';
   render();
