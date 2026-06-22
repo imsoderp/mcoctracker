@@ -689,6 +689,16 @@
 
   <!-- Utility actions -->
   <div class="util-cluster" style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+    <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+      Sort
+      <select id="sort-by" style="font-size:0.75rem;padding:5px 8px;">
+        <option value="name">Name</option>
+        <option value="stars-desc">Stars ↓</option>
+        <option value="rank-desc">Rank ↓</option>
+        <option value="rank-asc">Rank ↑</option>
+        <option value="newest">Newest</option>
+      </select>
+    </label>
     <div style="position:relative;flex-shrink:0;">
       <button class="btn-unplayable" id="btn-filters" onclick="toggleFilterPanel(event)" style="border-color:#6ea8fe44;color:#6ea8fe;position:relative;">
         ⚙ Filters<span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#e8303a;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;align-items:center;justify-content:center;"></span>
@@ -726,14 +736,6 @@
               <option value="">All</option>
             </select>
           </label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-            Sort
-            <select id="sort-by" style="font-size:0.8rem;padding:5px 8px;">
-              <option value="name">Name</option>
-              <option value="stars-desc">Stars ↓</option>
-              <option value="newest">Newest</option>
-            </select>
-          </label>
         </div>
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Rank</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
@@ -749,12 +751,17 @@
           <label class="filter-chip" data-group="awakened"><input type="checkbox" value="yes" onchange="applyCheckboxFilters()"> ⚡ Awakened</label>
           <label class="filter-chip" data-group="awakened"><input type="checkbox" value="no" onchange="applyCheckboxFilters()"> Unawakened</label>
         </div>
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Ascended</div>
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <label class="filter-chip" data-group="ascended"><input type="checkbox" value="yes" onchange="applyCheckboxFilters()"> ⬆ Ascended</label>
+          <label class="filter-chip" data-group="ascended"><input type="checkbox" value="no" onchange="applyCheckboxFilters()"> Unascended</label>
+        </div>
+        <button onclick="openManageTags()" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:rgba(26,188,156,0.12);border:1px solid #1abc9c44;color:#1abc9c;margin-bottom:8px;">🏷 Manage Tags</button>
         <button onclick="clearCheckboxFilters();document.getElementById('filter-stars').value='';document.getElementById('filter-class').value='';document.getElementById('filter-tag').value='';render();" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">Clear All Filters</button>
       </div>
     </div>
     <button class="btn-unplayable btn-action-select btn-select-mode" id="btn-select" onclick="toggleSelectMode()">☑ Select</button>
     <button class="btn-unplayable btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()">🗑️ Delete (<span id="selected-count">0</span>)</button>
-    <button class="btn-unplayable" onclick="openManageTags()" style="border-color:#1abc9c44;color:#1abc9c;">🏷 Tags</button>
     <button class="btn-unplayable btn-action-bosses" id="btn-unplayable" onclick="toggleUnplayable()">👁 View Unplayable</button>
     <div style="position:relative;flex-shrink:0;">
       <button class="btn-unplayable" id="btn-settings" onclick="toggleSettingsPanel(event)" style="font-size:1rem;padding:5px 10px;">⚙</button>
@@ -764,9 +771,12 @@
           <button id="storage-btn-browser" class="active" onclick="setStorageMode('browser')" style="flex:1;">🗄 Browser</button>
           <button id="storage-btn-file" onclick="setStorageMode('file')" style="flex:1;">💾 File</button>
         </div>
-        <div id="settings-file-actions" style="display:none;display:flex;flex-direction:column;gap:6px;">
+        <div id="settings-file-actions" style="display:none;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
           <button class="btn-unplayable btn-action-export" id="btn-export" onclick="exportRoster()" style="width:100%;justify-content:center;">💾 Save JSON</button>
           <button class="btn-unplayable btn-action-import" id="btn-import" onclick="openImport()" style="width:100%;justify-content:center;">📂 Load JSON</button>
+        </div>
+        <div style="border-top:1px solid var(--border2);padding-top:12px;">
+          <button onclick="openChampionDbModal()" style="width:100%;font-size:0.78rem;padding:7px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">➕ New Champion</button>
         </div>
       </div>
     </div>
@@ -811,6 +821,56 @@
   </div>
 </div>
 
+<!-- New Champion (database) modal -->
+<div id="champdb-overlay" style="
+  display:none; position:fixed; inset:0; z-index:1100;
+  background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+  <div style="
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:24px; width:min(420px,90vw); display:flex; flex-direction:column; gap:14px;">
+    <h2 style="font-size:1rem;font-weight:700;">Add New Champion</h2>
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:-8px;">Adds the champion to the searchable list so you can track it in your roster.</p>
+
+    <div class="form-group">
+      <label for="cdb-name">Name *</label>
+      <input type="text" id="cdb-name" placeholder="e.g. Nova Prime" oninput="cdbSyncKey()" />
+    </div>
+
+    <div class="form-group">
+      <label>Class *</label>
+      <div class="btn-group" id="grp-cdb-class">
+        <button type="button" class="opt-btn class-opt" data-val="cosmic"    title="Cosmic"    onclick="setGroup('grp-cdb-class','cdb-class','cosmic')">🌌</button>
+        <button type="button" class="opt-btn class-opt" data-val="tech"      title="Tech"      onclick="setGroup('grp-cdb-class','cdb-class','tech')">⚙️</button>
+        <button type="button" class="opt-btn class-opt" data-val="mutant"    title="Mutant"    onclick="setGroup('grp-cdb-class','cdb-class','mutant')">🧬</button>
+        <button type="button" class="opt-btn class-opt" data-val="skill"     title="Skill"     onclick="setGroup('grp-cdb-class','cdb-class','skill')">🗡️</button>
+        <button type="button" class="opt-btn class-opt" data-val="science"   title="Science"   onclick="setGroup('grp-cdb-class','cdb-class','science')">🧪</button>
+        <button type="button" class="opt-btn class-opt" data-val="mystic"    title="Mystic"    onclick="setGroup('grp-cdb-class','cdb-class','mystic')">🔮</button>
+      </div>
+      <input type="hidden" id="cdb-class" />
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="cdb-unplayable" />
+      <label for="cdb-unplayable">Unplayable (Boss only)</label>
+    </div>
+
+    <div class="form-group">
+      <label>Portrait</label>
+      <div class="portrait-preview-wrap">
+        <div class="portrait-preview" id="cdb-portrait-preview"><span>?</span></div>
+        <div class="portrait-preview-info">
+          <input type="file" id="cdb-portrait-file" accept="image/*" onchange="cdbPortraitChange(event)" />
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-cancel" onclick="closeChampionDbModal()">Cancel</button>
+      <button class="btn-save" onclick="saveChampionDb()">Add Champion</button>
+    </div>
+  </div>
+</div>
+
 <div class="grid" id="grid"></div>
 
 <!-- Modal -->
@@ -847,14 +907,10 @@
       </div>
 
       <div class="form-group">
-        <label>Class *</label>
-        <div class="btn-group" id="grp-class">
-          <button type="button" class="opt-btn class-opt" data-val="cosmic"    title="Cosmic"    onclick="pickClass('cosmic')">🌌</button>
-          <button type="button" class="opt-btn class-opt" data-val="tech"      title="Tech"      onclick="pickClass('tech')">⚙️</button>
-          <button type="button" class="opt-btn class-opt" data-val="mutant"    title="Mutant"    onclick="pickClass('mutant')">🧬</button>
-          <button type="button" class="opt-btn class-opt" data-val="skill"     title="Skill"     onclick="pickClass('skill')">🗡️</button>
-          <button type="button" class="opt-btn class-opt" data-val="science"   title="Science"   onclick="pickClass('science')">🧪</button>
-          <button type="button" class="opt-btn class-opt" data-val="mystic"    title="Mystic"    onclick="pickClass('mystic')">🔮</button>
+        <label>Class</label>
+        <div id="class-display" style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);padding:9px 0;">
+          <span id="class-display-icon" style="font-size:1.2rem;">❓</span>
+          <span id="class-display-text">Auto-filled from champion selection</span>
         </div>
         <input type="hidden" id="f-class" />
       </div>
@@ -913,8 +969,8 @@
 
       <div class="form-group">
         <label>Tags</label>
-        <div id="f-tags-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:28px;"></div>
-        <div style="display:flex;gap:6px;margin-top:6px;">
+        <div id="f-tags-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <div style="display:flex;gap:6px;">
           <input id="f-tag-input" type="text" placeholder="New tag…" maxlength="30"
             style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 9px;font-size:0.82rem;"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addTagFromInput();}" />
@@ -939,7 +995,7 @@
 const CHAMPION_LIST = [
   {key:'abomination',name:'Abomination',cls:'science'},
   {key:'abomination_immortal',name:'Abomination (Immortal)',cls:'science'},
-  {key:'absorbingman',name:'Absorbing Man',cls:'science'},
+  {key:'absorbingman',name:'Absorbing Man',cls:'mystic'},
   {key:'adamwarlock',name:'Adam Warlock',cls:'cosmic'},
   {key:'aegon',name:'Aegon',cls:'skill'},
   {key:'agent_venom',name:'Agent Venom',cls:'skill'},
@@ -947,7 +1003,7 @@ const CHAMPION_LIST = [
   {key:'americachavez',name:'America Chavez',cls:'mystic'},
   {key:'angela',name:'Angela',cls:'cosmic'},
   {key:'Annihilus',name:'Annihilus',cls:'cosmic'},
-  {key:'antivenom',name:'Anti-Venom',cls:'skill'},
+  {key:'antivenom',name:'Anti-Venom',cls:'science'},
   {key:'antman',name:'Ant-Man',cls:'science'},
   {key:'antman_future',name:'Ant-Man (Future)',cls:'tech'},
   {key:'apocalypse',name:'Apocalypse',cls:'mutant'},
@@ -1280,8 +1336,21 @@ const CHAMPION_LIST = [
 
 const CLASS_ICONS = {cosmic:'🌌',tech:'⚙️',mutant:'🧬',skill:'🗡️',science:'🧪',mystic:'🔮',universal:'✨'};
 
+// ── Custom champions (user-added, e.g. new monthly releases) ─────────────────
+let customChampions = [];
+try {
+  customChampions = JSON.parse(localStorage.getItem('mcoc-custom-champions') || '[]');
+} catch { customChampions = []; }
+
+function saveCustomChampions() {
+  localStorage.setItem('mcoc-custom-champions', JSON.stringify(customChampions));
+}
+
 function portraitPath(key) {
-  return key ? `portraits/portrait_${key}.png` : null;
+  if (!key) return null;
+  const custom = customChampions.find(c => c.key === key);
+  if (custom?.portraitData) return custom.portraitData;
+  return `portraits/portrait_${key}.png`;
 }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -1401,8 +1470,9 @@ let ddFiltered  = [];
 let ddFocusIdx  = -1;
 let ddDebounce  = null;
 
+CHAMPION_LIST.push(...customChampions);
 CHAMPION_LIST.sort((a, b) => a.name.localeCompare(b.name));
-const PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
+let PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
 
 function ddList() { return ddFiltered.length ? ddFiltered : PLAYABLE_LIST; }
 
@@ -1533,7 +1603,7 @@ function clearForm() {
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('f-sig').value = 1;
   document.getElementById('sig-display').textContent = '1';
-  setGroup('grp-class', 'f-class', '');
+  pickClass('');
   setGroup('grp-stars', 'f-stars', '');
   setGroup('grp-rank',  'f-rank',  '');
   const r6btn = document.querySelector('#grp-rank .opt-btn[data-val="6"]');
@@ -1562,7 +1632,21 @@ function setGroup(groupId, hiddenId, val) {
   document.getElementById(hiddenId).value = (val == null ? '' : val);
 }
 
-function pickClass(v) { setGroup('grp-class', 'f-class', v); }
+const CLASS_NAMES = {cosmic:'Cosmic',tech:'Tech',mutant:'Mutant',skill:'Skill',science:'Science',mystic:'Mystic',universal:'Universal'};
+function pickClass(v) {
+  document.getElementById('f-class').value = v || '';
+  const icon = document.getElementById('class-display-icon');
+  const text = document.getElementById('class-display-text');
+  if (v) {
+    icon.textContent = CLASS_ICONS[v] || '❓';
+    text.textContent = CLASS_NAMES[v] || v;
+    text.style.color = 'var(--text)';
+  } else {
+    icon.textContent = '❓';
+    text.textContent = 'Auto-filled from champion selection';
+    text.style.color = 'var(--text-muted)';
+  }
+}
 function pickStars(v) { setGroup('grp-stars', 'f-stars', v); onStarsChange(); }
 function pickRank(v)  { setGroup('grp-rank',  'f-rank',  v); onRankChange(); }
 
@@ -1593,9 +1677,9 @@ function onRankChange() {
 
   if ([5, 6, 7].includes(stars) && rank >= 1 && rank <= 5) {
     lvlEl.value    = RANK_LEVELS[rank];
-    lvlEl.readOnly = true;
-    lvlEl.style.color   = 'var(--text-muted)';
-    lvlEl.style.cursor  = 'default';
+    lvlEl.readOnly = false;
+    lvlEl.style.color   = '';
+    lvlEl.style.cursor  = '';
   } else {
     // 7★ R6 or 1-4★: leave manual
     if (stars === 7 && rank === 6) {
@@ -1650,10 +1734,8 @@ function saveChampion() {
 function toggleUnplayable() {
   showingUnplayable = !showingUnplayable;
   const btn = document.getElementById('btn-unplayable');
-  const rosterControls = document.getElementById('roster-controls');
   btn.textContent = showingUnplayable ? '← Back to Roster' : '👁 View Unplayable';
   btn.classList.toggle('active', showingUnplayable);
-  rosterControls.style.display = showingUnplayable ? 'none' : 'flex';
   render();
 }
 
@@ -1672,6 +1754,7 @@ function getFiltered() {
   const sortBy      = document.getElementById('sort-by').value;
   const rankChecked    = getChecked('rank');
   const awakenedChecked = getChecked('awakened');
+  const ascendedChecked = getChecked('ascended');
   let list = [...champions];
   if (starFilter)           list = list.filter(c => c.stars === Number(starFilter));
   if (classFilter)          list = list.filter(c => c.class === classFilter);
@@ -1684,9 +1767,19 @@ function getFiltered() {
       return !c.awakened;
     });
   }
-  const seqOf = c => parseInt(String(c.id), 10) || 0;  // ids are "seq-date" → leading seq orders by creation
+  if (ascendedChecked.length) {
+    list = list.filter(c => {
+      if (ascendedChecked.includes('yes') && ascendedChecked.includes('no')) return true;
+      if (ascendedChecked.includes('yes')) return !!c.ascension;
+      return !c.ascension;
+    });
+  }
+  const seqOf  = c => parseInt(String(c.id), 10) || 0;  // ids are "seq-date" → leading seq orders by creation
+  const rankOf = c => Number(c.rank) || 0;
   list.sort((a, b) => {
     if (sortBy === 'stars-desc') return b.stars - a.stars;
+    if (sortBy === 'rank-desc')  return rankOf(b) - rankOf(a);
+    if (sortBy === 'rank-asc')   return rankOf(a) - rankOf(b);
     if (sortBy === 'newest')     return seqOf(b) - seqOf(a);
     return a.name.localeCompare(b.name);
   });
@@ -2082,6 +2175,70 @@ function openImport() {
 
 function closeImport() {
   document.getElementById('import-overlay').style.display = 'none';
+}
+
+// ── Champion database (add new champions to the searchable list) ────────────
+let cdbPortraitData = null;
+
+function openChampionDbModal() {
+  document.getElementById('cdb-name').value = '';
+  document.getElementById('cdb-unplayable').checked = false;
+  document.getElementById('cdb-portrait-file').value = '';
+  document.getElementById('cdb-portrait-preview').innerHTML = '<span>?</span>';
+  setGroup('grp-cdb-class', 'cdb-class', '');
+  cdbPortraitData = null;
+  document.getElementById('champdb-overlay').style.display = 'flex';
+}
+
+function closeChampionDbModal() {
+  document.getElementById('champdb-overlay').style.display = 'none';
+}
+
+function cdbSyncKey() {
+  // no-op placeholder retained for future key-preview UI; key is generated on save
+}
+
+function cdbPortraitChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    cdbPortraitData = reader.result;
+    document.getElementById('cdb-portrait-preview').innerHTML = `<img src="${cdbPortraitData}" style="width:100%;height:100%;object-fit:cover;object-position:center top" />`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function slugifyChampionName(name) {
+  return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+function saveChampionDb() {
+  const name = document.getElementById('cdb-name').value.trim();
+  const cls  = document.getElementById('cdb-class').value;
+  const unplayable = document.getElementById('cdb-unplayable').checked;
+
+  if (!name || !cls) {
+    alert('Please fill in Name and Class.');
+    return;
+  }
+
+  let key = slugifyChampionName(name);
+  if (CHAMPION_LIST.some(c => c.key === key)) key = `${key}_${Date.now()}`;
+
+  const entry = { key, name, cls };
+  if (unplayable) entry.unplayable = true;
+  if (cdbPortraitData) entry.portraitData = cdbPortraitData;
+
+  customChampions.push(entry);
+  saveCustomChampions();
+
+  CHAMPION_LIST.push(entry);
+  CHAMPION_LIST.sort((a, b) => a.name.localeCompare(b.name));
+  PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
+
+  closeChampionDbModal();
+  render();
 }
 
 function importRoster() {
