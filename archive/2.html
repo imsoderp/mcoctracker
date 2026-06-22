@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCOC Champion Tracker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #06080d;
+      --surface: #0c0f16;
+      --surface2: #12161f;
+      --surface3: #1a1f2e;
+      --border: #1e2433;
+      --border2: #2a3045;
+      --gold: #f0c040;
+      --gold-light: #ffe680;
+      --accent: #e8303a;
+      --accent2: #ff6b35;
+      --text: #e8eaf0;
+      --text-muted: #5a6175;
+      --cosmic: #53b8e0;
+      --tech: #4a9eff;
+      --mutant: #e8d20a;
+      --skill: #e74c3c;
+      --science: #2ecc71;
+      --mystic: #b44fd4;
+      --universal: #3db552;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background-image: radial-gradient(ellipse at 20% 0%, rgba(232,48,58,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 0%, rgba(74,158,255,0.04) 0%, transparent 50%);
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(180deg, #0e1220 0%, #080b12 100%);
+      border-bottom: 1px solid var(--border2);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: relative;
+    }
+    header::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--gold), var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    .logo { display: flex; align-items: center; gap: 14px; }
+
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #1a0f0f, #2d1515);
+      border: 1px solid rgba(232,48,58,0.4);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 12px rgba(232,48,58,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    header h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--text);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    header p { font-size: 0.62rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
+
+    .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+    .header-stats { display: flex; gap: 6px; }
+
+    .stat-pill {
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 6px 14px;
+      font-size: 0.58rem; color: var(--text-muted); text-align: center;
+      text-transform: uppercase; letter-spacing: 1.5px;
+    }
+    .stat-pill strong { display: block; font-size: 1.35rem; color: var(--text); letter-spacing: 0; font-weight: 700; }
+
+    /* Save status */
+    .save-area { display: flex; align-items: center; gap: 8px; }
+
+    .btn-folder {
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border2);
+      color: var(--text); border-radius: 8px; padding: 7px 14px;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .btn-folder:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(232,48,58,0.2); }
+
+    /* Storage toggle */
+    .storage-toggle { display: flex; align-items: center; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border2); flex-shrink: 0; }
+    .storage-toggle button {
+      background: var(--surface2); border: none; color: var(--text-muted);
+      padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .storage-toggle button.active { background: var(--surface3); color: var(--text); }
+    .storage-toggle button:first-child { border-right: 1px solid var(--border2); }
+
+    .save-status { font-size: 0.73rem; color: var(--text-muted); white-space: nowrap; }
+    .save-status.saved   { color: #2ecc71; }
+    .save-status.saving  { color: var(--gold); }
+    .save-status.error   { color: #e74c3c; }
+
+    /* ── Controls ── */
+    .controls {
+      background: linear-gradient(180deg, #0a0d14 0%, #080b12 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    }
+
+    select, button {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); border-radius: 20px; padding: 6px 12px;
+      font-size: 0.82rem; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    select:hover, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 6px rgba(232,48,58,0.2); }
+    button { font-weight: 600; }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--accent), #c0252e);
+      border: none; color: #fff;
+      padding: 7px 18px; border-radius: 20px; font-weight: 700;
+      letter-spacing: 0.5px; margin-left: auto;
+      box-shadow: 0 2px 12px rgba(232,48,58,0.4);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .btn-add:hover { box-shadow: 0 4px 18px rgba(232,48,58,0.6); transform: translateY(-1px); }
+
+    .btn-unplayable {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text-muted); padding: 5px 12px;
+      border-radius: 20px; font-weight: 600; white-space: nowrap; font-size: 0.76rem;
+      transition: all 0.2s;
+    }
+    .btn-unplayable:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+    .btn-unplayable.active { border-color: var(--gold); color: var(--gold); background: rgba(240,192,64,0.1); }
+
+    .btn-action-select   { border-color: #4a9eff55; color: #4a9eff; }
+    .btn-action-select:hover, .btn-action-select.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; box-shadow: 0 0 8px rgba(74,158,255,0.2); }
+    .btn-action-export   { border-color: #2ecc7155; color: #2ecc71; }
+    .btn-action-export:hover { background: rgba(46,204,113,0.15); border-color: #2ecc71; box-shadow: 0 0 8px rgba(46,204,113,0.2); }
+    .btn-action-import   { border-color: #f39c1255; color: #f39c12; }
+    .btn-action-import:hover { background: rgba(243,156,18,0.15); border-color: #f39c12; box-shadow: 0 0 8px rgba(243,156,18,0.2); }
+    .btn-action-bosses   { border-color: #b44fd455; color: #b44fd4; }
+    .btn-action-bosses:hover, .btn-action-bosses.active { background: rgba(180,79,212,0.15); border-color: #b44fd4; box-shadow: 0 0 8px rgba(180,79,212,0.2); }
+
+    .unplayable-card .card-actions { display: none; }
+    .unplayable-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Select mode */
+    .card.selectable { cursor: pointer; user-select: none; }
+    .card.selectable:hover { border-color: #4a9eff; }
+    .card.selected { border-color: #e74c3c !important; box-shadow: 0 0 16px rgba(231,76,60,0.5) !important; }
+    .card.selected .select-check { opacity: 1 !important; }
+    .select-check {
+      position: absolute; top: 8px; right: 8px; z-index: 10;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #e74c3c; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      opacity: 0; transition: opacity 0.15s;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(231,76,60,0.6);
+    }
+    .btn-select-mode.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff; }
+    .btn-delete-selected {
+      background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #e74c3c;
+      display: none;
+    }
+    .btn-delete-selected.visible { display: block; }
+    .btn-delete-selected:hover { background: rgba(231,76,60,0.3); box-shadow: 0 0 8px rgba(231,76,60,0.3); }
+
+    .count-badge {
+      background: transparent; border: none;
+      padding: 6px 4px;
+      font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;
+    }
+    .count-badge span { color: var(--text); font-weight: 700; }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--card-width, 210px), 1fr));
+      gap: 18px; padding: 24px;
+    }
+
+    /* ── Champion Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      clip-path: inset(0 round 14px);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .card:hover { transform: scale(1.03); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+
+    /* Star-level borders */
+    .card[data-stars="1"] { border-color: #2b6324; }
+    .card[data-stars="2"] { border-color: #685d2b; }
+    .card[data-stars="3"] { border-color: #afafaa; }
+    .card[data-stars="4"] { border-color: #daca3f; box-shadow: 0 0 10px rgba(218,202,63,0.2); }
+    .card[data-stars="5"] { border-color: #b61b1b; box-shadow: 0 0 14px rgba(182,27,27,0.35); }
+    .card[data-stars="6"] { border-color: #65e6e6; box-shadow: 0 0 14px rgba(101,230,230,0.3); }
+    .card[data-stars="7"] { border-color: #a040d0; box-shadow: 0 0 18px rgba(160,64,208,0.45); }
+
+    /* Portrait area */
+    .card-portrait {
+      position: relative; height: var(--portrait-height, 170px); overflow: hidden;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .card-portrait img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .portrait-fallback { font-size: 4rem; opacity: 0.3; }
+
+    /* Class color bar at top of portrait — thicker gradient */
+    .card[data-class="cosmic"]   .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--cosmic),#90d8f8); z-index:2; }
+    .card[data-class="tech"]     .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--tech),#7fc0ff); z-index:2; }
+    .card[data-class="mutant"]   .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--mutant),#f8f080); z-index:2; }
+    .card[data-class="skill"]    .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--skill),#ff8070); z-index:2; }
+    .card[data-class="science"]  .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--science),#80f0a0); z-index:2; }
+    .card[data-class="mystic"]   .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--mystic),#e090f8); z-index:2; }
+    .card[data-class="universal"].card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--universal),#80e090); z-index:2; }
+
+    /* Stars + class badge overlaid on portrait */
+    .portrait-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.92));
+      padding: 28px 10px 8px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      z-index: 3;
+    }
+
+    .stars { color: var(--gold); font-size: 0.78rem; letter-spacing: 0px; text-shadow: 0 0 6px rgba(240,192,64,0.8); }
+
+    .class-badge {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .class-badge.class-cosmic   { background: var(--cosmic); }
+    .class-badge.class-tech     { background: var(--tech); }
+    .class-badge.class-mutant   { background: var(--mutant); }
+    .class-badge.class-skill    { background: var(--skill); }
+    .class-badge.class-science  { background: var(--science); }
+    .class-badge.class-mystic   { background: var(--mystic); }
+    .class-badge.class-universal{ background: var(--universal); }
+
+    /* Card body */
+    .card-body {
+      padding: 10px 12px; flex: 1;
+      display: flex; flex-direction: column; gap: 7px;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%);
+    }
+
+    .champ-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; font-weight: 700; color: var(--text);
+      line-height: 1.15; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); }
+    .stat-value { font-size: 0.86rem; font-weight: 700; color: var(--text); }
+
+    .awakened-badge {
+      display: inline-block; font-size: 0.67rem;
+      padding: 2px 8px; border-radius: 20px; font-weight: 600;
+    }
+    .awakened-yes { background: rgba(240,192,64,0.15); color: var(--gold); border: 1px solid rgba(240,192,64,0.4); }
+    .awakened-no  { background: rgba(90,97,117,0.15); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .card-notes { font-size: 0.73rem; color: var(--text-muted); font-style: italic; line-height: 1.4; }
+
+    .card-actions {
+      display: flex; border-top: 1px solid var(--border);
+      margin-top: auto;
+      background: var(--surface2);
+    }
+    .card-actions button {
+      flex: 1; background: transparent; border: none; border-radius: 0;
+      padding: 9px; font-size: 0.73rem; color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .card-actions button:hover { background: var(--surface3); color: var(--text); }
+    .card-actions .btn-delete:hover { color: #e74c3c; }
+    .card-actions button + button { border-left: 1px solid var(--border); }
+
+    /* Filter chips */
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+      border: 1px solid var(--border2); background: var(--surface2);
+      color: var(--text-muted); cursor: pointer; user-select: none;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .filter-chip:hover { border-color: #6ea8fe; color: var(--text); }
+    .filter-chip input[type="checkbox"] { display: none; }
+    .filter-chip.active { background: rgba(110,168,254,0.15); border-color: #6ea8fe; color: #6ea8fe; }
+
+    /* Tags */
+    .tag-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
+      border: 1px solid; cursor: pointer; white-space: nowrap; user-select: none;
+    }
+    .tag-chip.selected { opacity: 1; }
+    .tag-chip.unselected { opacity: 0.35; }
+    .tag-chip .tag-remove { font-size: 0.65rem; opacity: 0.7; cursor: pointer; margin-left: 2px; }
+    .tag-chip .tag-remove:hover { opacity: 1; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .card-tag { padding: 1px 7px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; border: 1px solid; }
+
+    /* Progressive card density */
+    .grid.size-sm .card-notes { display: none; }
+    .grid.size-xs .card-notes,
+    .grid.size-xs .card-stats,
+    .grid.size-xs .card-actions { display: none; }
+    .grid.size-xs .champ-name { font-size: 0.72rem; padding: 4px 6px; text-align: center; }
+    .grid.size-xs .card-body { padding: 2px 4px; gap: 0; }
+    .grid.size-tiny .card-body,
+    .grid.size-tiny .card-actions { display: none; }
+    .grid.size-tiny .portrait-overlay { padding: 4px 4px 3px; }
+    .grid.size-tiny .stars { font-size: 0.55rem; letter-spacing: 0; }
+    .grid.size-tiny .class-badge { display: none; }
+
+    /* ── Empty state ── */
+    .empty { grid-column: 1 / -1; text-align: center; padding: 100px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 4.5rem; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(232,48,58,0.3)); }
+    .empty h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: var(--text); margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
+    .empty p { font-size: 0.88rem; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85); z-index: 100;
+      align-items: center; justify-content: center; padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; width: 100%; max-width: 500px;
+      max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .modal-header {
+      padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 1;
+      background: linear-gradient(180deg, #12161f, var(--surface));
+    }
+    .modal-header h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.25rem; color: var(--text); font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .modal-close {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text-muted); font-size: 1rem; cursor: pointer;
+      padding: 4px 9px; line-height: 1; border-radius: 6px;
+    }
+    .modal-close:hover { color: var(--text); border-color: var(--accent); }
+
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Portrait preview in modal */
+    .portrait-preview-wrap { display: flex; align-items: center; gap: 14px; }
+    .portrait-preview {
+      width: 82px; height: 82px; border-radius: 10px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .portrait-preview img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .portrait-preview-info { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
+    .portrait-preview-info strong { color: var(--text); font-size: 0.9rem; display: block; }
+
+    /* Champion search */
+    .champ-search-wrap { position: relative; }
+    .champ-search-input {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); border-radius: 8px; padding: 10px 12px;
+      font-size: 0.9rem; width: 100%; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .champ-search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(232,48,58,0.15); }
+
+    .champ-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 200;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-top: none; border-radius: 0 0 10px 10px;
+      max-height: 220px; overflow-y: auto;
+      display: none;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    }
+    .champ-dropdown.open { display: block; }
+
+    .champ-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; cursor: pointer; font-size: 0.88rem;
+      transition: background 0.1s;
+    }
+    .champ-option:hover, .champ-option.focused { background: var(--surface3); }
+    .champ-option img { width: 32px; height: 32px; border-radius: 5px; object-fit: cover; object-position: center top; }
+    .champ-option .opt-icon { width: 32px; height: 32px; border-radius: 5px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Tappable option buttons (class / stars / rank) */
+    .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .opt-btn {
+      flex: 1 1 0; min-width: 40px; padding: 9px 4px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text-muted); border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; line-height: 1;
+      cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .opt-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+    .opt-btn.active { background: var(--text); border-color: var(--text); color: var(--bg); box-shadow: 0 2px 8px rgba(232,234,240,0.2); }
+    .class-opt { font-size: 1.05rem; }
+    .class-opt.active[data-val="cosmic"]    { background: var(--cosmic);    border-color: var(--cosmic);    color: #000; }
+    .class-opt.active[data-val="tech"]      { background: var(--tech);      border-color: var(--tech);      color: #fff; }
+    .class-opt.active[data-val="mutant"]    { background: var(--mutant);    border-color: var(--mutant);    color: #000; }
+    .class-opt.active[data-val="skill"]     { background: var(--skill);     border-color: var(--skill);     color: #fff; }
+    .class-opt.active[data-val="science"]   { background: var(--science);   border-color: var(--science);   color: #000; }
+    .class-opt.active[data-val="mystic"]    { background: var(--mystic);    border-color: var(--mystic);    color: #fff; }
+    .class-opt.active[data-val="universal"] { background: var(--universal); border-color: var(--universal); color: #fff; }
+
+    label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); border-radius: 8px; padding: 9px 12px;
+      font-size: 0.9rem; width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(232,48,58,0.12); }
+    textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+
+    .checkbox-row { display: flex; align-items: center; gap: 10px; }
+    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .checkbox-row label { font-size: 0.85rem; text-transform: none; letter-spacing: 0; color: var(--text); cursor: pointer; font-weight: 500; }
+
+    .modal-footer {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px; justify-content: flex-end;
+      position: sticky; bottom: 0;
+      background: linear-gradient(0deg, var(--surface), var(--surface) 70%, transparent);
+    }
+    .btn-cancel {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text-muted); border-radius: 8px; padding: 9px 18px;
+    }
+    .btn-cancel:hover { color: var(--text); border-color: var(--text-muted); }
+    .btn-save {
+      background: linear-gradient(135deg, var(--accent), #c0252e);
+      border: none; color: #fff; font-weight: 700;
+      padding: 9px 24px; border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(232,48,58,0.4);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .btn-save:hover { box-shadow: 0 4px 18px rgba(232,48,58,0.6); transform: translateY(-1px); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a4055; }
+
+    /* Sig level slider */
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px;
+      background: var(--border2); border-radius: 2px;
+      outline: none; cursor: pointer; border: none; padding: 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); cursor: pointer;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 6px rgba(232,48,58,0.5);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚔️</div>
+    <div>
+      <h1>MCOC Tracker</h1>
+      <p>Champion Roster</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-stats">
+      <div class="stat-pill"><strong id="stat-total">0</strong>Champions</div>
+      <div class="stat-pill"><strong id="stat-awakened">0</strong>Awakened</div>
+    </div>
+    <div class="save-area">
+      <button class="btn-folder" id="btn-folder" onclick="connectFolder()">📁 Connect Folder</button>
+      <span class="save-status" id="save-status">Not connected</span>
+    </div>
+  </div>
+</header>
+
+<div class="controls" style="justify-content:space-between;">
+  <!-- Left: action buttons -->
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+    <button class="btn-unplayable btn-action-select btn-select-mode" id="btn-select" onclick="toggleSelectMode()">☑ Select</button>
+    <button class="btn-unplayable btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()">🗑️ Delete (<span id="selected-count">0</span>)</button>
+    <button class="btn-unplayable" onclick="openManageTags()" style="border-color:#1abc9c44;color:#1abc9c;">🏷 Tags</button>
+    <span style="font-size:0.72rem;color:var(--text-muted);white-space:nowrap;">Save to:</span>
+    <div class="storage-toggle">
+      <button id="storage-btn-browser" class="active" onclick="setStorageMode('browser')">🗄 Browser</button>
+      <button id="storage-btn-file" onclick="setStorageMode('file')">💾 File</button>
+    </div>
+    <button class="btn-unplayable btn-action-export" id="btn-export" onclick="exportRoster()" style="display:none;">💾 Save JSON</button>
+    <button class="btn-unplayable btn-action-import" id="btn-import" onclick="openImport()" style="display:none;">📂 Load JSON</button>
+    <button class="btn-unplayable btn-action-bosses" id="btn-unplayable" onclick="toggleUnplayable()">👁 View Unplayable</button>
+  </div>
+
+  <!-- Right: filters + add -->
+  <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+    <div id="roster-controls" style="display:flex;flex-wrap:nowrap;gap:10px;align-items:center;overflow-x:auto;">
+      <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+        Stars
+        <select id="filter-stars" autocomplete="off" style="font-size:0.75rem;padding:5px 8px;">
+          <option value="">All</option>
+          <option value="7">7 ★</option>
+          <option value="6">6 ★</option>
+          <option value="5">5 ★</option>
+          <option value="4">4 ★</option>
+          <option value="3">3 ★</option>
+          <option value="2">2 ★</option>
+          <option value="1">1 ★</option>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+        Class
+        <select id="filter-class" autocomplete="off" style="font-size:0.75rem;padding:5px 8px;">
+          <option value="">All</option>
+          <option value="cosmic">🌌 Cosmic</option>
+          <option value="tech">⚙️ Tech</option>
+          <option value="mutant">🧬 Mutant</option>
+          <option value="skill">🗡️ Skill</option>
+          <option value="science">🧪 Science</option>
+          <option value="mystic">🔮 Mystic</option>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+        Tag
+        <select id="filter-tag" autocomplete="off" style="font-size:0.75rem;padding:5px 8px;" onchange="render()">
+          <option value="">All</option>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+        Sort
+        <select id="sort-by" style="font-size:0.75rem;padding:5px 8px;">
+          <option value="name">Name</option>
+          <option value="stars-desc">Stars ↓</option>
+          <option value="newest">Newest</option>
+        </select>
+      </label>
+    </div>
+    <div style="position:relative;flex-shrink:0;">
+      <button class="btn-unplayable" id="btn-filters" onclick="toggleFilterPanel(event)" style="border-color:#6ea8fe44;color:#6ea8fe;position:relative;">
+        ⚙ Filters<span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#e8303a;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;align-items:center;justify-content:center;"></span>
+      </button>
+      <div id="filter-panel" style="
+        display:none; position:absolute; top:calc(100% + 6px); right:0; z-index:9999;
+        background:var(--surface); border:1px solid var(--border2); border-radius:12px;
+        padding:16px; min-width:220px;
+        box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Rank</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="1" onchange="applyCheckboxFilters()"> R1</label>
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="2" onchange="applyCheckboxFilters()"> R2</label>
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="3" onchange="applyCheckboxFilters()"> R3</label>
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="4" onchange="applyCheckboxFilters()"> R4</label>
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="5" onchange="applyCheckboxFilters()"> R5</label>
+          <label class="filter-chip" data-group="rank"><input type="checkbox" value="6" onchange="applyCheckboxFilters()"> R6</label>
+        </div>
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Awakened</div>
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <label class="filter-chip" data-group="awakened"><input type="checkbox" value="yes" onchange="applyCheckboxFilters()"> ⚡ Awakened</label>
+          <label class="filter-chip" data-group="awakened"><input type="checkbox" value="no" onchange="applyCheckboxFilters()"> Unawakened</label>
+        </div>
+        <button onclick="clearCheckboxFilters()" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">Clear Filters</button>
+      </div>
+    </div>
+    <div class="count-badge" style="font-size:0.75rem;padding:4px;white-space:nowrap;flex-shrink:0;">Showing <span id="showing-count">0</span></div>
+    <button class="btn-add" onclick="openModal()" style="flex-shrink:0;">+ Add</button>
+  </div>
+</div>
+
+<!-- Manage Tags modal -->
+<div id="manage-tags-overlay" style="
+  display:none; position:fixed; inset:0; z-index:1100;
+  background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+  <div style="
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:24px; width:min(420px,90vw); display:flex; flex-direction:column; gap:14px;">
+    <h2 style="font-size:1rem;font-weight:700;">Manage Tags</h2>
+    <div id="manage-tags-list" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;"></div>
+    <p id="manage-tags-empty" style="font-size:0.82rem;color:var(--text-muted);display:none;">No tags yet — add one from the champion edit modal.</p>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="btn-cancel" onclick="closeManageTags()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div id="import-overlay" style="
+  display:none; position:fixed; inset:0; z-index:1100;
+  background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+  <div style="
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:24px; width:min(520px,90vw); display:flex; flex-direction:column; gap:16px;">
+    <h2 style="font-size:1rem;font-weight:700;">Import Roster</h2>
+    <p style="font-size:0.82rem;color:var(--text-muted);">Paste the contents of an exported roster file below. This will <strong style="color:var(--text);">replace</strong> your current roster.</p>
+    <textarea id="import-text" rows="10" style="
+      background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+      color:var(--text); font-size:0.78rem; font-family:monospace;
+      padding:10px; resize:vertical; width:100%; outline:none;"
+      placeholder="Paste exported text here…"></textarea>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-cancel" onclick="closeImport()">Cancel</button>
+      <button class="btn-save" onclick="importRoster()">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Champion</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Portrait preview -->
+      <div class="portrait-preview-wrap">
+        <div class="portrait-preview" id="modal-portrait-preview">
+          <span>?</span>
+        </div>
+        <div class="portrait-preview-info">
+          <strong id="modal-preview-name">Select a champion</strong><br>
+          Portrait loads automatically when you<br>pick a champion from the list below.
+        </div>
+      </div>
+
+      <!-- Champion search -->
+      <div class="form-group">
+        <label>Champion *</label>
+        <div class="champ-search-wrap" id="champ-search-wrap">
+          <input type="text" class="champ-search-input" id="f-champ-search"
+                 placeholder="Search champions…" autocomplete="off"
+                 oninput="filterChampions()" onfocus="showDropdown()" onkeydown="ddKeyNav(event)" />
+          <div class="champ-dropdown" id="champ-dropdown"></div>
+        </div>
+        <input type="hidden" id="f-champ-key" />
+        <input type="hidden" id="f-name" />
+      </div>
+
+      <div class="form-group">
+        <label>Class *</label>
+        <div class="btn-group" id="grp-class">
+          <button type="button" class="opt-btn class-opt" data-val="cosmic"    title="Cosmic"    onclick="pickClass('cosmic')">🌌</button>
+          <button type="button" class="opt-btn class-opt" data-val="tech"      title="Tech"      onclick="pickClass('tech')">⚙️</button>
+          <button type="button" class="opt-btn class-opt" data-val="mutant"    title="Mutant"    onclick="pickClass('mutant')">🧬</button>
+          <button type="button" class="opt-btn class-opt" data-val="skill"     title="Skill"     onclick="pickClass('skill')">🗡️</button>
+          <button type="button" class="opt-btn class-opt" data-val="science"   title="Science"   onclick="pickClass('science')">🧪</button>
+          <button type="button" class="opt-btn class-opt" data-val="mystic"    title="Mystic"    onclick="pickClass('mystic')">🔮</button>
+        </div>
+        <input type="hidden" id="f-class" />
+      </div>
+
+      <div class="form-group">
+        <label>Star Rating *</label>
+        <div class="btn-group" id="grp-stars">
+          <button type="button" class="opt-btn" data-val="1" onclick="pickStars(1)">1★</button>
+          <button type="button" class="opt-btn" data-val="2" onclick="pickStars(2)">2★</button>
+          <button type="button" class="opt-btn" data-val="3" onclick="pickStars(3)">3★</button>
+          <button type="button" class="opt-btn" data-val="4" onclick="pickStars(4)">4★</button>
+          <button type="button" class="opt-btn" data-val="5" onclick="pickStars(5)">5★</button>
+          <button type="button" class="opt-btn" data-val="6" onclick="pickStars(6)">6★</button>
+          <button type="button" class="opt-btn" data-val="7" onclick="pickStars(7)">7★</button>
+        </div>
+        <input type="hidden" id="f-stars" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rank</label>
+          <div class="btn-group" id="grp-rank">
+            <button type="button" class="opt-btn" data-val="1" onclick="pickRank(1)">R1</button>
+            <button type="button" class="opt-btn" data-val="2" onclick="pickRank(2)">R2</button>
+            <button type="button" class="opt-btn" data-val="3" onclick="pickRank(3)">R3</button>
+            <button type="button" class="opt-btn" data-val="4" onclick="pickRank(4)">R4</button>
+            <button type="button" class="opt-btn" data-val="5" onclick="pickRank(5)">R5</button>
+            <button type="button" class="opt-btn" data-val="6" onclick="pickRank(6)">R6</button>
+          </div>
+          <input type="hidden" id="f-rank" />
+        </div>
+        <div class="form-group">
+          <label for="f-level">Level</label>
+          <input type="number" id="f-level" placeholder="—" min="1" max="100" />
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="f-awakened" onchange="toggleSigLevel()" />
+        <label for="f-awakened">Awakened (Duped)</label>
+      </div>
+
+      <div class="form-group" id="sig-group" style="display:none;">
+        <label>Signature Level — <span id="sig-display">1</span></label>
+        <input type="range" id="f-sig" min="1" max="200" value="1" oninput="document.getElementById('sig-display').textContent=this.value" />
+      </div>
+
+      <div class="form-group" id="ascension-group" style="display:none;">
+        <label>Ascension Level</label>
+        <div class="btn-group" id="grp-ascension">
+          <button type="button" class="opt-btn" data-val="A1" onclick="setGroup('grp-ascension','f-ascension','A1')">A1</button>
+          <button type="button" class="opt-btn" data-val="A2" onclick="setGroup('grp-ascension','f-ascension','A2')">A2</button>
+        </div>
+        <input type="hidden" id="f-ascension" />
+      </div>
+
+      <div class="form-group">
+        <label>Tags</label>
+        <div id="f-tags-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:28px;"></div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <input id="f-tag-input" type="text" placeholder="New tag…" maxlength="30"
+            style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 9px;font-size:0.82rem;"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addTagFromInput();}" />
+          <button type="button" class="btn-unplayable" onclick="addTagFromInput()" style="padding:5px 10px;">+ Add</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="f-notes">Notes</label>
+        <textarea id="f-notes" placeholder="e.g. Great for AW defense, needs awakening gem…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveChampion()">Save Champion</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Champion list (key → display name) ──────────────────────────────────────
+const CHAMPION_LIST = [
+  {key:'abomination',name:'Abomination',cls:'science'},
+  {key:'abomination_immortal',name:'Abomination (Immortal)',cls:'science'},
+  {key:'absorbingman',name:'Absorbing Man',cls:'science'},
+  {key:'adamwarlock',name:'Adam Warlock',cls:'cosmic'},
+  {key:'aegon',name:'Aegon',cls:'skill'},
+  {key:'agent_venom',name:'Agent Venom',cls:'skill'},
+  {key:'airwalker',name:'Air-Walker',cls:'cosmic'},
+  {key:'americachavez',name:'America Chavez',cls:'mystic'},
+  {key:'angela',name:'Angela',cls:'cosmic'},
+  {key:'Annihilus',name:'Annihilus',cls:'cosmic'},
+  {key:'antivenom',name:'Anti-Venom',cls:'skill'},
+  {key:'antman',name:'Ant-Man',cls:'science'},
+  {key:'antman_future',name:'Ant-Man (Future)',cls:'tech'},
+  {key:'apocalypse',name:'Apocalypse',cls:'mutant'},
+  {key:'arcade',name:'Arcade',cls:'tech'},
+  {key:'archangel',name:'Archangel',cls:'mutant'},
+  {key:'ares',name:'Ares',cls:'mystic',unplayable:true},
+  {key:'arnimZola',name:'Arnim Zola',cls:'tech'},
+  {key:'attuma',name:'Attuma',cls:'skill'},
+  {key:'bahamet',name:'Bahamet',cls:'mystic',unplayable:true},
+  {key:'baronzemo',name:'Baron Zemo',cls:'skill'},
+  {key:'bastion',name:'Bastion',cls:'tech'},
+  {key:'Beast_Allnew',name:'Beast',cls:'mutant'},
+  {key:'betaraybill',name:'Beta Ray Bill',cls:'cosmic'},
+  {key:'bishop',name:'Bishop',cls:'mutant'},
+  {key:'black_bolt',name:'Black Bolt',cls:'cosmic'},
+  {key:'black_panther',name:'Black Panther',cls:'skill'},
+  {key:'black_panther_cw',name:'Black Panther (Civil War)',cls:'skill'},
+  {key:'black_panther_realm',name:'Jabari Panther',cls:'skill'},
+  {key:'black_widow',name:'Black Widow',cls:'skill'},
+  {key:'black_widow_movie',name:'Black Widow (Deadly Origin)',cls:'skill'},
+  {key:'black_widow_timely',name:'Black Widow (Claire Voyant)',cls:'skill'},
+  {key:'blackcat',name:'Black Cat',cls:'skill'},
+  {key:'blade',name:'Blade',cls:'skill'},
+  {key:'blade_stellar',name:'Blade (Stellar Forged)',cls:'skill'},
+  {key:'bluemarvel',name:'Blue Marvel',cls:'science'},
+  {key:'brother_voodoo',name:'Brother Voodoo',cls:'mystic'},
+  {key:'bullseye',name:'Bullseye',cls:'skill'},
+  {key:'cable',name:'Cable',cls:'mutant'},
+  {key:'capamerica_wwii',name:'Captain America (WWII)',cls:'science'},
+  {key:'captain_america',name:'Captain America',cls:'science'},
+  {key:'captain_marvel',name:'Captain Marvel (Classic)',cls:'cosmic'},
+  {key:'captain_marvel_movie',name:'Captain Marvel',cls:'cosmic'},
+  {key:'captainamerica_infinitywar',name:'Captain America (Infinity War)',cls:'science'},
+  {key:'captainamerica_samwilson',name:'Captain America (Sam Wilson)',cls:'tech'},
+  {key:'captainbritain',name:'Captain Britain',cls:'mutant'},
+  {key:'carina_chronoserpent',name:'Carina (Chrono Serpent)',cls:'cosmic',unplayable:true},
+  {key:'carnage',name:'Carnage',cls:'cosmic'},
+  {key:'cassandranova',name:'Cassandra Nova',cls:'mutant'},
+  {key:'cassielang',name:'Cassie Lang',cls:'science'},
+  {key:'cerastes',name:'Cerastes',cls:'cosmic' ,unplayable:true},
+  {key:'Champion',name:'Champion',cls:'cosmic'},
+  {key:'cheeilth',name:'Cheeilth',cls:'skill'},
+  {key:'civilwarrior',name:'Civil Warrior',cls:'tech'},
+  {key:'collector',name:'Collector',cls:'cosmic',unplayable:true},
+  {key:'colossus',name:'Colossus',cls:'mutant'},
+  {key:'colossus_unstoppable',name:'Unstoppable Colossus',cls:'mystic'},
+  {key:'corvusglaive',name:'Corvus Glaive',cls:'cosmic'},
+  {key:'countnefaria',name:'Count Nefaria',cls:'science'},
+  {key:'crossbones',name:'Crossbones',cls:'skill'},
+  {key:'cullobsidian',name:'Cull Obsidian',cls:'cosmic'},
+  {key:'cyclops',name:'Cyclops (Blue Team)',cls:'mutant'},
+  {key:'cyclops_90s',name:'Cyclops (90s)',cls:'mutant'},
+  {key:'danimoonstar',name:'Dani Moonstar',cls:'mutant'},
+  {key:'daredevil',name:'Daredevil (Classic)',cls:'skill'},
+  {key:'daredevil_netflix',name:'Daredevil (Hell’s Kitchen)',cls:'skill'},
+  {key:'darkhawk',name:'Darkhawk',cls:'tech'},
+  {key:'dazzler',name:'Dazzler',cls:'mutant'},
+  {key:'deadpool',name:'Deadpool',cls:'mutant'},
+  {key:'deadpool_gold',name:'Deadpool (Gold)',cls:'mutant'},
+  {key:'deadpool_platinum',name:'Deadpool (Platinum)',cls:'cosmic'},
+  {key:'deadpool_xforce',name:'Deadpool (X-Force)',cls:'mutant'},
+  {key:'destroyer',name:'Destroyer',cls:'mystic'},
+  {key:'doc_ock',name:'Doctor Octopus',cls:'tech'},
+  {key:'doctor_strange',name:'Doctor Strange',cls:'mystic'},
+  {key:'doctorbong',name:'Doctor Bong',cls:'skill'},
+  {key:'doctordoom',name:'Doctor Doom',cls:'mystic'},
+  {key:'domino',name:'Domino',cls:'mutant'},
+  {key:'dormammu',name:'Dormammu',cls:'mystic'},
+  {key:'dracula',name:'Dracula',cls:'mystic'},
+  {key:'dragonman',name:'Dragon Man',cls:'mystic'},
+  {key:'drax',name:'Drax',cls:'cosmic'},
+  {key:'dreademperordoom',name:'Dread Emperor Doom',cls:'mystic',unplayable:true},
+  {key:'drstrange_realm',name:'Sorcerer Supreme',cls:'mystic'},
+  {key:'dust',name:'Dust',cls:'mutant'},
+  {key:'ebonymaw',name:'Ebony Maw',cls:'mystic'},
+  {key:'electro',name:'Electro',cls:'science'},
+  {key:'elektra',name:'Elektra',cls:'skill'},
+  {key:'elsabloodstone',name:'Elsa Bloodstone',cls:'skill'},
+  {key:'emmafrost',name:'Emma Frost',cls:'mutant'},
+  {key:'enchantress',name:'Enchantress',cls:'mystic'},
+  {key:'falcon',name:'Falcon',cls:'tech'},
+  {key:'falcon_joaquintorres',name:'Falcon (Joaquin Torres)',cls:'tech'},
+  {key:'frankencastle',name:'Franken-Castle',cls:'tech'},
+  {key:'galan',name:'Galan',cls:'cosmic'},
+  {key:'gambit',name:'Gambit',cls:'mutant'},
+  {key:'gamora',name:'Gamora',cls:'cosmic'},
+  {key:'gentle',name:'Gentle',cls:'mutant'},
+  {key:'ghost',name:'Ghost',cls:'tech'},
+  {key:'ghost_rider',name:'Ghost Rider',cls:'mystic'},
+  {key:'ghost_rider_cosmic',name:'Ghost Rider (Cosmic)',cls:'cosmic'},
+  {key:'gladiator',name:'Gladiator',cls:'cosmic'},
+  {key:'glykhan',name:'Glykhan',cls:'mystic',unplayable:true},
+  {key:'gorr',name:'Gorr',cls:'cosmic'},
+  {key:'grandmaster',name:'Grandmaster',cls:'cosmic',unplayable:true},
+  {key:'green_goblin',name:'Green Goblin',cls:'tech'},
+  {key:'groot',name:'Groot',cls:'cosmic'},
+  {key:'groot_king',name:'King Groot',cls:'cosmic'},
+  {key:'guardian',name:'Guardian',cls:'tech'},
+  {key:'guillotine',name:'Guillotine',cls:'mystic'},
+  {key:'guillotine_2099',name:'Guillotine 2099',cls:'tech'},
+  {key:'gwenmaster',name:'Gwenmaster',cls:'skill',unplayable:true},
+  {key:'gwenpool',name:'Gwenpool',cls:'skill'},
+  {key:'gwenpool_master',name:'Gwenpool (Master)',cls:'skill',unplayable:true},
+  {key:'havok',name:'Havok',cls:'mutant'},
+  {key:'hawkeye',name:'Hawkeye',cls:'skill'},
+  {key:'heimdall',name:'Heimdall',cls:'cosmic'},
+  {key:'hela',name:'Hela',cls:'cosmic'},
+  {key:'hela-Thor',name:'Hela (Thor Form)',cls:'mystic',unplayable:true},
+  {key:'hercules',name:'Hercules',cls:'cosmic'},
+  {key:'high_evolutionary',name:'High Evolutionary',cls:'science'},
+  {key:'hitmonkey',name:'Hit-Monkey',cls:'skill'},
+  {key:'hood',name:'The Hood',cls:'mystic'},
+  {key:'howardmech',name:'Howard the Duck',cls:'tech'},
+  {key:'hulk',name:'Hulk',cls:'science'},
+  {key:'hulk_immortal',name:'Hulk (Immortal)',cls:'science'},
+  {key:'hulk_ragnarok',name:'Hulk (Ragnarok)',cls:'science'},
+  {key:'hulk_red',name:'Red Hulk',cls:'science'},
+  {key:'hulkbuster_movie',name:'Hulkbuster',cls:'tech'},
+  {key:'hulkling',name:'Hulkling',cls:'cosmic'},
+  {key:'hyperion',name:'Hyperion',cls:'cosmic'},
+  {key:'iceman',name:'Iceman',cls:'mutant'},
+  {key:'ikaris',name:'Ikaris',cls:'cosmic'},
+  {key:'imperiosa',name:'Imperiosa',cls:'mystic'},
+  {key:'invisiblewoman',name:'Invisible Woman',cls:'science'},
+  {key:'iron_fist',name:'Iron Fist',cls:'mystic'},
+  {key:'iron_fist_white',name:'Iron Fist (White)',cls:'mystic'},
+  {key:'iron_man',name:'Iron Man',cls:'tech'},
+  {key:'ironheart',name:'Ironheart',cls:'tech'},
+  {key:'ironman_infamous',name:'Iron Man (Infamous)',cls:'tech'},
+  {key:'ironman_movie',name:'Iron Man (Movie)',cls:'tech'},
+  {key:'ironman_silvercenturion',name:'Iron Man (Silver Centurion)',cls:'tech'},
+  {key:'ironman_superior',name:'Superior Iron Man',cls:'cosmic'},
+  {key:'ironpatriot',name:'Iron Patriot',cls:'tech'},
+  {key:'isophyne',name:'Isophyne',cls:'mystic'},
+  {key:'jackolantern',name:"Jack O'Lantern",cls:'tech'},
+  {key:'jean_grey_current',name:'Jean Grey',cls:'mutant'},
+  {key:'jessica_jones',name:'Jessica Jones',cls:'science'},
+  {key:'jjj_spiderslayer',name:'J. Jonah Jameson',cls:'tech'},
+  {key:'joefixit',name:'Joe Fixit',cls:'science'},
+  {key:'johnnystorm',name:'Human Torch',cls:'science'},
+  {key:'johnnystorm_old',name:'Human Torch (Classic)',cls:'science',unplayable:true},
+  {key:'juggernaut',name:'Juggernaut',cls:'mystic'},
+  {key:'kang',name:'Kang',cls:'tech'},
+  {key:'kang_neutral',name:'Kang (Neutral)',cls:'tech'},
+  {key:'kang_superior',name:'Kang (Superior)',cls:'tech',unplayable:true},
+  {key:'karl_mordo',name:'Karl Mordo',cls:'mystic'},
+  {key:'karnak',name:'Karnak',cls:'skill'},
+  {key:'karolinadean',name:'Karolina Dean',cls:'cosmic'},
+  {key:'katebishop',name:'Kate Bishop',cls:'skill'},
+  {key:'killmonger',name:'Killmonger',cls:'skill'},
+  {key:'kindred',name:'Kindred',cls:'mystic'},
+  {key:'kingpin',name:'Kingpin',cls:'skill'},
+  {key:'kittypryde',name:'Kitty Pryde',cls:'mutant'},
+  {key:'knull',name:'Knull',cls:'cosmic'},
+  {key:'korg_movie',name:'Korg',cls:'skill'},
+  {key:'kraven',name:'Kraven',cls:'skill'},
+  {key:'kushala',name:'Kushala',cls:'mystic'},
+  {key:'ladydeathstrike',name:'Lady Deathstrike',cls:'tech'},
+  {key:'leader',name:'Leader',cls:'science'},
+  {key:'lizard',name:'Lizard',cls:'science'},
+  {key:'lockjaw',name:'Lockjaw',cls:'cosmic',unplayable:true},
+  {key:'loki',name:'Loki',cls:'mystic'},
+  {key:'longshot',name:'Longshot',cls:'mutant'},
+  {key:'lotan',name:'Lotan',cls:'cosmic',unplayable:true},
+  {key:'luke_cage',name:'Luke Cage',cls:'science'},
+  {key:'lumatrix',name:'Lumatrix',cls:'skill'},
+  {key:'madelynepryor',name:'Madelyne Pryor',cls:'mystic'},
+  {key:'maestro',name:'Maestro',cls:'science'},
+  {key:'magik',name:'Magik',cls:'mystic'},
+  {key:'magneto',name:'Magneto',cls:'mutant'},
+  {key:'magneto_white',name:'Magneto (White)',cls:'mutant'},
+  {key:'maker',name:'Maker',cls:'tech'},
+  {key:'mangog',name:'Mangog',cls:'mystic'},
+  {key:'manthing',name:'Man-Thing',cls:'mystic'},
+  {key:'mantis',name:'Mantis',cls:'skill'},
+  {key:'masacre',name:'Masacre',cls:'skill'},
+  {key:'mbaku',name:"M'Baku",cls:'skill'},
+  {key:'medusa',name:'Medusa',cls:'cosmic'},
+  {key:'mephisto',name:'Mephisto',cls:'mystic'},
+  {key:'MisterKnight',name:'Mister Knight',cls:'skill'},
+  {key:'misternegative',name:'Mister Negative',cls:'science'},
+  {key:'mistersinister',name:'Mister Sinister',cls:'mutant'},
+  {key:'mistyknight',name:'Misty Knight',cls:'skill'},
+  {key:'modok',name:'M.O.D.O.K.',cls:'science'},
+  {key:'mojo',name:'Mojo',cls:'mystic'},
+  {key:'moleman',name:'Mole Man',cls:'skill'},
+  {key:'moondragon',name:'Moondragon',cls:'skill'},
+  {key:'moonknight',name:'Moon Knight',cls:'mystic'},
+  {key:'morbius',name:'Morbius',cls:'science'},
+  {key:'morningstar',name:'Morningstar',cls:'mystic'},
+  {key:'mrfantastic',name:'Mr. Fantastic',cls:'science'},
+  {key:'msmarvel',name:'Ms. Marvel',cls:'cosmic'},
+  {key:'msmarvel_kamala',name:'Ms. Marvel (Kamala)',cls:'cosmic'},
+  {key:'mysterio',name:'Mysterio',cls:'tech'},
+  {key:'namor',name:'Namor',cls:'mutant'},
+  {key:'nebula',name:'Nebula',cls:'tech'},
+  {key:'negasonicteenagewarhead',name:'Negasonic Teenage Warhead',cls:'mutant'},
+  {key:'nickfury',name:'Nick Fury',cls:'skill'},
+  {key:'nicominoru',name:'Nico Minoru',cls:'mystic'},
+  {key:'nightcrawler',name:'Nightcrawler',cls:'mutant'},
+  {key:'NightThrasher',name:'Night Thrasher',cls:'skill'},
+  {key:'nimrod',name:'Nimrod',cls:'tech'},
+  {key:'northstar',name:'Northstar',cls:'mutant'},
+  {key:'nova',name:'Nova',cls:'cosmic'},
+  {key:'odin',name:'Odin',cls:'cosmic'},
+  {key:'okoye',name:'Okoye',cls:'skill'},
+  {key:'omegared',name:'Omega Red',cls:'mutant'},
+  {key:'omegasentinel',name:'Omega Sentinel',cls:'tech'},
+  {key:'onslaught',name:'Onslaught',cls:'mutant'},
+  {key:'orochi',name:'Orochi',cls:'mystic',unplayable:true},
+  {key:'patriot',name:'Patriot',cls:'skill'},
+  {key:'peniparker',name:'Peni Parker',cls:'tech'},
+  {key:'phoenix',name:'Phoenix',cls:'cosmic'},
+  {key:'phoenix_dark',name:'Dark Phoenix',cls:'cosmic'},
+  {key:'photon',name:'Photon',cls:'science'},
+  {key:'phylavell',name:'Phylavell',cls:'mutant'},
+  {key:'pixie',name:'Pixie',cls:'mutant'},
+  {key:'professorx',name:'Professor X',cls:'mutant'},
+  {key:'prowler',name:'Prowler',cls:'tech'},
+  {key:'proximamidnight',name:'Proxima Midnight',cls:'cosmic'},
+  {key:'psychoman',name:'Psycho-Man',cls:'tech'},
+  {key:'psylocke',name:'Psylocke',cls:'mutant'},
+  {key:'punisher',name:'Punisher',cls:'skill'},
+  {key:'punisher_2099',name:'Punisher 2099',cls:'tech'},
+  {key:'purgatory',name:'Purgatory',cls:'mystic'},
+  {key:'quake',name:'Quake',cls:'science'},
+  {key:'quicksilver',name:'Quicksilver',cls:'mutant'},
+  {key:'red_goblin',name:'Red Goblin',cls:'cosmic'},
+  {key:'redguardian',name:'Red Guardian',cls:'science'},
+  {key:'redSkull',name:'Red Skull',cls:'tech'},
+  {key:'rhino',name:'Rhino',cls:'science'},
+  {key:'rintrah',name:'Rintrah',cls:'mystic'},
+  {key:'rocket',name:'Rocket Raccoon',cls:'tech'},
+  {key:'rogue',name:'Rogue',cls:'mutant'},
+  {key:'ronan',name:'Ronan',cls:'cosmic'},
+  {key:'ronin',name:'Ronin',cls:'skill'},
+  {key:'rubythursday',name:'Ruby Thursday',cls:'tech'},
+  {key:'sabretooth',name:'Sabretooth',cls:'mutant'},
+  {key:'sandman',name:'Sandman',cls:'science'},
+  {key:'sasquatch',name:'Sasquatch',cls:'mystic'},
+  {key:'sauron',name:'Sauron',cls:'mutant'},
+  {key:'scarlet_witch',name:'Scarlet Witch (Classic)',cls:'mystic'},
+  {key:'scarlet_witch_current',name:'Scarlet Witch',cls:'mystic'},
+  {key:'scorpion',name:'Scorpion',cls:'science'},
+  {key:'scream',name:'Scream',cls:'cosmic'},
+  {key:'scytalis',name:'Scytalis',cls:'cosmic',unplayable:true},
+  {key:'sentinel',name:'Sentinel',cls:'tech'},
+  {key:'sentry_current',name:'Sentry',cls:'science'},
+  {key:'serpent',name:'Serpent',cls:'cosmic'},
+  {key:'sersi',name:'Sersi',cls:'cosmic'},
+  {key:'shangchi',name:'Shang-Chi',cls:'skill'},
+  {key:'shathra',name:'Shathra',cls:'mystic'},
+  {key:'shatterstar',name:'Shatterstar',cls:'mutant'},
+  {key:'shehulk',name:'She-Hulk',cls:'science'},
+  {key:'SheHulk_Deathless',name:'She-Hulk (Deathless)',cls:'science'},
+  {key:'shocker',name:'Shocker',cls:'tech'},
+  {key:'shuri',name:'Shuri',cls:'tech'},
+  {key:'silk',name:'Silk',cls:'science'},
+  {key:'silversable',name:'Silver Sable',cls:'skill'},
+  {key:'SilverSamurai',name:'Silver Samurai',cls:'mutant'},
+  {key:'silversurfer',name:'Silver Surfer',cls:'cosmic'},
+  {key:'skrull',name:'Skrull',cls:'cosmic'},
+  {key:'skrull_super',name:'Super Skrull',cls:'cosmic'},
+  {key:'solvarch',name:'Solvarch',cls:'tech'},
+  {key:'spider_man',name:'Spider-Man',cls:'science'},
+  {key:'spidergwen',name:'Spider-Gwen',cls:'science'},
+  {key:'spiderham',name:'Spider-Ham',cls:'science'},
+  {key:'spiderman_2099',name:'Spider-Man 2099',cls:'science'},
+  {key:'spiderman_black',name:'Spider-Man (Symbiote)',cls:'cosmic'},
+  {key:'spiderman_morales',name:'Spider-Man (Miles Morales)',cls:'science'},
+  {key:'spiderman_movie',name:'Spider-Man (Movie)',cls:'tech'},
+  {key:'spiderman_pavitr',name:'Spider-Man (Pavitr Prabhakar)',cls:'mystic'},
+  {key:'spiderman_stealth',name:'Spider-Man (Stealth Suit)',cls:'science'},
+  {key:'spiderman_supreme',name:'Spider-Man Supreme',cls:'mystic'},
+  {key:'spiderpunk',name:'Spider-Punk',cls:'science'},
+  {key:'spiderwoman',name:'Spider-Woman',cls:'science'},
+  {key:'spiral',name:'Spiral',cls:'mystic'},
+  {key:'spot',name:'Spot',cls:'science'},
+  {key:'squirrelgirl',name:'Squirrel Girl',cls:'skill'},
+  {key:'star_lord',name:'Star-Lord',cls:'tech'},
+  {key:'starlord_stellar',name:'Star-Lord (Stellar Forged)',cls:'skill'},
+  {key:'storm',name:'Storm',cls:'mutant'},
+  {key:'storm_realm',name:'Storm (Pyramid X)',cls:'mutant'},
+  {key:'stryfe',name:'Stryfe',cls:'mutant'},
+  {key:'sunspot',name:'Sunspot',cls:'mutant'},
+  {key:'symbiote_supreme',name:'Symbiote Supreme',cls:'mystic'},
+  {key:'taskmaster',name:'Taskmaster',cls:'skill'},
+  {key:'terrax',name:'Terrax',cls:'cosmic'},
+  {key:'thanos',name:'Thanos',cls:'cosmic'},
+  {key:'thanos_gauntlet',name:'Thanos (Infinity Gauntlet)',cls:'cosmic'},
+  {key:'thing',name:'Thing',cls:'science'},
+  {key:'thor',name:'Thor',cls:'cosmic'},
+  {key:'thor_janefoster',name:'Thor (Jane Foster)',cls:'cosmic'},
+  {key:'thor_ragnarok',name:'Thor (Ragnarok)',cls:'skill'},
+  {key:'tigra',name:'Tigra',cls:'mystic'},
+  {key:'titania',name:'Titania',cls:'science'},
+  {key:'toad',name:'Toad',cls:'mutant'},
+  {key:'ultron',name:'Ultron',cls:'tech'},
+  {key:'ultron_prime',name:'Ultron (Prime)',cls:'tech'},
+  {key:'valkyrie',name:'Valkyrie',cls:'skill'},
+  {key:'venom',name:'Venom',cls:'cosmic'},
+  {key:'venompool',name:'Venompool',cls:'cosmic'},
+  {key:'VenomTheDuck',name:'Venom the Duck',cls:'cosmic'},
+  {key:'vision',name:'Vision',cls:'tech'},
+  {key:'vision_movie',name:'Vision (Age Of Ultron)',cls:'tech'},
+  {key:'vision_timely',name:'Vision (Aarkus)',cls:'tech'},
+  {key:'vivvision',name:'Viv Vision',cls:'tech'},
+  {key:'void_current',name:'The Void',cls:'science'},
+  {key:'vox',name:'Vox',cls:'cosmic'},
+  {key:'vulture_movie',name:'Vulture',cls:'tech'},
+  {key:'warlock',name:'Warlock',cls:'tech'},
+  {key:'warmachine',name:'War Machine',cls:'tech'},
+  {key:'wasp',name:'Wasp',cls:'science'},
+  {key:'wave',name:'Wave',cls:'science'},
+  {key:'werewolfbynight',name:'Werewolf by Night',cls:'mystic'},
+  {key:'whitetiger',name:'White Tiger',cls:'mystic'},
+  {key:'wiccan',name:'Wiccan',cls:'mystic'},
+  {key:'winter_soldier',name:'Winter Soldier',cls:'skill'},
+  {key:'wolverine',name:'Wolverine',cls:'mutant'},
+  {key:'wolverine_oldman',name:'Old Man Logan',cls:'mutant'},
+  {key:'wolverine_weaponx',name:'Wolverine (Weapon X)',cls:'mutant'},
+  {key:'wong',name:'Wong',cls:'mystic'},
+  {key:'x23',name:'X-23',cls:'mutant'},
+  {key:'yelenabelova',name:'Yelena Belova',cls:'skill'},
+  {key:'yellowjacket',name:'Yellowjacket',cls:'science'},
+  {key:'yondu',name:'Yondu',cls:'tech'},
+  {key:'super_adaptoid_hydra',name:'Super-Adaptoid',cls:'tech',unplayable:true},
+  {key:'ALT_electro_luke',name:'Electro Luke Cage',cls:'science',unplayable:true},
+];
+
+const CLASS_ICONS = {cosmic:'🌌',tech:'⚙️',mutant:'🧬',skill:'🗡️',science:'🧪',mystic:'🔮',universal:'✨'};
+
+function portraitPath(key) {
+  return key ? `portraits/portrait_${key}.png` : null;
+}
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+let champions = [];
+let userTags  = [];
+let nextSeq   = 1;
+let dirHandle  = null;
+let editingId  = null;
+let saveTimer  = null;
+let showingUnplayable = false;
+
+// IndexedDB for persisting the directory handle across sessions
+async function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('mcoc-tracker', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('handles');
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e);
+  });
+}
+
+async function storeHandle(handle) {
+  const db = await openDB();
+  const tx = db.transaction('handles', 'readwrite');
+  tx.objectStore('handles').put(handle, 'dir');
+}
+
+async function loadHandle() {
+  const db = await openDB();
+  return new Promise(res => {
+    const tx  = db.transaction('handles', 'readonly');
+    const req = tx.objectStore('handles').get('dir');
+    req.onsuccess = e => res(e.target.result || null);
+    req.onerror   = () => res(null);
+  });
+}
+
+function setStatus(msg, cls = '') {
+  const el = document.getElementById('save-status');
+  el.textContent = msg;
+  el.className   = 'save-status ' + cls;
+}
+
+async function connectFolder() {
+  if (!window.showDirectoryPicker) {
+    alert('Your browser does not support folder access.\nPlease use Chrome or Edge.');
+    return;
+  }
+  try {
+    dirHandle = await window.showDirectoryPicker({ mode: 'readwrite', id: 'mcoc-tracker', startIn: 'desktop' });
+    await storeHandle(dirHandle);
+    document.getElementById('btn-folder').textContent = '📁 ' + dirHandle.name;
+    document.getElementById('btn-save-file').style.display = '';
+    setStatus('Connected', 'saved');
+    await loadChampionsFromFile();
+  } catch (e) {
+    if (e.name !== 'AbortError') setStatus('Error connecting', 'error');
+  }
+}
+
+async function saveToFile() {
+  if (!dirHandle) { saveToLocalStorage(); return; }
+  setStatus('Saving…', 'saving');
+  try {
+    const perm = await dirHandle.requestPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') { setStatus('Permission denied', 'error'); return; }
+    const fh  = await dirHandle.getFileHandle('champions.json', { create: true });
+    const w   = await fh.createWritable();
+    await w.write(JSON.stringify({ champions, tags: userTags, nextSeq }, null, 2));
+    await w.close();
+    setStatus('Saved ✓', 'saved');
+  } catch (e) {
+    setStatus('Save failed', 'error');
+  }
+}
+
+async function loadChampionsFromFile() {
+  if (!dirHandle) return;
+  try {
+    const fh   = await dirHandle.getFileHandle('champions.json');
+    const file = await fh.getFile();
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (Array.isArray(data)) { champions = data; }
+    else if (data && Array.isArray(data.champions)) { champions = data.champions; userTags = data.tags || []; nextSeq = data.nextSeq || (champions.length + 1); }
+    render();
+    setStatus('Loaded ✓', 'saved');
+  } catch (e) {
+    // File doesn't exist yet — start fresh
+    setStatus('Connected (no save file yet)', 'saved');
+  }
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem('mcoc-champions', JSON.stringify({ champions, tags: userTags, nextSeq }));
+}
+
+let storageMode = localStorage.getItem('mcoc-storage-mode') || 'browser';
+
+function setStorageMode(mode) {
+  storageMode = mode;
+  localStorage.setItem('mcoc-storage-mode', mode);
+  document.getElementById('storage-btn-browser').classList.toggle('active', mode === 'browser');
+  document.getElementById('storage-btn-file').classList.toggle('active', mode === 'file');
+  document.getElementById('btn-export').style.display = mode === 'file' ? '' : 'none';
+  document.getElementById('btn-import').style.display = mode === 'file' ? '' : 'none';
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (dirHandle) saveToFile();
+    else saveToLocalStorage();
+  }, 400);
+}
+
+// ── Champion search dropdown ──────────────────────────────────────────────────
+let ddFiltered  = [];
+let ddFocusIdx  = -1;
+let ddDebounce  = null;
+
+CHAMPION_LIST.sort((a, b) => a.name.localeCompare(b.name));
+const PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
+
+function ddList() { return ddFiltered.length ? ddFiltered : PLAYABLE_LIST; }
+
+function filterChampions() {
+  clearTimeout(ddDebounce);
+  ddDebounce = setTimeout(() => {
+    const q   = document.getElementById('f-champ-search').value.toLowerCase().trim();
+    ddFiltered = q
+      ? PLAYABLE_LIST.filter(c => c.name.toLowerCase().includes(q) || c.key.toLowerCase().includes(q))
+      : [];
+    ddFocusIdx = -1;
+    renderDropdown();
+    document.getElementById('champ-dropdown').classList.add('open');
+  }, 120);
+}
+
+function showDropdown() {
+  renderDropdown();
+  document.getElementById('champ-dropdown').classList.add('open');
+}
+
+function hideDropdown() {
+  setTimeout(() => document.getElementById('champ-dropdown').classList.remove('open'), 150);
+}
+
+function renderDropdown() {
+  const dd   = document.getElementById('champ-dropdown');
+  dd.innerHTML = ddList().map((c, i) => {
+    const src = portraitPath(c.key);
+    const img = src
+      ? `<img src="${src}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" /><span class="opt-icon" style="display:none">?</span>`
+      : `<span class="opt-icon">?</span>`;
+    return `<div class="champ-option" data-idx="${i}" onmousedown="selectChampion(${i})">
+              ${img}<span>${escHtml(c.name)}</span>
+            </div>`;
+  }).join('');
+}
+
+function selectChampion(idx) {
+  const list = ddList();
+  const c    = list[idx];
+  if (!c) return;
+  document.getElementById('f-champ-search').value = c.name;
+  document.getElementById('f-champ-key').value    = c.key;
+  document.getElementById('f-name').value         = c.name;
+  if (c.cls) pickClass(c.cls);
+  document.getElementById('champ-dropdown').classList.remove('open');
+  updatePortraitPreview(c.key, c.name);
+}
+
+function ddKeyNav(e) {
+  const dd   = document.getElementById('champ-dropdown');
+  const list = ddList();
+  const opts = dd.querySelectorAll('.champ-option');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    ddFocusIdx = Math.min(ddFocusIdx + 1, opts.length - 1);
+    opts.forEach((o, i) => o.classList.toggle('focused', i === ddFocusIdx));
+    opts[ddFocusIdx]?.scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    ddFocusIdx = Math.max(ddFocusIdx - 1, 0);
+    opts.forEach((o, i) => o.classList.toggle('focused', i === ddFocusIdx));
+    opts[ddFocusIdx]?.scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter' && ddFocusIdx >= 0) {
+    e.preventDefault();
+    selectChampion(ddFocusIdx);
+  } else if (e.key === 'Escape') {
+    dd.classList.remove('open');
+  }
+}
+
+function updatePortraitPreview(key, name) {
+  const wrap = document.getElementById('modal-portrait-preview');
+  const src  = portraitPath(key);
+  document.getElementById('modal-preview-name').textContent = name || 'Select a champion';
+  if (src) {
+    wrap.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;object-position:center top" onerror="this.parentElement.innerHTML='<span style=\\'font-size:2rem\\'>?</span>'" />`;
+  } else {
+    wrap.innerHTML = '<span>?</span>';
+  }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function openModal(id = null) {
+  editingId = id;
+  document.getElementById('modal-title').textContent = id ? 'Edit Champion' : 'Add Champion';
+  clearForm();
+  ddFiltered = [];
+  renderDropdown();
+
+  if (id) {
+    const c = champions.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('f-champ-search').value   = c.name;
+    document.getElementById('f-champ-key').value      = c.portraitKey || '';
+    document.getElementById('f-name').value           = c.name;
+    pickClass(c.class);
+    pickStars(c.stars);              // syncs R6 visibility + level field state (rank still empty)
+    pickRank(c.rank || '');          // may auto-fill level for ranked 5★/6★/7★
+    // Restore the saved level (pickRank may have auto-filled it)
+    document.getElementById('f-level').value          = c.level || '';
+    document.getElementById('f-awakened').checked     = c.awakened;
+    const sigVal = c.sig || 1;
+    document.getElementById('f-sig').value = sigVal;
+    document.getElementById('sig-display').textContent = sigVal;
+    document.getElementById('f-notes').value          = c.notes || '';
+    if (c.awakened) document.getElementById('sig-group').style.display = 'flex';
+    modalSelectedTags = [...(c.tags || [])];
+    renderTagsModal();
+    const ascVal = c.ascension || '';
+    setGroup('grp-ascension', 'f-ascension', ascVal);
+    if (c.stars === 7) document.getElementById('ascension-group').style.display = '';
+    updatePortraitPreview(c.portraitKey, c.name);
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+  if (!editingId) document.getElementById('f-champ-search').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+}
+
+function clearForm() {
+  ['f-champ-search','f-champ-key','f-name','f-class','f-stars','f-rank','f-level','f-notes']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('f-sig').value = 1;
+  document.getElementById('sig-display').textContent = '1';
+  setGroup('grp-class', 'f-class', '');
+  setGroup('grp-stars', 'f-stars', '');
+  setGroup('grp-rank',  'f-rank',  '');
+  const r6btn = document.querySelector('#grp-rank .opt-btn[data-val="6"]');
+  if (r6btn) r6btn.style.display = 'none';
+  document.getElementById('f-awakened').checked = false;
+  document.getElementById('sig-group').style.display = 'none';
+  document.getElementById('ascension-group').style.display = 'none';
+  setGroup('grp-ascension', 'f-ascension', '');
+  document.getElementById('modal-portrait-preview').innerHTML = '<span>?</span>';
+  document.getElementById('modal-preview-name').textContent   = 'Select a champion';
+  modalSelectedTags = [];
+  document.getElementById('f-tag-input').value = '';
+  renderTagsModal();
+}
+
+function toggleSigLevel() {
+  document.getElementById('sig-group').style.display =
+    document.getElementById('f-awakened').checked ? 'flex' : 'none';
+}
+
+// Set the active button in a group and sync its hidden input
+function setGroup(groupId, hiddenId, val) {
+  const grp = document.getElementById(groupId);
+  grp.querySelectorAll('.opt-btn').forEach(b =>
+    b.classList.toggle('active', val !== '' && val != null && b.dataset.val === String(val)));
+  document.getElementById(hiddenId).value = (val == null ? '' : val);
+}
+
+function pickClass(v) { setGroup('grp-class', 'f-class', v); }
+function pickStars(v) { setGroup('grp-stars', 'f-stars', v); onStarsChange(); }
+function pickRank(v)  { setGroup('grp-rank',  'f-rank',  v); onRankChange(); }
+
+// Max level per rank for 5★/6★/7★
+const RANK_LEVELS = { 1: 25, 2: 35, 3: 45, 4: 55, 5: 65 };
+
+function onStarsChange() {
+  const stars = Number(document.getElementById('f-stars').value);
+  const r6btn = document.querySelector('#grp-rank .opt-btn[data-val="6"]');
+
+  // Show R6 only for 7★
+  if (r6btn) r6btn.style.display = stars === 7 ? '' : 'none';
+
+  // Show ascension only for 7★
+  document.getElementById('ascension-group').style.display = stars === 7 ? '' : 'none';
+  if (stars !== 7) setGroup('grp-ascension', 'f-ascension', '');
+
+  // If R6 was selected but stars changed away from 7, reset rank
+  if (document.getElementById('f-rank').value === '6' && stars !== 7) setGroup('grp-rank', 'f-rank', '');
+
+  onRankChange();
+}
+
+function onRankChange() {
+  const stars = Number(document.getElementById('f-stars').value);
+  const rank  = Number(document.getElementById('f-rank').value);
+  const lvlEl = document.getElementById('f-level');
+
+  if ([5, 6, 7].includes(stars) && rank >= 1 && rank <= 5) {
+    lvlEl.value    = RANK_LEVELS[rank];
+    lvlEl.readOnly = true;
+    lvlEl.style.color   = 'var(--text-muted)';
+    lvlEl.style.cursor  = 'default';
+  } else {
+    // 7★ R6 or 1-4★: leave manual
+    if (stars === 7 && rank === 6) {
+      lvlEl.value = '';
+      lvlEl.placeholder = 'Pending';
+    } else {
+      lvlEl.placeholder = '—';
+    }
+    lvlEl.readOnly = false;
+    lvlEl.style.color  = '';
+    lvlEl.style.cursor = '';
+  }
+}
+
+function saveChampion() {
+  const name  = document.getElementById('f-name').value.trim() || document.getElementById('f-champ-search').value.trim();
+  const cls   = document.getElementById('f-class').value;
+  const stars = document.getElementById('f-stars').value;
+
+  if (!name || !cls || !stars) {
+    alert('Please fill in Champion, Class, and Star Rating.');
+    return;
+  }
+
+  const data = {
+    id:         editingId || (() => { const seq = nextSeq++; const d = new Date(); const date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; return `${seq}-${date}`; })(),
+    name,
+    portraitKey: document.getElementById('f-champ-key').value || null,
+    class:      cls,
+    stars:      Number(stars),
+    rank:       document.getElementById('f-rank').value  || null,
+    level:      document.getElementById('f-level').value || null,
+    awakened:   document.getElementById('f-awakened').checked,
+    sig:        document.getElementById('f-sig').value   || null,
+    ascension:  document.getElementById('f-ascension').value || null,
+    tags:       [...modalSelectedTags],
+    notes:      document.getElementById('f-notes').value.trim() || null,
+  };
+
+  if (editingId) {
+    const idx = champions.findIndex(x => x.id === editingId);
+    champions[idx] = data;
+  } else {
+    champions.push(data);
+  }
+
+  scheduleSave();
+  closeModal();
+  render();
+}
+
+function toggleUnplayable() {
+  showingUnplayable = !showingUnplayable;
+  const btn = document.getElementById('btn-unplayable');
+  const rosterControls = document.getElementById('roster-controls');
+  btn.textContent = showingUnplayable ? '← Back to Roster' : '👁 View Unplayable';
+  btn.classList.toggle('active', showingUnplayable);
+  rosterControls.style.display = showingUnplayable ? 'none' : 'flex';
+  render();
+}
+
+function deleteChampion(id) {
+  if (!confirm('Remove this champion from your roster?')) return;
+  champions = champions.filter(x => x.id !== id);
+  scheduleSave();
+  render();
+}
+
+// ── Filtering & sorting ───────────────────────────────────────────────────────
+function getFiltered() {
+  const starFilter  = document.getElementById('filter-stars').value;
+  const classFilter = document.getElementById('filter-class').value;
+  const tagFilter   = document.getElementById('filter-tag').value;
+  const sortBy      = document.getElementById('sort-by').value;
+  const rankChecked    = getChecked('rank');
+  const awakenedChecked = getChecked('awakened');
+  let list = [...champions];
+  if (starFilter)           list = list.filter(c => c.stars === Number(starFilter));
+  if (classFilter)          list = list.filter(c => c.class === classFilter);
+  if (tagFilter)            list = list.filter(c => c.tags?.includes(tagFilter));
+  if (rankChecked.length)   list = list.filter(c => rankChecked.includes(String(c.rank)));
+  if (awakenedChecked.length) {
+    list = list.filter(c => {
+      if (awakenedChecked.includes('yes') && awakenedChecked.includes('no')) return true;
+      if (awakenedChecked.includes('yes')) return c.awakened;
+      return !c.awakened;
+    });
+  }
+  list.sort((a, b) => {
+    if (sortBy === 'stars-desc') return b.stars - a.stars;
+    if (sortBy === 'newest')     return b.added - a.added;
+    return a.name.localeCompare(b.name);
+  });
+  return list;
+}
+
+// ── Card HTML ─────────────────────────────────────────────────────────────────
+function starsDisplay(n) { return '★'.repeat(Number(n)) + '☆'.repeat(Math.max(0, 7 - Number(n))); }
+
+function cardHTML(c) {
+  const icon      = CLASS_ICONS[c.class] || '❓';
+  const src       = portraitPath(c.portraitKey);
+  const rankLevel = [c.rank ? `R${c.rank}` : null, c.level ? `L${c.level}` : null, c.ascension || null].filter(Boolean).join(' · ') || '—';
+  const awBadge   = c.awakened
+    ? `<span class="awakened-badge awakened-yes">⚡ Awakened${c.sig ? ` · Sig ${c.sig}` : ''}</span>`
+    : `<span class="awakened-badge awakened-no">Unawakened</span>`;
+
+  const portraitHTML = src
+    ? `<img src="${src}" alt="${escHtml(c.name)}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" /><span class="portrait-fallback" style="display:none">${icon}</span>`
+    : `<span class="portrait-fallback">${icon}</span>`;
+
+  const selectAttr = selectMode ? `selectable${selectedIds.has(c.id) ? ' selected' : ''}` : '';
+  return `
+    <div class="card ${selectAttr}" data-class="${c.class}" data-stars="${c.stars}" data-id="${c.id}"
+      ${selectMode ? `onclick="toggleCardSelect('${c.id}')"` : ''}>
+      <div class="card-portrait">
+        <div class="select-check">✓</div>
+        ${portraitHTML}
+        <div class="portrait-overlay">
+          <div class="stars">${starsDisplay(c.stars)}</div>
+          <div class="class-badge class-${c.class}">${icon}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="champ-name">${escHtml(c.name)}</div>
+        <div class="card-stats">
+          <div class="stat">
+            <span class="stat-label">Rank / Level</span>
+            <span class="stat-value">${rankLevel}</span>
+          </div>
+          <div class="stat" style="grid-column:1/-1">
+            <span class="stat-label">Status</span>
+            ${awBadge}
+          </div>
+        </div>
+        ${c.tags?.length ? `<div class="card-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color}40;background:${color}18">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
+        ${c.notes ? `<div class="card-notes">${escHtml(c.notes)}</div>` : ''}
+      </div>
+      ${selectMode ? '' : `<div class="card-actions">
+        <button onclick="openModal('${c.id}')">✏️ Edit</button>
+        <button class="btn-delete" onclick="deleteChampion('${c.id}')">🗑️ Remove</button>
+      </div>`}
+    </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function unplayableCardHTML(c) {
+  const icon = CLASS_ICONS[c.cls] || '❓';
+  const src  = portraitPath(c.key);
+  const portraitHTML = src
+    ? `<img src="${src}" alt="${escHtml(c.name)}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" /><span class="portrait-fallback" style="display:none">${icon}</span>`
+    : `<span class="portrait-fallback">${icon}</span>`;
+  return `
+    <div class="card unplayable-card" data-class="${c.cls}">
+      <div class="card-portrait">
+        ${portraitHTML}
+        <div class="portrait-overlay">
+          <div class="class-badge class-${c.cls}">${icon}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="champ-name">${escHtml(c.name)}</div>
+        <div class="unplayable-label">Boss / Unplayable</div>
+      </div>
+    </div>`;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const grid = document.getElementById('grid');
+  syncTagFilter();
+
+  if (showingUnplayable) {
+    const list = CHAMPION_LIST.filter(c => c.unplayable);
+    grid.innerHTML = list.length
+      ? list.map(unplayableCardHTML).join('')
+      : '<div class="empty"><div class="empty-icon">🔍</div><h2>No bosses found</h2></div>';
+    return;
+  }
+
+  const list = getFiltered();
+  const total    = champions.length;
+  const awakened = champions.filter(c => c.awakened).length;
+
+  document.getElementById('stat-total').textContent    = total;
+  document.getElementById('stat-awakened').textContent = awakened;
+  document.getElementById('showing-count').textContent = list.length;
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${champions.length === 0 ? '🏆' : '🔍'}</div>
+        <h2>${champions.length === 0 ? 'No champions yet' : 'No champions match your filters'}</h2>
+        <p>${champions.length === 0 ? 'Click "+ Add Champion" to start building your roster.' : 'Try adjusting the filters above.'}</p>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(cardHTML).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async () => {
+  // Try to restore the saved directory handle
+  if (window.showDirectoryPicker) {
+    const stored = await loadHandle();
+    if (stored) {
+      try {
+        const perm = await stored.queryPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+          dirHandle = stored;
+          document.getElementById('btn-folder').textContent = '📁 ' + dirHandle.name;
+          document.getElementById('btn-save-file').style.display = '';
+          setStatus('Connected', 'saved');
+          await loadChampionsFromFile();
+          setStorageMode(storageMode);
+          clearCheckboxFilters();
+          render();
+          return;
+        }
+      } catch {}
+    }
+  }
+  // Fallback: localStorage
+  const stored = localStorage.getItem('mcoc-champions');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) { champions = parsed; }
+      else if (parsed && Array.isArray(parsed.champions)) { champions = parsed.champions; userTags = parsed.tags || []; nextSeq = parsed.nextSeq || (champions.length + 1); }
+    } catch {}
+  }
+  if (!window.showDirectoryPicker) {
+    setStatus('Using browser storage', '');
+    document.getElementById('btn-folder').style.display = 'none';
+  } else {
+    setStatus('Click to connect folder', '');
+  }
+  setStorageMode(storageMode);
+  clearCheckboxFilters();
+  render();
+})();
+
+// Event listeners
+const modalOverlay = document.getElementById('modal-overlay');
+let overlayMousedownTarget = null;
+modalOverlay.addEventListener('mousedown', e => { overlayMousedownTarget = e.target; });
+modalOverlay.addEventListener('click', e => {
+  if (e.target.id === 'modal-overlay' && overlayMousedownTarget?.id === 'modal-overlay') closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+window.addEventListener('pageshow', () => { clearCheckboxFilters(); render(); });
+document.getElementById('f-champ-search').addEventListener('blur', hideDropdown);
+['filter-stars','filter-class','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', render));
+
+// ── Filter panel ─────────────────────────────────────────────────────────────
+let filterPanelOpen = false;
+
+function toggleFilterPanel(e) {
+  e.stopPropagation();
+  filterPanelOpen = !filterPanelOpen;
+  document.getElementById('filter-panel').style.display = filterPanelOpen ? 'block' : 'none';
+}
+
+document.addEventListener('click', e => {
+  if (filterPanelOpen && !e.target.closest('#filter-panel')) {
+    filterPanelOpen = false;
+    document.getElementById('filter-panel').style.display = 'none';
+  }
+});
+
+function getChecked(group) {
+  return [...document.querySelectorAll(`#filter-panel input[type="checkbox"][value]`)]
+    .filter(cb => {
+      const chip = cb.closest('.filter-chip');
+      return chip.dataset.group === group && cb.checked;
+    })
+    .map(cb => cb.value);
+}
+
+function applyCheckboxFilters() {
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.querySelector('input').checked);
+  });
+  updateFilterBadge();
+  render();
+}
+
+function clearCheckboxFilters() {
+  document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  updateFilterBadge();
+  render();
+}
+
+function updateFilterBadge() {
+  const count = document.querySelectorAll('#filter-panel input[type="checkbox"]:checked').length;
+  const badge = document.getElementById('filter-badge');
+  const btn   = document.getElementById('btn-filters');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'flex';
+    btn.style.borderColor = '#6ea8fe';
+    btn.style.color = '#6ea8fe';
+    btn.style.background = 'rgba(110,168,254,0.15)';
+  } else {
+    badge.style.display = 'none';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.style.background = '';
+  }
+}
+
+// ── Tags ─────────────────────────────────────────────────────────────────────
+const TAG_PALETTE = ['#6ea8fe','#2ecc71','#f39c12','#e74c3c','#9b59b6','#1abc9c','#e67e22','#3498db','#e91e63','#00bcd4'];
+
+function tagColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return TAG_PALETTE[Math.abs(hash) % TAG_PALETTE.length];
+}
+
+let modalSelectedTags = [];
+
+function renderTagsModal() {
+  const container = document.getElementById('f-tags-list');
+  if (!container) return;
+  container.innerHTML = userTags.map(t => {
+    const color = tagColor(t);
+    const sel = modalSelectedTags.includes(t);
+    return `<span class="tag-chip ${sel ? 'selected' : 'unselected'}"
+      style="color:${color};border-color:${color};background:${sel ? color + '22' : 'transparent'}"
+      onclick="toggleModalTag('${escHtml(t)}')">
+      ${escHtml(t)}
+      <span class="tag-remove" onclick="event.stopPropagation();toggleModalTag('${escHtml(t)}')" title="Remove from champion">✕</span>
+    </span>`;
+  }).join('');
+}
+
+function toggleModalTag(name) {
+  if (modalSelectedTags.includes(name)) modalSelectedTags = modalSelectedTags.filter(t => t !== name);
+  else modalSelectedTags.push(name);
+  renderTagsModal();
+}
+
+function addTagFromInput() {
+  const input = document.getElementById('f-tag-input');
+  const name  = input.value.trim();
+  if (!name) return;
+  if (!userTags.includes(name)) { userTags.push(name); userTags.sort(); syncTagFilter(); scheduleSave(); }
+  if (!modalSelectedTags.includes(name)) modalSelectedTags.push(name);
+  input.value = '';
+  renderTagsModal();
+}
+
+function deleteTag(name) {
+  if (!confirm(`Delete tag "${name}" from all champions?`)) return;
+  userTags = userTags.filter(t => t !== name);
+  champions.forEach(c => { if (c.tags) c.tags = c.tags.filter(t => t !== name); });
+  modalSelectedTags = modalSelectedTags.filter(t => t !== name);
+  syncTagFilter();
+  scheduleSave();
+  renderTagsModal();
+  render();
+}
+
+function openManageTags() {
+  renderManageTags();
+  document.getElementById('manage-tags-overlay').style.display = 'flex';
+}
+
+function closeManageTags() {
+  document.getElementById('manage-tags-overlay').style.display = 'none';
+}
+
+function renderManageTags() {
+  const list  = document.getElementById('manage-tags-list');
+  const empty = document.getElementById('manage-tags-empty');
+  if (!userTags.length) {
+    list.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = userTags.map(t => {
+    const color = tagColor(t);
+    const count = champions.filter(c => c.tags?.includes(t)).length;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span class="card-tag" style="color:${color};border-color:${color}40;background:${color}18;">${escHtml(t)}</span>
+        <span style="font-size:0.75rem;color:var(--text-muted);">${count} champion${count !== 1 ? 's' : ''}</span>
+      </span>
+      <button class="btn-unplayable" onclick="globalDeleteTag('${escHtml(t)}')"
+        style="font-size:0.72rem;padding:3px 8px;border-color:#e74c3c44;color:#e74c3c;">Delete</button>
+    </div>`;
+  }).join('');
+}
+
+function globalDeleteTag(name) {
+  if (!confirm(`Delete tag "${name}" from all champions?`)) return;
+  userTags = userTags.filter(t => t !== name);
+  champions.forEach(c => { if (c.tags) c.tags = c.tags.filter(t => t !== name); });
+  scheduleSave();
+  syncTagFilter();
+  renderManageTags();
+  render();
+}
+
+function syncTagFilter() {
+  const sel = document.getElementById('filter-tag');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All</option>' +
+    userTags.map(t => `<option value="${escHtml(t)}" ${t === cur ? 'selected' : ''}>${escHtml(t)}</option>`).join('');
+}
+
+// Select mode
+let selectMode = false;
+let selectedIds = new Set();
+
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  selectedIds.clear();
+  document.getElementById('btn-select').classList.toggle('active', selectMode);
+  document.getElementById('btn-delete-selected').classList.toggle('visible', false);
+  document.getElementById('selected-count').textContent = '0';
+  render();
+}
+
+function toggleCardSelect(id) {
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) card.classList.toggle('selected', selectedIds.has(id));
+  const count = selectedIds.size;
+  document.getElementById('selected-count').textContent = count;
+  document.getElementById('btn-delete-selected').classList.toggle('visible', count > 0);
+}
+
+function deleteSelected() {
+  if (!selectedIds.size) return;
+  if (!confirm(`Remove ${selectedIds.size} champion(s) from your roster?`)) return;
+  champions = champions.filter(c => !selectedIds.has(c.id));
+  selectedIds.clear();
+  scheduleSave();
+  toggleSelectMode();
+}
+
+// Export / Import
+function exportRoster() {
+  const text = JSON.stringify({ champions, tags: userTags, nextSeq }, null, 2);
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mcoc-roster.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function openImport() {
+  document.getElementById('import-text').value = '';
+  document.getElementById('import-overlay').style.display = 'flex';
+}
+
+function closeImport() {
+  document.getElementById('import-overlay').style.display = 'none';
+}
+
+function importRoster() {
+  const raw = document.getElementById('import-text').value.trim();
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    alert('Invalid format — make sure you paste the full contents of an exported file.');
+    return;
+  }
+  let importedChampions, importedTags;
+  if (Array.isArray(parsed)) {
+    importedChampions = parsed;
+    importedTags = [];
+  } else if (parsed && Array.isArray(parsed.champions)) {
+    importedChampions = parsed.champions;
+    importedTags = parsed.tags || [];
+  } else {
+    alert('Invalid format — make sure you paste the full contents of an exported file.');
+    return;
+  }
+  if (!confirm(`This will replace your current ${champions.length} champion(s) with ${importedChampions.length} imported champion(s). Continue?`)) return;
+  champions = importedChampions;
+  userTags  = importedTags;
+  scheduleSave();
+  closeImport();
+  render();
+}
+
+// Card size slider
+(function() {
+  const MIN = 80, MAX = 380, DEFAULT = 210;
+  const stored = parseInt(localStorage.getItem('cardSize'), 10);
+  let current = (stored >= MIN && stored <= MAX) ? stored : DEFAULT;
+
+  function applySize(v) {
+    const portrait = Math.round(v * (170 / 210));
+    document.documentElement.style.setProperty('--card-width', v + 'px');
+    document.documentElement.style.setProperty('--portrait-height', portrait + 'px');
+    const grid = document.querySelector('.grid');
+    if (grid) {
+      grid.classList.remove('size-sm', 'size-xs', 'size-tiny');
+      if (v < 110)      grid.classList.add('size-tiny');
+      else if (v < 150) grid.classList.add('size-xs');
+      else if (v < 190) grid.classList.add('size-sm');
+    }
+  }
+
+  applySize(current);
+
+  const slider = document.createElement('div');
+  slider.innerHTML = `
+    <div id="size-widget" style="
+      position:fixed; bottom:20px; right:20px; z-index:900;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:10px; padding:10px 14px;
+      display:flex; align-items:center; gap:10px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.5);
+    ">
+      <span style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap;">Card Size</span>
+      <input id="card-size-slider" type="range" min="${MIN}" max="${MAX}" value="${current}"
+        style="width:100px;accent-color:var(--accent);cursor:pointer;" />
+    </div>`;
+  document.body.appendChild(slider);
+
+  document.getElementById('card-size-slider').addEventListener('input', function() {
+    current = Number(this.value);
+    applySize(current);
+    localStorage.setItem('cardSize', current);
+  });
+})();
+</script>
+</body>
+</html>

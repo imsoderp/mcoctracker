@@ -1,0 +1,34 @@
+{
+  "champions": [
+    {
+      "id": "1-2026-06-18",
+      "name": "Absorbing Man",
+      "portraitKey": "absorbingman",
+      "class": "science",
+      "stars": 7,
+      "rank": "3",
+      "level": "45",
+      "awakened": false,
+      "sig": "1",
+      "ascension": null,
+      "tags": [],
+      "notes": null
+    },
+    {
+      "id": "2-2026-06-18",
+      "name": "Black Bolt",
+      "portraitKey": "black_bolt",
+      "class": "cosmic",
+      "stars": 7,
+      "rank": "5",
+      "level": "65",
+      "awakened": false,
+      "sig": "1",
+      "ascension": null,
+      "tags": [],
+      "notes": null
+    }
+  ],
+  "tags": [],
+  "nextSeq": 3
+}
