@@ -345,6 +345,10 @@
       font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
       white-space: nowrap;
     }
+    .card-meta-prestige {
+      font-size: 0.73rem; font-weight: 700; color: var(--gold);
+      white-space: nowrap;
+    }
 
     .awakened-badge {
       display: inline-block; font-size: 0.67rem;
@@ -675,6 +679,7 @@
     <div class="header-stats">
       <div class="stat-pill"><strong id="stat-total">0</strong>Champions</div>
       <div class="stat-pill"><strong id="stat-awakened">0</strong>Awakened</div>
+      <div class="stat-pill" title="Average prestige of your top 5 champions"><strong id="stat-prestige">—</strong>Prestige</div>
     </div>
     <div class="save-area">
       <button class="btn-folder" id="btn-folder" onclick="connectFolder()">📁 Connect Folder</button>
@@ -701,6 +706,7 @@
         <option value="stars-desc">Stars ↓</option>
         <option value="rank-desc">Rank ↓</option>
         <option value="rank-asc">Rank ↑</option>
+        <option value="prestige-desc">Prestige ↓</option>
         <option value="newest">Newest</option>
       </select>
     </label>
@@ -1071,6 +1077,7 @@ const CHAMPION_LIST = [
   {key:'deadpool_platinum',name:'Deadpool (Platinum)',cls:'cosmic'},
   {key:'deadpool_xforce',name:'Deadpool (X-Force)',cls:'mutant'},
   {key:'destroyer',name:'Destroyer',cls:'mystic'},
+  {key:'diablo',name:'Diablo',cls:'science'},
   {key:'doc_ock',name:'Doctor Octopus',cls:'tech'},
   {key:'doctor_strange',name:'Doctor Strange',cls:'mystic'},
   {key:'doctorbong',name:'Doctor Bong',cls:'skill'},
@@ -1106,9 +1113,11 @@ const CHAMPION_LIST = [
   {key:'green_goblin',name:'Green Goblin',cls:'tech'},
   {key:'groot',name:'Groot',cls:'cosmic'},
   {key:'groot_king',name:'King Groot',cls:'cosmic'},
+  {key:'groot_king_blackorder',name:'King Groot (Deathless)',cls:'cosmic'},
   {key:'guardian',name:'Guardian',cls:'tech'},
   {key:'guillotine',name:'Guillotine',cls:'mystic'},
   {key:'guillotine_2099',name:'Guillotine 2099',cls:'tech'},
+  {key:'guillotine_blackorder',name:'Guillotine (Deathless)',cls:'mystic'},
   {key:'gwenmaster',name:'Gwenmaster',cls:'skill',unplayable:true},
   {key:'gwenpool',name:'Gwenpool',cls:'skill'},
   {key:'gwenpool_master',name:'Gwenpool (Master)',cls:'skill',unplayable:true},
@@ -1180,6 +1189,7 @@ const CHAMPION_LIST = [
   {key:'magik',name:'Magik',cls:'mystic'},
   {key:'magneto',name:'Magneto',cls:'mutant'},
   {key:'magneto_white',name:'Magneto (White)',cls:'mutant'},
+  {key:'maestro_overseer',name:'The Overseer',cls:'tech'},
   {key:'maker',name:'Maker',cls:'tech'},
   {key:'mangog',name:'Mangog',cls:'mystic'},
   {key:'manthing',name:'Man-Thing',cls:'mystic'},
@@ -1257,6 +1267,7 @@ const CHAMPION_LIST = [
   {key:'scytalis',name:'Scytalis',cls:'cosmic',unplayable:true},
   {key:'sentinel',name:'Sentinel',cls:'tech'},
   {key:'sentry_current',name:'Sentry',cls:'science'},
+  {key:'scarletsigil',name:'Scarlet Sigil',cls:'mystic'},
   {key:'serpent',name:'Serpent',cls:'cosmic'},
   {key:'sersi',name:'Sersi',cls:'cosmic'},
   {key:'shangchi',name:'Shang-Chi',cls:'skill'},
@@ -1299,6 +1310,7 @@ const CHAMPION_LIST = [
   {key:'terrax',name:'Terrax',cls:'cosmic'},
   {key:'thanos',name:'Thanos',cls:'cosmic'},
   {key:'thanos_gauntlet',name:'Thanos (Infinity Gauntlet)',cls:'cosmic'},
+  {key:'thanos_nameless',name:'Thanos (Deathless)',cls:'cosmic'},
   {key:'thing',name:'Thing',cls:'science'},
   {key:'thor',name:'Thor',cls:'cosmic'},
   {key:'thor_janefoster',name:'Thor (Jane Foster)',cls:'cosmic'},
@@ -1314,6 +1326,7 @@ const CHAMPION_LIST = [
   {key:'VenomTheDuck',name:'Venom the Duck',cls:'cosmic'},
   {key:'vision',name:'Vision',cls:'tech'},
   {key:'vision_movie',name:'Vision (Age Of Ultron)',cls:'tech'},
+  {key:'vision_blackorder',name:'Vision (Deathless)',cls:'tech'},
   {key:'vision_timely',name:'Vision (Aarkus)',cls:'tech'},
   {key:'vivvision',name:'Viv Vision',cls:'tech'},
   {key:'void_current',name:'The Void',cls:'science'},
@@ -1325,6 +1338,7 @@ const CHAMPION_LIST = [
   {key:'wave',name:'Wave',cls:'science'},
   {key:'werewolfbynight',name:'Werewolf by Night',cls:'mystic'},
   {key:'whitetiger',name:'White Tiger',cls:'mystic'},
+  {key:'whitewidow',name:'White Widow',cls:'skill'},
   {key:'wiccan',name:'Wiccan',cls:'mystic'},
   {key:'winter_soldier',name:'Winter Soldier',cls:'skill'},
   {key:'wolverine',name:'Wolverine',cls:'mutant'},
@@ -1351,11 +1365,288 @@ function saveCustomChampions() {
   localStorage.setItem('mcoc-custom-champions', JSON.stringify(customChampions));
 }
 
+// 7★ prestige values [7R4, 7R4+A1, 7R4+A2, 7R5, 7R5+A1, 7R5+A2]; null = no ascension data.
+// Source: "7 Star - Prestige + Relics + Stat Focus MCOC" spreadsheet, July 2026.
+const PRESTIGE_7 = {
+  high_evolutionary:[34230,36970,39710,40600,43850,47100],
+  bluemarvel:[34110,36840,39570,40460,43700,46930],
+  ironman_infamous:[34060,36780,39510,40390,43620,46850],
+  spiderman_pavitr:[33970,36690,39410,40290,43510,46740],
+  danimoonstar:[33940,36660,39370,40260,43480,46700],
+  shatterstar:[33920,36630,39350,40230,43450,46670],
+  baronzemo:[33850,36560,39270,40150,43360,46570],
+  phylavell:[33750,36450,39150,40030,43230,46430],
+  wave:[33740,36440,39140,40000,43200,46400],
+  madelynepryor:[33710,36410,39100,39990,43190,46390],
+  doctorbong:[33610,36300,38990,39880,43080,46270],
+  jjj_spiderslayer:[33590,36280,38960,39850,43040,46230],
+  rubythursday:[33600,36290,38980,39850,43040,46230],
+  ghost_rider:[33560,36240,38930,39810,42990,46180],
+  pixie:[33570,36260,38940,39800,42980,46170],
+  spiderpunk:[33540,36220,38910,39760,42940,46120],
+  lizard:[33520,36200,38880,39760,42940,46120],
+  doctor_strange:[33480,36160,38840,39730,42910,46090],
+  blade_stellar:[33480,36160,38840,39700,42880,46050],
+  starlord_stellar:[33460,36140,38810,39670,42840,46020],
+  mbaku:[33440,36120,38790,39660,42830,46010],
+  iron_man:[33440,36120,38790,39660,42830,46010],
+  destroyer:[33420,36090,38770,39650,42820,45990],
+  kindred:[33430,36100,38780,39640,42810,45980],
+  whitetiger:[33420,33420,38770,39620,42790,45960],
+  dust:[33410,36080,38760,39620,42790,45960],
+  arcade:[33410,36080,38760,39620,42790,45960],
+  spot:[33350,36020,38690,39560,42720,45890],
+  adamwarlock:[33370,36040,38710,39560,42720,45890],
+  gentle:[33330,36000,38660,39540,42700,45870],
+  ladydeathstrike:[33340,36010,38670,39530,42690,45850],
+  sandman:[33290,35950,38620,39480,42640,45800],
+  patriot:[33270,35930,38590,39460,42620,45770],
+  black_panther_cw:[33270,35930,38590,39460,42620,45770],
+  captainamerica_samwilson:[33250,35910,38570,39430,42580,45740],
+  spiral:[33240,35900,38560,39420,42570,45730],
+  sersi:[33230,35890,38550,39420,42570,45730],
+  maestro:[33230,35890,38550,39420,42570,45730],
+  knull:[33220,35880,38540,39400,42550,45700],
+  gorr:[33220,35880,38540,39400,42550,45700],
+  americachavez:[33220,35880,38540,39400,42550,45700],
+  abomination_immortal:[33220,35880,38540,39390,42540,45690],
+  hitmonkey:[33220,35880,38540,39380,42530,45680],
+  misternegative:[33200,35860,38510,39370,42520,45670],
+  attuma:[33180,35830,38490,39370,42520,45670],
+  toad:[33190,35850,38500,39360,42510,45660],
+  scarletsigil:[33190,35850,38500,39360,42510,45660],
+  sasquatch:[33170,35820,38480,39360,42510,45660],
+  nova:[33190,35850,38500,39360,42510,45660],
+  black_panther_realm:[33190,35850,38500,39360,42510,45660],
+  peniparker:[33180,35830,38490,39350,42500,45650],
+  spiderham:[33160,35810,38470,39310,42450,45600],
+  mrfantastic:[33150,35800,38450,39310,42450,45600],
+  storm_realm:[33150,35800,38450,39300,42440,45590],
+  warlock:[33130,35780,38430,39280,42420,45560],
+  mojo:[33090,35740,38380,39260,42400,45540],
+  manthing:[32830,35460,38080,39170,42300,45440],
+  vision_timely:[33010,35650,38290,39140,42270,45400],
+  bishop:[32910,35540,38180,39030,42150,45270],
+  korg_movie:[32840,35470,38090,38950,42070,45180],
+  howardmech:[32780,35400,38020,38880,41990,45100],
+  corvusglaive:[32720,35340,37960,38780,41880,44980],
+  emmafrost:[32540,35140,37750,38600,41690,44780],
+  deadpool:[32020,34580,37140,37980,41020,44060],
+  onslaught:[34210,null,null,40590,null,null],
+  yelenabelova:[34210,null,null,40580,null,null],
+  phoenix_dark:[34040,null,null,40370,null,null],
+  shathra:[34030,null,null,40360,null,null],
+  silversurfer:[34020,null,null,40320,null,null],
+  quicksilver:[33950,null,null,40260,null,null],
+  heimdall:[33840,null,null,40140,null,null],
+  okoye:[33780,null,null,40060,null,null],
+  serpent:[33680,null,null,39960,null,null],
+  photon:[33680,null,null,39940,null,null],
+  magik:[33640,null,null,39890,null,null],
+  prowler:[33520,null,null,39760,null,null],
+  imperiosa:[33470,null,null,39700,null,null],
+  thor_janefoster:[33460,null,null,39690,null,null],
+  frankencastle:[33440,null,null,39680,null,null],
+  spiderman_supreme:[33460,null,null,39660,null,null],
+  karolinadean:[33460,null,null,39660,null,null],
+  valkyrie:[33440,null,null,39660,null,null],
+  dracula:[33440,null,null,39660,null,null],
+  bullseye:[33440,null,null,39660,null,null],
+  werewolfbynight:[33430,null,null,39660,null,null],
+  lumatrix:[33430,null,null,39650,null,null],
+  jean_grey_current:[33430,null,null,39650,null,null],
+  leader:[33420,null,null,39650,null,null],
+  enchantress:[33420,null,null,39650,null,null],
+  negasonicteenagewarhead:[33440,null,null,39640,null,null],
+  MisterKnight:[33420,null,null,39630,null,null],
+  thanos_nameless:[33400,null,null,39630,null,null],
+  omegasentinel:[33430,null,null,39620,null,null],
+  spiderwoman:[33400,null,null,39620,null,null],
+  punisher:[33390,null,null,39610,null,null],
+  countnefaria:[33390,null,null,39610,null,null],
+  scream:[33390,null,null,39600,null,null],
+  gladiator:[33390,null,null,39600,null,null],
+  cheeilth:[33380,null,null,39600,null,null],
+  absorbingman:[33380,null,null,39600,null,null],
+  cassandranova:[33380,null,null,39590,null,null],
+  bastion:[33380,null,null,39590,null,null],
+  solvarch:[33360,null,null,39590,null,null],
+  thor_ragnarok:[33370,null,null,39580,null,null],
+  nicominoru:[33370,null,null,39580,null,null],
+  phoenix:[33370,null,null,39580,null,null],
+  maker:[33370,null,null,39570,null,null],
+  northstar:[33370,null,null,39570,null,null],
+  rhino:[33360,null,null,39570,null,null],
+  captainbritain:[33350,null,null,39570,null,null],
+  betaraybill:[33340,null,null,39550,null,null],
+  dazzler:[33340,null,null,39540,null,null],
+  SheHulk_Deathless:[33330,null,null,39540,null,null],
+  silversable:[33340,null,null,39530,null,null],
+  ironheart:[33340,null,null,39530,null,null],
+  antman_future:[33320,null,null,39520,null,null],
+  moondragon:[33310,null,null,39520,null,null],
+  rocket:[33330,null,null,39500,null,null],
+  nimrod:[33300,null,null,39500,null,null],
+  kushala:[33300,null,null,39500,null,null],
+  namor:[33300,null,null,39490,null,null],
+  galan:[33290,null,null,39490,null,null],
+  SilverSamurai:[33300,null,null,39480,null,null],
+  arnimZola:[33280,null,null,39480,null,null],
+  maestro_overseer:[33270,null,null,39480,null,null],
+  titania:[33270,null,null,39470,null,null],
+  groot_king_blackorder:[33250,null,null,39470,null,null],
+  medusa:[33270,null,null,39460,null,null],
+  falcon_joaquintorres:[33270,null,null,39450,null,null],
+  jackolantern:[33270,null,null,39450,null,null],
+  cassielang:[33250,null,null,39440,null,null],
+  morbius:[33250,null,null,39430,null,null],
+  yondu:[33240,null,null,39420,null,null],
+  hulkling:[33240,null,null,39420,null,null],
+  mantis:[33240,null,null,39410,null,null],
+  isophyne:[33240,null,null,39410,null,null],
+  vox:[33230,null,null,39410,null,null],
+  sauron:[33230,null,null,39410,null,null],
+  guillotine_blackorder:[33230,null,null,39410,null,null],
+  wiccan:[33230,null,null,39400,null,null],
+  shocker:[33230,null,null,39400,null,null],
+  odin:[33220,null,null,39400,null,null],
+  apocalypse:[33220,null,null,39400,null,null],
+  modok:[33200,null,null,39400,null,null],
+  stryfe:[33210,null,null,39390,null,null],
+  red_goblin:[33210,null,null,39390,null,null],
+  shuri:[33210,null,null,39380,null,null],
+  hulk_immortal:[33200,null,null,39380,null,null],
+  deadpool_xforce:[33200,null,null,39380,null,null],
+  rintrah:[33190,null,null,39380,null,null],
+  professorx:[33210,null,null,39370,null,null],
+  deadpool_gold:[33210,null,null,39370,null,null],
+  deadpool_platinum:[33190,null,null,39370,null,null],
+  kraven:[33190,null,null,39370,null,null],
+  spiderman_stealth:[33210,null,null,39360,null,null],
+  kittypryde:[33210,null,null,39360,null,null],
+  tigra:[33200,null,null,39360,null,null],
+  shangchi:[33190,null,null,39360,null,null],
+  scorpion:[33190,null,null,39350,null,null],
+  drstrange_realm:[33180,null,null,39350,null,null],
+  mangog:[33180,null,null,39350,null,null],
+  luke_cage:[33190,null,null,39340,null,null],
+  sunspot:[33180,null,null,39340,null,null],
+  guardian:[33180,null,null,39340,null,null],
+  wong:[33170,null,null,39340,null,null],
+  skrull_super:[33170,null,null,39340,null,null],
+  dragonman:[33170,null,null,39340,null,null],
+  blackcat:[33170,null,null,39340,null,null],
+  sentinel:[33160,null,null,39330,null,null],
+  spiderman_2099:[33190,null,null,39330,null,null],
+  redguardian:[33180,null,null,39330,null,null],
+  vivvision:[33170,null,null,39330,null,null],
+  silk:[33170,null,null,39330,null,null],
+  mistyknight:[33170,null,null,39330,null,null],
+  purgatory:[33150,null,null,39320,null,null],
+  antivenom:[33150,null,null,39320,null,null],
+  black_widow_timely:[33160,null,null,39310,null,null],
+  captain_marvel_movie:[33160,null,null,39310,null,null],
+  diablo:[33150,null,null,39310,null,null],
+  terrax:[33130,null,null,39290,null,null],
+  jessica_jones:[33120,null,null,39280,null,null],
+  sentry_current:[33120,null,null,39270,null,null],
+  whitewidow:[33120,null,null,39250,null,null],
+  thing:[33080,null,null,39240,null,null],
+  nightcrawler:[33080,null,null,39210,null,null],
+  venompool:[33060,null,null,39210,null,null],
+  punisher_2099:[33050,null,null,39190,null,null],
+  longshot:[33040,null,null,39190,null,null],
+  masacre:[33040,null,null,39170,null,null],
+  guillotine_2099:[33050,null,null,39160,null,null],
+  gambit:[33020,null,null,39150,null,null],
+  antman:[33000,null,null,39140,null,null],
+  falcon:[33010,null,null,39120,null,null],
+  ironman_superior:[32960,null,null,39090,null,null],
+  daredevil_netflix:[32950,null,null,39070,null,null],
+  spider_man:[32940,null,null,39050,null,null],
+  mysterio:[32940,null,null,39040,null,null],
+  cyclops:[32910,null,null,39030,null,null],
+  hulk:[32900,null,null,39030,null,null],
+  crossbones:[32900,null,null,39020,null,null],
+  elsabloodstone:[32910,null,null,39010,null,null],
+  ebonymaw:[32910,null,null,39010,null,null],
+  havok:[32900,null,null,39010,null,null],
+  storm:[32890,null,null,39000,null,null],
+  symbiote_supreme:[32870,null,null,38980,null,null],
+  iceman:[32870,null,null,38970,null,null],
+  redSkull:[32870,null,null,38960,null,null],
+  nickfury:[32860,null,null,38950,null,null],
+  johnnystorm:[32840,null,null,38940,null,null],
+  sabretooth:[32830,null,null,38920,null,null],
+  black_panther:[32790,null,null,38880,null,null],
+  magneto:[32780,null,null,38880,null,null],
+  invisiblewoman:[32780,null,null,38870,null,null],
+  kingpin:[32760,null,null,38870,null,null],
+  moleman:[32710,null,null,38790,null,null],
+  karl_mordo:[32700,null,null,38770,null,null],
+  thanos:[32650,null,null,38740,null,null],
+  mistersinister:[32650,null,null,38730,null,null],
+  hawkeye:[32630,null,null,38700,null,null],
+  angela:[32640,null,null,38690,null,null],
+  ronin:[32620,null,null,38670,null,null],
+  killmonger:[32600,null,null,38670,null,null],
+  gwenpool:[32610,null,null,38660,null,null],
+  wolverine_weaponx:[32600,null,null,38660,null,null],
+  joefixit:[32590,null,null,38660,null,null],
+  cullobsidian:[32600,null,null,38650,null,null],
+  hood:[32590,null,null,38650,null,null],
+  blade:[32600,null,null,38640,null,null],
+  void_current:[32580,null,null,38640,null,null],
+  captainamerica_infinitywar:[32580,null,null,38640,null,null],
+  NightThrasher:[32580,null,null,38630,null,null],
+  civilwarrior:[32570,null,null,38630,null,null],
+  ultron_prime:[32560,null,null,38620,null,null],
+  karnak:[32560,null,null,38620,null,null],
+  ironman_movie:[32550,null,null,38600,null,null],
+  colossus:[32530,null,null,38590,null,null],
+  gamora:[32550,null,null,38580,null,null],
+  spiderman_morales:[32540,null,null,38580,null,null],
+  warmachine:[32530,null,null,38570,null,null],
+  omegared:[32530,null,null,38570,null,null],
+  carnage:[32540,null,null,38560,null,null],
+  domino:[32510,null,null,38550,null,null],
+  archangel:[32500,null,null,38540,null,null],
+  brother_voodoo:[32480,null,null,38520,null,null],
+  vision:[32470,null,null,38520,null,null],
+  vision_blackorder:[32470,null,null,38500,null,null],
+  x23:[32440,null,null,38470,null,null],
+  hulk_red:[32350,null,null,38370,null,null],
+  juggernaut:[32340,null,null,38340,null,null],
+  spidergwen:[32320,null,null,38320,null,null],
+  VenomTheDuck:[32280,null,null,38280,null,null],
+  hyperion:[32190,null,null,38180,null,null],
+  venom:[32100,null,null,38080,null,null],
+  hulkbuster_movie:[32050,null,null,38020,null,null],
+  kang:[32040,null,null,38000,null,null],
+  spiderman_movie:[31850,null,null,37750,null,null],
+  ultron:[31780,null,null,37690,null,null],
+  star_lord:[31480,null,null,37330,null,null],
+  shehulk:[31340,null,null,37160,null,null],
+  scarlet_witch_current:[31260,null,null,37070,null,null],
+};
+
 function portraitPath(key) {
   if (!key) return null;
   const custom = customChampions.find(c => c.key === key);
   if (custom?.portraitData) return custom.portraitData;
   return `portraits/portrait_${key}.png`;
+}
+
+// Prestige for a roster champion — 7★ R4/R5 only (that's all the source sheet covers).
+function champPrestige(c) {
+  if (c.stars !== 7) return null;
+  const p = PRESTIGE_7[c.portraitKey];
+  if (!p) return null;
+  const r = Number(c.rank);
+  if (r !== 4 && r !== 5) return null;
+  const base = r === 4 ? 0 : 3;
+  const asc  = c.ascension === 'A2' ? 2 : c.ascension === 'A1' ? 1 : 0;
+  return p[base + asc] ?? p[base];
 }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -1785,6 +2076,7 @@ function getFiltered() {
     if (sortBy === 'stars-desc') return b.stars - a.stars;
     if (sortBy === 'rank-desc')  return rankOf(b) - rankOf(a);
     if (sortBy === 'rank-asc')   return rankOf(a) - rankOf(b);
+    if (sortBy === 'prestige-desc') return (champPrestige(b) || 0) - (champPrestige(a) || 0);
     if (sortBy === 'newest')     return seqOf(b) - seqOf(a);
     return a.name.localeCompare(b.name);
   });
@@ -1800,6 +2092,7 @@ function cardHTML(c, index = 0, animate = true) {
   const icon      = CLASS_ICONS[c.class] || '❓';
   const src       = portraitPath(c.portraitKey);
   const rankLevel = [c.rank ? `R${c.rank}` : null, c.level ? `L${c.level}` : null, c.ascension || null].filter(Boolean).join(' · ') || '—';
+  const prestige  = champPrestige(c);
   const awBadge   = c.awakened
     ? `<span class="awakened-badge awakened-yes">⚡${c.sig ? ` ${c.sig}` : ''}</span>`
     : `<span class="awakened-badge awakened-no">—</span>`;
@@ -1825,6 +2118,7 @@ function cardHTML(c, index = 0, animate = true) {
           <div class="champ-name">${escHtml(c.name)}</div>
           <div class="card-meta">
             <span class="card-meta-rank">${rankLevel}</span>
+            ${prestige ? `<span class="card-meta-prestige" title="Prestige">🏆 ${prestige.toLocaleString()}</span>` : ''}
             ${awBadge}
           </div>
           ${c.tags?.length ? `<div class="card-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color}40;background:${color}18">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
@@ -1884,8 +2178,12 @@ function render() {
   const total    = champions.length;
   const awakened = champions.filter(c => c.awakened).length;
 
+  const top5 = champions.map(champPrestige).filter(Boolean).sort((a, b) => b - a).slice(0, 5);
+  const acctPrestige = top5.length ? Math.round(top5.reduce((s, v) => s + v, 0) / top5.length) : null;
+
   document.getElementById('stat-total').textContent    = total;
   document.getElementById('stat-awakened').textContent = awakened;
+  document.getElementById('stat-prestige').textContent = acctPrestige ? acctPrestige.toLocaleString() : '—';
   document.getElementById('showing-count').textContent = list.length;
 
   if (list.length === 0) {
