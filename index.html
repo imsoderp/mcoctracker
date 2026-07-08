@@ -139,6 +139,10 @@
 
     .size-btn.active { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
 
+    .help-h { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: 0.5px; margin-bottom: 4px; }
+    .help-p { margin: 0; color: var(--text-muted); }
+    .help-p strong { color: var(--text); font-weight: 600; }
+
     /* Storage toggle */
     .storage-toggle { display: flex; align-items: center; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border2); flex-shrink: 0; }
     .storage-toggle button {
@@ -764,6 +768,7 @@
     </div>
     <div class="save-area">
       <span class="save-status" id="save-status">Not connected</span>
+      <button class="btn-folder" id="btn-help" onclick="openHelp()" title="How to use this site" style="padding:7px 12px;font-weight:700;">?</button>
       <button class="btn-folder" id="btn-theme" onclick="toggleTheme()" title="Toggle light/dark mode" style="padding:7px 10px;">🌙</button>
       <div style="position:relative;flex-shrink:0;">
         <button class="btn-folder" id="btn-settings" onclick="toggleSettingsPanel(event)" title="Settings" style="padding:7px 10px;">⚙</button>
@@ -899,6 +904,56 @@
   </div>
 </div>
 
+<!-- Help modal -->
+<div id="help-overlay" onclick="if(event.target===this)closeHelp()" style="
+  display:none; position:fixed; inset:0; z-index:1100;
+  background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:20px;">
+  <div style="
+    background:var(--surface); border:1px solid var(--border2); border-radius:14px;
+    width:min(560px,94vw); max-height:88vh; overflow-y:auto; box-shadow:var(--panel-shadow);">
+    <div style="position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border2);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;">
+      <h2 style="font-family:'Rajdhani',sans-serif;font-size:1.25rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;">How to use the tracker</h2>
+      <button class="modal-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:18px;font-size:0.85rem;line-height:1.6;color:var(--text);">
+
+      <div>
+        <div class="help-h">🚀 Getting started</div>
+        <p class="help-p">Click <strong>+ Add</strong>, search a champion, and set their star rating, rank, level, awakened/signature, and ascension. Your roster saves automatically in this browser.</p>
+      </div>
+
+      <div>
+        <div class="help-h">💾 Keep your data safe</div>
+        <p class="help-p">Browser storage is per-device. Open <strong>⚙ Settings → Save to: File</strong> and use <strong>Save JSON</strong> to download a backup, or <strong>Load JSON</strong> to restore it on another device or browser. Chrome/Edge can also connect a folder for automatic file saves.</p>
+      </div>
+
+      <div>
+        <div class="help-h">🔎 Views &amp; filtering</div>
+        <p class="help-p">Switch between <strong>Roster</strong>, <strong>Unplayable</strong> (bosses), and <strong>Prestige</strong> with the tabs. Use <strong>🔽 Filters</strong> to narrow by stars, class, tag, rank, awakened, and ascension, and <strong>Sort</strong> to reorder. Card size can be toggled bottom-right.</p>
+      </div>
+
+      <div>
+        <div class="help-h">🏷 Tags</div>
+        <p class="help-p">Add your own tags (e.g. AW Defense, Arena) when editing a champion, then filter by them. Manage or delete tags from inside the Filters panel.</p>
+      </div>
+
+      <div>
+        <div class="help-h">☑ Editing &amp; removing</div>
+        <p class="help-p">Click <strong>Select</strong> to enter manage mode. Pick one champion to reveal <strong>Edit</strong>; select any number to <strong>Delete</strong> them together.</p>
+      </div>
+
+      <div>
+        <div class="help-h">🏆 Prestige — get the most from it</div>
+        <p class="help-p">The Prestige tab shows your <strong>account prestige</strong> (top-30 average of your 7★ champions). The <strong>Recommended next rank-ups</strong> table is the key tool: it ranks single rank-ups by how much each raises your account average — do them top-down for the fastest prestige growth. Expand the <strong>full reference</strong> to see every 7★, with the ones you own highlighted at their current rank.</p>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;font-size:0.78rem;color:var(--text-muted);">
+        <strong style="color:var(--text);">Pro tip:</strong> back up your roster with Save JSON before big changes, and re-import if anything ever looks wrong.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Import modal -->
 <div id="import-overlay" style="
   display:none; position:fixed; inset:0; z-index:1100;
@@ -927,12 +982,13 @@
   <div style="
     background:var(--surface); border:1px solid var(--border); border-radius:12px;
     padding:24px; width:min(420px,90vw); display:flex; flex-direction:column; gap:14px;">
-    <h2 style="font-size:1rem;font-weight:700;">Champion Code Generator</h2>
-    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:-8px;">Generates the code to add a new champion to the site. Paste the snippet into <code>CHAMPION_LIST</code> in index.html and drop the portrait into the portraits folder, then publish.</p>
+    <h2 style="font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;">New Champion Generator</h2>
+    <p style="font-size:0.76rem;color:var(--text-muted);margin-top:-8px;line-height:1.5;">Fill this in when a champion releases. It generates the exact code to paste into <code>index.html</code> plus a correctly-named portrait file — then push to publish.</p>
 
     <div class="form-group">
       <label for="cdb-name">Name *</label>
-      <input type="text" id="cdb-name" placeholder="e.g. Nova Prime" oninput="cdbSyncKey()" />
+      <input type="text" id="cdb-name" placeholder="e.g. Nova Prime" oninput="cdbUpdateKey()" />
+      <div id="cdb-key-preview" style="font-size:0.68rem;color:var(--text-muted);font-family:monospace;"></div>
     </div>
 
     <div class="form-group">
@@ -949,8 +1005,21 @@
     </div>
 
     <div class="checkbox-row">
-      <input type="checkbox" id="cdb-unplayable" />
-      <label for="cdb-unplayable">Unplayable (Boss only)</label>
+      <input type="checkbox" id="cdb-unplayable" onchange="document.getElementById('cdb-prestige-group').style.display=this.checked?'none':''" />
+      <label for="cdb-unplayable">Unplayable (Boss only — no prestige)</label>
+    </div>
+
+    <div class="form-group" id="cdb-prestige-group">
+      <label>7★ Prestige by rank (optional)</label>
+      <p style="font-size:0.68rem;color:var(--text-muted);margin:-2px 0 4px;">Max-sig base values from your prestige source. Leave blank if not a 7★ yet. Ascension is auto-calculated.</p>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;">
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R1<input type="number" class="cdb-prestige" data-rank="1" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R2<input type="number" class="cdb-prestige" data-rank="2" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R3<input type="number" class="cdb-prestige" data-rank="3" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R4<input type="number" class="cdb-prestige" data-rank="4" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R5<input type="number" class="cdb-prestige" data-rank="5" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+        <label style="font-size:0.6rem;color:var(--text-muted);text-align:center;">R6<input type="number" class="cdb-prestige" data-rank="6" min="0" style="width:100%;padding:5px 4px;font-size:0.72rem;text-align:center;margin-top:2px;" /></label>
+      </div>
     </div>
 
     <div class="form-group">
@@ -963,13 +1032,29 @@
       </div>
     </div>
 
-    <div id="cdb-output" style="display:none;flex-direction:column;gap:8px;border-top:1px solid var(--border2);padding-top:12px;">
-      <label style="font-size:0.7rem;">Paste into CHAMPION_LIST</label>
-      <textarea id="cdb-snippet" readonly rows="2" style="font-family:monospace;font-size:0.75rem;" onclick="this.select()"></textarea>
-      <p id="cdb-portrait-note" style="font-size:0.75rem;color:var(--text-muted);"></p>
-      <div style="display:flex;gap:8px;">
-        <button type="button" class="btn-unplayable" onclick="cdbCopySnippet()" style="flex:1;">📋 Copy Snippet</button>
-        <button type="button" class="btn-unplayable" id="cdb-download" onclick="cdbDownloadPortrait()" style="flex:1;display:none;">⬇ Download Portrait</button>
+    <div id="cdb-output" style="display:none;flex-direction:column;gap:14px;border-top:1px solid var(--border2);padding-top:14px;">
+
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <label style="font-size:0.7rem;">1 · Paste into <code>CHAMPION_LIST</code></label>
+          <button type="button" class="btn-unplayable" onclick="cdbCopy('cdb-snippet-champ',this)" style="font-size:0.68rem;padding:3px 9px;">📋 Copy</button>
+        </div>
+        <textarea id="cdb-snippet-champ" readonly rows="1" style="font-family:monospace;font-size:0.75rem;" onclick="this.select()"></textarea>
+      </div>
+
+      <div id="cdb-prestige-out" style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <label style="font-size:0.7rem;">2 · Paste into <code>PRESTIGE_7</code></label>
+          <button type="button" class="btn-unplayable" onclick="cdbCopy('cdb-snippet-prestige',this)" style="font-size:0.68rem;padding:3px 9px;">📋 Copy</button>
+        </div>
+        <textarea id="cdb-snippet-prestige" readonly rows="1" style="font-family:monospace;font-size:0.75rem;" onclick="this.select()"></textarea>
+        <p id="cdb-prestige-warn" style="display:none;font-size:0.7rem;color:var(--accent);"></p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:0.7rem;">3 · Portrait file</label>
+        <p id="cdb-portrait-note" style="font-size:0.72rem;color:var(--text-muted);margin:0;"></p>
+        <button type="button" class="btn-unplayable" id="cdb-download" onclick="cdbDownloadPortrait()" style="display:none;align-self:flex-start;font-size:0.72rem;">⬇ Download portrait_key.png</button>
       </div>
     </div>
 
@@ -1877,6 +1962,7 @@ function prestigeTableHTML() {
 function prestigePlannerHTML(recs, fmt) {
   if (!recs.length) return '';
   const chip = t => `<span style="font-size:0.66rem;color:var(--text-muted);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;white-space:nowrap;">${t}</span>`;
+  const th = (label, align) => `<th style="padding:7px 12px;text-align:${align};font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">${label}</th>`;
   const rows = recs.map(r => `
     <tr style="border-bottom:1px solid var(--border);">
       <td style="padding:7px 10px;">
@@ -1886,55 +1972,94 @@ function prestigePlannerHTML(recs, fmt) {
           <span style="font-weight:600;">${escHtml(r.c.name)}</span>
         </span>
       </td>
-      <td style="padding:7px 10px;white-space:nowrap;">
+      <td style="padding:7px 12px;white-space:nowrap;">
         ${chip(rankAscLabel(r.c.rank, r.c.ascension))} <span style="color:var(--text-muted);">→</span> ${chip(rankAscLabel(r.step.rank, r.step.ascension))}
       </td>
       <td style="padding:7px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;">
-        <div><span style="font-weight:700;color:var(--gold);">${fmt(r.newAvg)}</span> <span style="color:#2ea043;font-size:0.74rem;font-weight:600;">+${fmt(r.gainAvg)}</span></div>
-        <div style="font-size:0.66rem;color:var(--text-muted);">champ +${fmt(r.gainSelf)}</div>
+        <div style="font-weight:600;">${fmt(r.step.prestige)}</div>
+        <div style="font-size:0.7rem;color:#2ea043;font-weight:600;">+${fmt(r.gainSelf)}</div>
+      </td>
+      <td style="padding:7px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;border-left:1px solid var(--border);">
+        <div style="font-weight:700;color:var(--gold);">${fmt(r.newAvg)}</div>
+        <div style="font-size:0.7rem;color:#2ea043;font-weight:600;">+${fmt(r.gainAvg)}</div>
       </td>
     </tr>`).join('');
   return `
     <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
-      <div style="padding:11px 16px;border-bottom:1px solid var(--border2);background:var(--surface2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
-        <span style="font-size:0.8rem;font-weight:700;">Recommended next rank-ups</span>
-        <span style="font-size:0.68rem;color:var(--text-muted);">biggest gain to your prestige, one step at a time</span>
+      <div style="padding:11px 16px;border-bottom:1px solid var(--border2);background:var(--surface2);">
+        <div style="font-size:0.8rem;font-weight:700;">Recommended next rank-ups</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">Ordered by how much each single rank-up raises your account prestige.</div>
       </div>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
           <thead><tr style="background:var(--surface2);border-bottom:1px solid var(--border);">
-            <th style="padding:7px 10px;text-align:left;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Champion</th>
-            <th style="padding:7px 10px;text-align:left;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Next step</th>
-            <th style="padding:7px 12px;text-align:right;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Your prestige</th>
+            ${th('Champion', 'left')}
+            ${th('Rank-up', 'left')}
+            ${th('Champion prestige', 'right')}
+            ${th('Account prestige', 'right')}
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
+      </div>
+      <div style="padding:9px 16px;border-top:1px solid var(--border);font-size:0.66rem;color:var(--text-muted);line-height:1.6;">
+        <strong style="color:var(--text);">Champion prestige</strong> = that champion's prestige after the rank-up (green = its gain). <strong style="color:var(--text);">Account prestige</strong> = your new top-30 average (green = how much your account goes up).
       </div>
     </div>`;
 }
 
 // Full whole-game 7★ prestige lookup (base ranks R1–R6), collapsed by default.
+// Owned 7★ champions are highlighted, with a marker on the rank they currently hold.
 function prestigeReferenceHTML() {
+  // Map each owned 7★ portraitKey → its highest owned rank (+ ascension for the tooltip).
+  const owned = {};
+  champions.forEach(c => {
+    if (c.stars !== 7 || !isSevenStar(c.portraitKey)) return;
+    const rank = Number(c.rank);
+    if (!(rank >= 1 && rank <= 6)) return;
+    const cur = owned[c.portraitKey];
+    if (!cur || rank > cur.rank) owned[c.portraitKey] = { rank, ascension: c.ascension || null };
+  });
+
   const rows = Object.entries(PRESTIGE_7)
-    .map(([key, v]) => ({ key, name: (CHAMPION_LIST.find(c => c.key === key) || {}).name || key, v }))
+    .map(([key, v]) => ({ key, name: (CHAMPION_LIST.find(c => c.key === key) || {}).name || key, v, own: owned[key] || null }))
     .sort((a, b) => (b.v[4] || 0) - (a.v[4] || 0));
+  const ownedCount = Object.keys(owned).length;
+
   const fmt = v => (v == null ? '—' : v.toLocaleString());
   const head = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
   const cell = 'padding:5px 10px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;';
   const hcell = 'padding:7px 10px;text-align:right;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);';
-  const body = rows.map(r => `
-    <tr style="border-bottom:1px solid var(--border);">
-      <td style="padding:4px 10px;">
-        <span style="display:flex;align-items:center;gap:8px;">
-          <img src="${portraitPath(r.key)}" onerror="this.style.visibility='hidden'" style="width:26px;height:26px;border-radius:5px;object-fit:cover;object-position:center top;" />
-          <span>${escHtml(r.name)}</span>
-        </span>
-      </td>
-      ${r.v.map(x => `<td style="${cell}">${fmt(x)}</td>`).join('')}
-    </tr>`).join('');
+  const body = rows.map(r => {
+    const own = r.own;
+    const rowStyle = own
+      ? 'border-bottom:1px solid var(--border);background:rgba(240,192,64,0.12);box-shadow:inset 3px 0 0 var(--gold);'
+      : 'border-bottom:1px solid var(--border);';
+    const nameStyle = own ? 'font-weight:700;color:var(--text);' : '';
+    const ownedTag = own
+      ? `<span style="font-size:0.62rem;color:var(--gold);border:1px solid var(--gold);border-radius:5px;padding:1px 6px;white-space:nowrap;font-weight:700;">${rankAscLabel(own.rank, own.ascension)}</span>`
+      : '';
+    const cells = r.v.map((x, i) => {
+      const here = own && own.rank === i + 1;
+      const style = here
+        ? `${cell}color:var(--gold);font-weight:700;background:rgba(240,192,64,0.18);`
+        : cell;
+      return `<td style="${style}">${fmt(x)}</td>`;
+    }).join('');
+    return `
+      <tr style="${rowStyle}">
+        <td style="padding:4px 10px;">
+          <span style="display:flex;align-items:center;gap:8px;">
+            <img src="${portraitPath(r.key)}" onerror="this.style.visibility='hidden'" style="width:26px;height:26px;border-radius:5px;object-fit:cover;object-position:center top;" />
+            <span style="${nameStyle}">${escHtml(r.name)}</span>
+            ${ownedTag}
+          </span>
+        </td>
+        ${cells}
+      </tr>`;
+  }).join('');
   return `
     <details style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;">
-      <summary style="cursor:pointer;padding:12px 16px;font-size:0.82rem;font-weight:600;color:var(--text);">Full prestige reference — all ${rows.length} champions · ascension adds +8% (A1) / +16% (A2)</summary>
+      <summary style="cursor:pointer;padding:12px 16px;font-size:0.82rem;font-weight:600;color:var(--text);">Full prestige reference — all ${rows.length} champions${ownedCount ? ` · <span style="color:var(--gold);">${ownedCount} owned highlighted</span>` : ''} · ascension adds +8% (A1) / +16% (A2)</summary>
       <div style="overflow-x:auto;padding:0 8px 10px;">
         <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
           <thead><tr style="background:var(--surface2);">
@@ -2579,7 +2704,7 @@ modalOverlay.addEventListener('mousedown', e => { overlayMousedownTarget = e.tar
 modalOverlay.addEventListener('click', e => {
   if (e.target.id === 'modal-overlay' && overlayMousedownTarget?.id === 'modal-overlay') closeModal();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeHelp(); } });
 window.addEventListener('pageshow', () => { clearCheckboxFilters(); render(); });
 
 // Hidden admin tool: triple-click the swords logo to open the champion code generator
@@ -2829,6 +2954,9 @@ function closeImport() {
   document.getElementById('import-overlay').style.display = 'none';
 }
 
+function openHelp()  { document.getElementById('help-overlay').style.display = 'flex'; }
+function closeHelp() { document.getElementById('help-overlay').style.display = 'none'; }
+
 // ── Champion code generator (hidden admin tool — triple-click the logo) ─────
 let cdbPortraitData = null;
 let cdbGeneratedKey = null;
@@ -2838,6 +2966,9 @@ function openChampionDbModal() {
   document.getElementById('cdb-unplayable').checked = false;
   document.getElementById('cdb-portrait-file').value = '';
   document.getElementById('cdb-portrait-preview').innerHTML = '<span>?</span>';
+  document.getElementById('cdb-key-preview').textContent = '';
+  document.getElementById('cdb-prestige-group').style.display = '';
+  document.querySelectorAll('.cdb-prestige').forEach(i => i.value = '');
   setGroup('grp-cdb-class', 'cdb-class', '');
   cdbPortraitData = null;
   cdbGeneratedKey = null;
@@ -2849,8 +2980,14 @@ function closeChampionDbModal() {
   document.getElementById('champdb-overlay').style.display = 'none';
 }
 
-function cdbSyncKey() {
-  // no-op placeholder retained for future key-preview UI; key is generated on save
+function cdbUpdateKey() {
+  const name = document.getElementById('cdb-name').value.trim();
+  const el = document.getElementById('cdb-key-preview');
+  if (!name) { el.textContent = ''; return; }
+  const key = slugifyChampionName(name);
+  const exists = CHAMPION_LIST.some(c => c.key === key);
+  el.textContent = `key: ${key}` + (exists ? '  ⚠ already exists' : '');
+  el.style.color = exists ? 'var(--accent)' : 'var(--text-muted)';
 }
 
 function cdbPortraitChange(e) {
@@ -2895,20 +3032,51 @@ function generateChampionDb() {
   cdbGeneratedKey = key;
 
   const safeName = name.replace(/'/g, "\\'");
-  const snippet = `  {key:'${key}',name:'${safeName}',cls:'${cls}'${unplayable ? ',unplayable:true' : ''}},`;
+  document.getElementById('cdb-snippet-champ').value =
+    `  {key:'${key}',name:'${safeName}',cls:'${cls}'${unplayable ? ',unplayable:true' : ''}},`;
 
-  document.getElementById('cdb-snippet').value = snippet;
+  // Prestige entry — only if any value was entered
+  const vals = [...document.querySelectorAll('.cdb-prestige')]
+    .sort((a, b) => a.dataset.rank - b.dataset.rank)
+    .map(i => i.value.trim() === '' ? null : Number(i.value));
+  const anyPrestige = vals.some(v => v != null);
+  const prestigeOut = document.getElementById('cdb-prestige-out');
+  const warn = document.getElementById('cdb-prestige-warn');
+
+  if (anyPrestige) {
+    prestigeOut.style.display = 'flex';
+    document.getElementById('cdb-snippet-prestige').value =
+      `  ${key}:[${vals.map(v => v == null ? 'null' : v).join(',')}],`;
+    // Validate strictly increasing among filled values (matches the data invariant)
+    const filled = vals.filter(v => v != null);
+    let mono = true;
+    for (let i = 1; i < filled.length; i++) if (filled[i] <= filled[i - 1]) mono = false;
+    if (!mono) {
+      warn.style.display = 'block';
+      warn.textContent = '⚠ Prestige values should increase from R1→R6 — double-check the numbers.';
+    } else {
+      warn.style.display = 'none';
+    }
+  } else {
+    prestigeOut.style.display = 'none';
+  }
+
   document.getElementById('cdb-portrait-note').textContent = cdbPortraitData
-    ? `Save the portrait as portraits/portrait_${key}.png — the download button names it for you.`
-    : `No portrait uploaded — add portraits/portrait_${key}.png later or the card shows a fallback icon.`;
+    ? `Downloads as portrait_${key}.png — drop it in the portraits folder.`
+    : `No portrait uploaded. Add portraits/portrait_${key}.png later, or the card shows a fallback icon.`;
   document.getElementById('cdb-download').style.display = cdbPortraitData ? '' : 'none';
   document.getElementById('cdb-output').style.display = 'flex';
 }
 
-function cdbCopySnippet() {
-  const ta = document.getElementById('cdb-snippet');
+function cdbCopy(id, btn) {
+  const ta = document.getElementById(id);
   ta.select();
   navigator.clipboard?.writeText(ta.value).catch(() => document.execCommand('copy'));
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = orig; }, 1200);
+  }
 }
 
 function cdbDownloadPortrait() {
