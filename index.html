@@ -8,6 +8,31 @@
     @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
     :root {
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --surface2: #f4f5f7;
+      --surface3: #e9ebf0;
+      --border: #e9ebef;
+      --border2: #dcdfe6;
+      --gold: #b8860b;
+      --gold-bright: #f0c040;
+      --gold-light: #ffe680;
+      --accent: #d92632;
+      --accent2: #ff6b35;
+      --text: #1a1d26;
+      --text-muted: #6a7080;
+      --header-bg: #ffffff;
+      --panel-shadow: 0 8px 28px rgba(20,24,40,0.14);
+      --cosmic: #53b8e0;
+      --tech: #4a9eff;
+      --mutant: #d4b90a;
+      --skill: #e74c3c;
+      --science: #27ae60;
+      --mystic: #9b44c4;
+      --universal: #3db552;
+    }
+
+    body.dark {
       --bg: #06080d;
       --surface: #0c0f16;
       --surface2: #12161f;
@@ -15,11 +40,14 @@
       --border: #1e2433;
       --border2: #2a3045;
       --gold: #f0c040;
+      --gold-bright: #f0c040;
       --gold-light: #ffe680;
       --accent: #e8303a;
       --accent2: #ff6b35;
       --text: #e8eaf0;
       --text-muted: #5a6175;
+      --header-bg: linear-gradient(180deg, #0e1220 0%, #080b12 100%);
+      --panel-shadow: 0 12px 40px rgba(0,0,0,0.6);
       --cosmic: #53b8e0;
       --tech: #4a9eff;
       --mutant: #e8d20a;
@@ -36,13 +64,15 @@
       color: var(--text);
       font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       min-height: 100vh;
+    }
+    body.dark {
       background-image: radial-gradient(ellipse at 20% 0%, rgba(232,48,58,0.06) 0%, transparent 50%),
                         radial-gradient(ellipse at 80% 0%, rgba(74,158,255,0.04) 0%, transparent 50%);
     }
 
     /* ── Header ── */
     header {
-      background: linear-gradient(180deg, #0e1220 0%, #080b12 100%);
+      background: var(--header-bg);
       border-bottom: 1px solid var(--border2);
       padding: 14px 24px;
       display: flex;
@@ -63,11 +93,16 @@
 
     .logo-icon {
       width: 44px; height: 44px;
-      background: linear-gradient(135deg, #1a0f0f, #2d1515);
-      border: 1px solid rgba(232,48,58,0.4);
+      background: var(--accent);
+      border: none;
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       font-size: 22px;
+      box-shadow: 0 2px 10px rgba(217,38,50,0.35);
+    }
+    body.dark .logo-icon {
+      background: linear-gradient(135deg, #1a0f0f, #2d1515);
+      border: 1px solid rgba(232,48,58,0.4);
       box-shadow: 0 0 12px rgba(232,48,58,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
@@ -102,6 +137,8 @@
     }
     .btn-folder:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(232,48,58,0.2); }
 
+    .size-btn.active { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
+
     /* Storage toggle */
     .storage-toggle { display: flex; align-items: center; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border2); flex-shrink: 0; }
     .storage-toggle button {
@@ -119,11 +156,31 @@
 
     /* ── Controls ── */
     .controls {
-      background: linear-gradient(180deg, #0a0d14 0%, #080b12 100%);
-      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border2);
       padding: 10px 20px;
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
     }
+
+    /* Segmented view switcher */
+    .view-switch {
+      display: flex; gap: 2px; padding: 3px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 10px; flex-shrink: 0;
+    }
+    .view-btn {
+      background: transparent; border: none; border-radius: 8px;
+      color: var(--text-muted); padding: 6px 16px;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .view-btn:hover { color: var(--text); }
+    .view-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: 0 1px 3px rgba(20,24,40,0.12);
+    }
+    body.dark .view-btn.active { background: var(--surface3); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 
     select, button {
       background: var(--surface2); border: 1px solid var(--border2);
@@ -154,37 +211,54 @@
     .btn-unplayable:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
     .btn-unplayable.active { border-color: var(--gold); color: var(--gold); background: rgba(240,192,64,0.1); }
 
-    .btn-action-select   { border-color: #4a9eff55; color: #4a9eff; }
-    .btn-action-select:hover, .btn-action-select.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; box-shadow: 0 0 8px rgba(74,158,255,0.2); }
-    .btn-action-export   { border-color: #2ecc7155; color: #2ecc71; }
-    .btn-action-export:hover { background: rgba(46,204,113,0.15); border-color: #2ecc71; box-shadow: 0 0 8px rgba(46,204,113,0.2); }
-    .btn-action-import   { border-color: #f39c1255; color: #f39c12; }
-    .btn-action-import:hover { background: rgba(243,156,18,0.15); border-color: #f39c12; box-shadow: 0 0 8px rgba(243,156,18,0.2); }
-    .btn-action-bosses   { border-color: #b44fd455; color: #b44fd4; }
-    .btn-action-bosses:hover, .btn-action-bosses.active { background: rgba(180,79,212,0.15); border-color: #b44fd4; box-shadow: 0 0 8px rgba(180,79,212,0.2); }
+    .btn-action-select   { border-color: rgba(36,112,194,0.4); color: #2470c2; }
+    .btn-action-select:hover, .btn-action-select.active { background: rgba(36,112,194,0.1); border-color: #2470c2; }
+    .btn-action-export   { border-color: rgba(30,132,73,0.4); color: #1e8449; }
+    .btn-action-export:hover { background: rgba(30,132,73,0.1); border-color: #1e8449; }
+    .btn-action-import   { border-color: rgba(175,96,26,0.4); color: #af601a; }
+    .btn-action-import:hover { background: rgba(175,96,26,0.1); border-color: #af601a; }
+    .btn-action-bosses   { border-color: rgba(142,68,173,0.4); color: #8e44ad; }
+    .btn-action-bosses:hover, .btn-action-bosses.active { background: rgba(142,68,173,0.1); border-color: #8e44ad; }
+    body.dark .btn-action-select   { border-color: #4a9eff55; color: #4a9eff; }
+    body.dark .btn-action-select:hover, body.dark .btn-action-select.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; box-shadow: 0 0 8px rgba(74,158,255,0.2); }
+    body.dark .btn-action-export   { border-color: #2ecc7155; color: #2ecc71; }
+    body.dark .btn-action-export:hover { background: rgba(46,204,113,0.15); border-color: #2ecc71; box-shadow: 0 0 8px rgba(46,204,113,0.2); }
+    body.dark .btn-action-import   { border-color: #f39c1255; color: #f39c12; }
+    body.dark .btn-action-import:hover { background: rgba(243,156,18,0.15); border-color: #f39c12; box-shadow: 0 0 8px rgba(243,156,18,0.2); }
+    body.dark .btn-action-bosses   { border-color: #b44fd455; color: #b44fd4; }
+    body.dark .btn-action-bosses:hover, body.dark .btn-action-bosses.active { background: rgba(180,79,212,0.15); border-color: #b44fd4; box-shadow: 0 0 8px rgba(180,79,212,0.2); }
 
     .unplayable-card .card-actions { display: none; }
     .unplayable-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
     /* Select mode */
     .card.selectable { cursor: pointer; user-select: none; }
-    .card.selectable .card-inner { border-color: #4a9eff66; }
-    .card.selectable:hover .card-inner { border-color: #4a9eff; }
-    .card.selected .card-inner { border-color: #e74c3c !important; box-shadow: 0 0 16px rgba(231,76,60,0.5) !important; }
-    .card.selected .select-check { opacity: 1 !important; background: #e74c3c; border-color: #e74c3c; }
+    .card.selectable .card-inner { border-color: #4a9eff66; filter: brightness(0.6); transition: border-color 0.2s, filter 0.15s; }
+    .card.selectable:hover .card-inner { border-color: #4a9eff; filter: brightness(0.75); }
+    .card.selected .card-inner { border-color: #e74c3c !important; box-shadow: 0 0 16px rgba(231,76,60,0.5) !important; filter: brightness(1) !important; }
+    .card.selected .select-check { opacity: 1 !important; background: #e74c3c; border-color: #e74c3c; color: #fff; transform: scale(1.1); }
     .select-check {
       position: absolute; top: 8px; right: 8px; z-index: 10;
-      width: 24px; height: 24px; border-radius: 50%;
-      background: rgba(0,0,0,0.4); color: #fff;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(0,0,0,0.35); color: transparent;
       border: 2px solid rgba(255,255,255,0.6);
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 700;
-      opacity: 0; transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+      opacity: 0; transition: opacity 0.15s, background 0.15s, border-color 0.15s, transform 0.15s;
       pointer-events: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
     .card.selectable .select-check { opacity: 1; }
-    .btn-select-mode.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff; }
+    .btn-select-mode.active { background: rgba(36,112,194,0.1); border-color: #2470c2; color: #2470c2; }
+    body.dark .btn-select-mode.active { background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff; }
+    .btn-edit-selected {
+      background: rgba(36,112,194,0.1); border-color: #2470c2; color: #2470c2;
+      display: none;
+    }
+    .btn-edit-selected.visible { display: block; }
+    .btn-edit-selected:hover { background: rgba(36,112,194,0.2); }
+    body.dark .btn-edit-selected { background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff; }
+    body.dark .btn-edit-selected:hover { background: rgba(74,158,255,0.3); box-shadow: 0 0 8px rgba(74,158,255,0.3); }
     .btn-delete-selected {
       background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #e74c3c;
       display: none;
@@ -230,7 +304,7 @@
       height: 100%;
     }
     .card:hover { transform: scale(1.03); }
-    .card:hover .card-inner { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+    .card:hover .card-inner { box-shadow: var(--panel-shadow); }
 
     /* Class color glow on hover */
     .card[data-class="cosmic"]:hover   { box-shadow: 0 0 22px rgba(32,178,220,0.7); }
@@ -296,24 +370,25 @@
     .card[data-class="mystic"]   .card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--mystic),#e090f8); z-index:2; }
     .card[data-class="universal"].card-portrait::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--universal),#80e090); z-index:2; }
 
-    /* Stars + class badge overlaid on portrait */
-    .portrait-overlay {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.92));
-      padding: 28px 10px 8px;
-      display: flex; align-items: flex-end; justify-content: space-between;
-      z-index: 3;
+    /* Stars badge — top-left of portrait */
+    .stars {
+      position: absolute; top: 8px; left: 8px; z-index: 3;
+      background: rgba(0,0,0,0.55); color: var(--gold-bright);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0px;
+      padding: 2px 8px; border-radius: 6px;
+      text-shadow: 0 0 6px rgba(240,192,64,0.6);
     }
 
-    .stars { color: var(--gold); font-size: 1.1rem; font-weight: 700; letter-spacing: 0px; text-shadow: 0 0 8px rgba(240,192,64,0.9); }
-
+    /* Class badge — top-right of portrait */
     .class-badge {
-      width: 28px; height: 28px; border-radius: 50%;
+      position: absolute; top: 8px; right: 8px; z-index: 3;
+      width: 26px; height: 26px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      border: 1px solid rgba(255,255,255,0.25);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      font-size: 13px;
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
     }
+    body.dark .class-badge { border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
     .class-badge.class-cosmic   { background: var(--cosmic); }
     .class-badge.class-tech     { background: var(--tech); }
     .class-badge.class-mutant   { background: var(--mutant); }
@@ -322,6 +397,25 @@
     .class-badge.class-mystic   { background: var(--mystic); }
     .class-badge.class-universal{ background: var(--universal); }
 
+    /* Tags overlaid on portrait, below the stars badge */
+    .portrait-tags {
+      position: absolute; top: 32px; left: 8px; right: 8px; z-index: 3;
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+
+    /* Rank/level + awakened overlay — bottom of portrait */
+    .portrait-meta {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+      background: linear-gradient(transparent, rgba(0,0,0,0.92));
+      padding: 20px 8px 6px;
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 3px;
+    }
+    .portrait-meta-rank {
+      font-size: 0.72rem; font-weight: 700; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 100%; align-self: stretch; text-align: right;
+    }
     /* Card body */
     .card-body {
       padding: 10px 12px; flex: 1;
@@ -334,29 +428,17 @@
       font-size: 1rem; font-weight: 700; color: var(--text);
       line-height: 1.15; letter-spacing: 0.5px; text-transform: uppercase;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden; min-height: 2.3em;
-    }
-
-    .card-meta {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 6px;
-    }
-    .card-meta-rank {
-      font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
-      white-space: nowrap;
-    }
-    .card-meta-prestige {
-      font-size: 0.73rem; font-weight: 700; color: var(--gold);
-      white-space: nowrap;
+      overflow: hidden;
     }
 
     .awakened-badge {
-      display: inline-block; font-size: 0.67rem;
-      padding: 2px 8px; border-radius: 20px; font-weight: 600;
+      display: inline-block; font-size: 0.65rem;
+      padding: 2px 7px; border-radius: 20px; font-weight: 600;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+      flex-shrink: 0;
     }
-    .awakened-yes { background: rgba(240,192,64,0.15); color: var(--gold); border: 1px solid rgba(240,192,64,0.4); }
-    .awakened-no  { background: rgba(90,97,117,0.15); color: var(--text-muted); border: 1px solid var(--border); }
+    .awakened-yes { background: rgba(0,0,0,0.45); color: var(--gold-bright); border: 1px solid rgba(240,192,64,0.5); }
+    .awakened-no  { background: rgba(0,0,0,0.35); color: #9aa0b4; border: 1px solid rgba(154,160,180,0.35); }
 
     .card-notes { font-size: 0.73rem; color: var(--text-muted); font-style: italic; line-height: 1.4; }
 
@@ -383,9 +465,11 @@
       color: var(--text-muted); cursor: pointer; user-select: none;
       transition: all 0.15s; white-space: nowrap;
     }
-    .filter-chip:hover { border-color: #6ea8fe; color: var(--text); }
+    .filter-chip:hover { border-color: #2470c2; color: var(--text); }
     .filter-chip input[type="checkbox"] { display: none; }
-    .filter-chip.active { background: rgba(110,168,254,0.15); border-color: #6ea8fe; color: #6ea8fe; }
+    .filter-chip.active { background: rgba(36,112,194,0.1); border-color: #2470c2; color: #2470c2; }
+    body.dark .filter-chip:hover { border-color: #6ea8fe; color: var(--text); }
+    body.dark .filter-chip.active { background: rgba(110,168,254,0.15); border-color: #6ea8fe; color: #6ea8fe; }
 
     /* Tags */
     .tag-chip {
@@ -403,15 +487,10 @@
     /* Progressive card density */
     .grid.size-sm .card-notes { display: none; }
     .grid.size-xs .card-notes,
-    .grid.size-xs .card-meta,
+    .grid.size-xs .portrait-tags,
     .grid.size-xs .card-actions { display: none; }
     .grid.size-xs .champ-name { font-size: 0.72rem; padding: 4px 6px; text-align: center; }
     .grid.size-xs .card-body { padding: 2px 4px; gap: 0; }
-    .grid.size-tiny .card-body,
-    .grid.size-tiny .card-actions { display: none; }
-    .grid.size-tiny .portrait-overlay { padding: 4px 4px 3px; }
-    .grid.size-tiny .stars { font-size: 0.55rem; letter-spacing: 0; }
-    .grid.size-tiny .class-badge { display: none; }
 
     /* ── Empty state ── */
     .empty {
@@ -469,7 +548,7 @@
       padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 1;
-      background: linear-gradient(180deg, #12161f, var(--surface));
+      background: linear-gradient(180deg, var(--surface2), var(--surface));
     }
     .modal-header h2 {
       font-family: 'Rajdhani', sans-serif;
@@ -666,6 +745,9 @@
   </style>
 </head>
 <body>
+<script>
+  if (localStorage.getItem('mcoc-theme') === 'dark') document.body.classList.add('dark');
+</script>
 
 <header>
   <div class="logo">
@@ -679,42 +761,51 @@
     <div class="header-stats">
       <div class="stat-pill"><strong id="stat-total">0</strong>Champions</div>
       <div class="stat-pill"><strong id="stat-awakened">0</strong>Awakened</div>
-      <div class="stat-pill" title="Average prestige of your top 5 champions"><strong id="stat-prestige">—</strong>Prestige</div>
     </div>
     <div class="save-area">
-      <button class="btn-folder" id="btn-folder" onclick="connectFolder()">📁 Connect Folder</button>
       <span class="save-status" id="save-status">Not connected</span>
+      <button class="btn-folder" id="btn-theme" onclick="toggleTheme()" title="Toggle light/dark mode" style="padding:7px 10px;">🌙</button>
+      <div style="position:relative;flex-shrink:0;">
+        <button class="btn-folder" id="btn-settings" onclick="toggleSettingsPanel(event)" title="Settings" style="padding:7px 10px;">⚙</button>
+        <div id="settings-panel" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:220px;box-shadow:var(--panel-shadow);">
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Save to</div>
+          <div class="storage-toggle" style="width:100%;margin-bottom:14px;">
+            <button id="storage-btn-browser" class="active" onclick="setStorageMode('browser')" style="flex:1;">🗄 Browser</button>
+            <button id="storage-btn-file" onclick="setStorageMode('file')" style="flex:1;">💾 File</button>
+          </div>
+          <div id="settings-file-actions" style="display:none;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+            <button class="btn-unplayable btn-action-export" id="btn-export" onclick="exportRoster()" style="width:100%;justify-content:center;">💾 Save JSON</button>
+            <button class="btn-unplayable btn-action-import" id="btn-import" onclick="openImport()" style="width:100%;justify-content:center;">📂 Load JSON</button>
+          </div>
+          <div style="border-top:1px solid var(--border2);padding-top:12px;">
+            <button class="btn-folder" id="btn-folder" onclick="connectFolder()" style="width:100%;">📁 Connect Folder</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="controls" style="gap:10px;flex-wrap:nowrap;">
 
-  <!-- Primary action -->
-  <button class="btn-add" onclick="openModal()" style="flex-shrink:0;">+ Add</button>
+  <!-- View switcher -->
+  <div class="view-switch">
+    <button class="view-btn active" id="view-roster" onclick="setView('roster')">Roster</button>
+    <button class="view-btn" id="view-unplayable" onclick="setView('unplayable')">Unplayable</button>
+    <button class="view-btn" id="view-prestige" onclick="setView('prestige')">Prestige</button>
+  </div>
 
   <div class="ctrl-divider" style="width:1px;height:24px;background:var(--border2);flex-shrink:0;"></div>
 
   <div id="roster-controls" style="display:none;"></div>
 
   <!-- Utility actions -->
-  <div class="util-cluster" style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-    <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
-      Sort
-      <select id="sort-by" style="font-size:0.75rem;padding:5px 8px;">
-        <option value="name">Name</option>
-        <option value="stars-desc">Stars ↓</option>
-        <option value="rank-desc">Rank ↓</option>
-        <option value="rank-asc">Rank ↑</option>
-        <option value="prestige-desc">Prestige ↓</option>
-        <option value="newest">Newest</option>
-      </select>
-    </label>
+  <div class="util-cluster" style="display:flex;gap:6px;align-items:center;flex:1;">
     <div style="position:relative;flex-shrink:0;">
-      <button class="btn-unplayable" id="btn-filters" onclick="toggleFilterPanel(event)" style="border-color:#6ea8fe44;color:#6ea8fe;position:relative;">
-        ⚙ Filters<span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#e8303a;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;align-items:center;justify-content:center;"></span>
+      <button class="btn-unplayable btn-action-select" id="btn-filters" onclick="toggleFilterPanel(event)" style="position:relative;">
+        🔽 Filters<span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#e8303a;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;align-items:center;justify-content:center;"></span>
       </button>
-      <div id="filter-panel" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:260px;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+      <div id="filter-panel" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:260px;box-shadow:var(--panel-shadow);">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
           <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;">
             Stars
@@ -771,26 +862,23 @@
         <button onclick="clearCheckboxFilters();document.getElementById('filter-stars').value='';document.getElementById('filter-class').value='';document.getElementById('filter-tag').value='';render();" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">Clear All Filters</button>
       </div>
     </div>
+    <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
+      Sort
+      <select id="sort-by" style="font-size:0.75rem;padding:5px 8px;">
+        <option value="name">Name</option>
+        <option value="stars-desc">Stars ↓</option>
+        <option value="rank-desc">Rank ↓</option>
+        <option value="rank-asc">Rank ↑</option>
+        <option value="newest">Newest</option>
+      </select>
+    </label>
+
+    <div style="flex:1;"></div>
+
     <button class="btn-unplayable btn-action-select btn-select-mode" id="btn-select" onclick="toggleSelectMode()">☑ Select</button>
+    <button class="btn-unplayable btn-edit-selected" id="btn-edit-selected" onclick="editSelected()">✏️ Edit</button>
     <button class="btn-unplayable btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()">🗑️ Delete (<span id="selected-count">0</span>)</button>
-    <button class="btn-unplayable btn-action-bosses" id="btn-unplayable" onclick="toggleUnplayable()">👁 View Unplayable</button>
-    <div style="position:relative;flex-shrink:0;">
-      <button class="btn-unplayable" id="btn-settings" onclick="toggleSettingsPanel(event)" style="font-size:1rem;padding:5px 10px;">⚙</button>
-      <div id="settings-panel" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
-        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Save to</div>
-        <div class="storage-toggle" style="width:100%;margin-bottom:14px;">
-          <button id="storage-btn-browser" class="active" onclick="setStorageMode('browser')" style="flex:1;">🗄 Browser</button>
-          <button id="storage-btn-file" onclick="setStorageMode('file')" style="flex:1;">💾 File</button>
-        </div>
-        <div id="settings-file-actions" style="display:none;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-          <button class="btn-unplayable btn-action-export" id="btn-export" onclick="exportRoster()" style="width:100%;justify-content:center;">💾 Save JSON</button>
-          <button class="btn-unplayable btn-action-import" id="btn-import" onclick="openImport()" style="width:100%;justify-content:center;">📂 Load JSON</button>
-        </div>
-        <div style="border-top:1px solid var(--border2);padding-top:12px;">
-          <button onclick="openChampionDbModal()" style="width:100%;font-size:0.78rem;padding:7px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">➕ New Champion</button>
-        </div>
-      </div>
-    </div>
+    <button class="btn-add" onclick="openModal()" style="flex-shrink:0;margin-left:0;">+ Add</button>
   </div>
 
 </div>
@@ -839,8 +927,8 @@
   <div style="
     background:var(--surface); border:1px solid var(--border); border-radius:12px;
     padding:24px; width:min(420px,90vw); display:flex; flex-direction:column; gap:14px;">
-    <h2 style="font-size:1rem;font-weight:700;">Add New Champion</h2>
-    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:-8px;">Adds the champion to the searchable list so you can track it in your roster.</p>
+    <h2 style="font-size:1rem;font-weight:700;">Champion Code Generator</h2>
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:-8px;">Generates the code to add a new champion to the site. Paste the snippet into <code>CHAMPION_LIST</code> in index.html and drop the portrait into the portraits folder, then publish.</p>
 
     <div class="form-group">
       <label for="cdb-name">Name *</label>
@@ -875,9 +963,19 @@
       </div>
     </div>
 
+    <div id="cdb-output" style="display:none;flex-direction:column;gap:8px;border-top:1px solid var(--border2);padding-top:12px;">
+      <label style="font-size:0.7rem;">Paste into CHAMPION_LIST</label>
+      <textarea id="cdb-snippet" readonly rows="2" style="font-family:monospace;font-size:0.75rem;" onclick="this.select()"></textarea>
+      <p id="cdb-portrait-note" style="font-size:0.75rem;color:var(--text-muted);"></p>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn-unplayable" onclick="cdbCopySnippet()" style="flex:1;">📋 Copy Snippet</button>
+        <button type="button" class="btn-unplayable" id="cdb-download" onclick="cdbDownloadPortrait()" style="flex:1;display:none;">⬇ Download Portrait</button>
+      </div>
+    </div>
+
     <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button class="btn-cancel" onclick="closeChampionDbModal()">Cancel</button>
-      <button class="btn-save" onclick="saveChampionDb()">Add Champion</button>
+      <button class="btn-cancel" onclick="closeChampionDbModal()">Close</button>
+      <button class="btn-save" onclick="generateChampionDb()">Generate Code</button>
     </div>
   </div>
 </div>
@@ -1355,298 +1453,498 @@ const CHAMPION_LIST = [
 
 const CLASS_ICONS = {cosmic:'🌌',tech:'⚙️',mutant:'🧬',skill:'🗡️',science:'🧪',mystic:'🔮',universal:'✨'};
 
-// ── Custom champions (user-added, e.g. new monthly releases) ─────────────────
-let customChampions = [];
-try {
-  customChampions = JSON.parse(localStorage.getItem('mcoc-custom-champions') || '[]');
-} catch { customChampions = []; }
-
-function saveCustomChampions() {
-  localStorage.setItem('mcoc-custom-champions', JSON.stringify(customChampions));
-}
-
-// 7★ prestige values [7R4, 7R4+A1, 7R4+A2, 7R5, 7R5+A1, 7R5+A2]; null = no ascension data.
-// Source: "7 Star - Prestige + Relics + Stat Focus MCOC" spreadsheet, July 2026.
+// 7★ prestige by rank: [R1, R2, R3, R4, R5, R6] at max signature (sig 200).
+// Source: mcochub.insaneskull.com prestige data (tier 7), July 2026. null = rank not available.
+// Ascension (A1/A2, for R4/R5/R6 only) is computed in champPrestige: A1 = base×1.08, A2 = base×1.16 (round to 10).
+// Membership in this table also defines whether a champion is available as a 7★.
 const PRESTIGE_7 = {
-  high_evolutionary:[34230,36970,39710,40600,43850,47100],
-  bluemarvel:[34110,36840,39570,40460,43700,46930],
-  ironman_infamous:[34060,36780,39510,40390,43620,46850],
-  spiderman_pavitr:[33970,36690,39410,40290,43510,46740],
-  danimoonstar:[33940,36660,39370,40260,43480,46700],
-  shatterstar:[33920,36630,39350,40230,43450,46670],
-  baronzemo:[33850,36560,39270,40150,43360,46570],
-  phylavell:[33750,36450,39150,40030,43230,46430],
-  wave:[33740,36440,39140,40000,43200,46400],
-  madelynepryor:[33710,36410,39100,39990,43190,46390],
-  doctorbong:[33610,36300,38990,39880,43080,46270],
-  jjj_spiderslayer:[33590,36280,38960,39850,43040,46230],
-  rubythursday:[33600,36290,38980,39850,43040,46230],
-  ghost_rider:[33560,36240,38930,39810,42990,46180],
-  pixie:[33570,36260,38940,39800,42980,46170],
-  spiderpunk:[33540,36220,38910,39760,42940,46120],
-  lizard:[33520,36200,38880,39760,42940,46120],
-  doctor_strange:[33480,36160,38840,39730,42910,46090],
-  blade_stellar:[33480,36160,38840,39700,42880,46050],
-  starlord_stellar:[33460,36140,38810,39670,42840,46020],
-  mbaku:[33440,36120,38790,39660,42830,46010],
-  iron_man:[33440,36120,38790,39660,42830,46010],
-  destroyer:[33420,36090,38770,39650,42820,45990],
-  kindred:[33430,36100,38780,39640,42810,45980],
-  whitetiger:[33420,33420,38770,39620,42790,45960],
-  dust:[33410,36080,38760,39620,42790,45960],
-  arcade:[33410,36080,38760,39620,42790,45960],
-  spot:[33350,36020,38690,39560,42720,45890],
-  adamwarlock:[33370,36040,38710,39560,42720,45890],
-  gentle:[33330,36000,38660,39540,42700,45870],
-  ladydeathstrike:[33340,36010,38670,39530,42690,45850],
-  sandman:[33290,35950,38620,39480,42640,45800],
-  patriot:[33270,35930,38590,39460,42620,45770],
-  black_panther_cw:[33270,35930,38590,39460,42620,45770],
-  captainamerica_samwilson:[33250,35910,38570,39430,42580,45740],
-  spiral:[33240,35900,38560,39420,42570,45730],
-  sersi:[33230,35890,38550,39420,42570,45730],
-  maestro:[33230,35890,38550,39420,42570,45730],
-  knull:[33220,35880,38540,39400,42550,45700],
-  gorr:[33220,35880,38540,39400,42550,45700],
-  americachavez:[33220,35880,38540,39400,42550,45700],
-  abomination_immortal:[33220,35880,38540,39390,42540,45690],
-  hitmonkey:[33220,35880,38540,39380,42530,45680],
-  misternegative:[33200,35860,38510,39370,42520,45670],
-  attuma:[33180,35830,38490,39370,42520,45670],
-  toad:[33190,35850,38500,39360,42510,45660],
-  scarletsigil:[33190,35850,38500,39360,42510,45660],
-  sasquatch:[33170,35820,38480,39360,42510,45660],
-  nova:[33190,35850,38500,39360,42510,45660],
-  black_panther_realm:[33190,35850,38500,39360,42510,45660],
-  peniparker:[33180,35830,38490,39350,42500,45650],
-  spiderham:[33160,35810,38470,39310,42450,45600],
-  mrfantastic:[33150,35800,38450,39310,42450,45600],
-  storm_realm:[33150,35800,38450,39300,42440,45590],
-  warlock:[33130,35780,38430,39280,42420,45560],
-  mojo:[33090,35740,38380,39260,42400,45540],
-  manthing:[32830,35460,38080,39170,42300,45440],
-  vision_timely:[33010,35650,38290,39140,42270,45400],
-  bishop:[32910,35540,38180,39030,42150,45270],
-  korg_movie:[32840,35470,38090,38950,42070,45180],
-  howardmech:[32780,35400,38020,38880,41990,45100],
-  corvusglaive:[32720,35340,37960,38780,41880,44980],
-  emmafrost:[32540,35140,37750,38600,41690,44780],
-  deadpool:[32020,34580,37140,37980,41020,44060],
-  onslaught:[34210,null,null,40590,null,null],
-  yelenabelova:[34210,null,null,40580,null,null],
-  phoenix_dark:[34040,null,null,40370,null,null],
-  shathra:[34030,null,null,40360,null,null],
-  silversurfer:[34020,null,null,40320,null,null],
-  quicksilver:[33950,null,null,40260,null,null],
-  heimdall:[33840,null,null,40140,null,null],
-  okoye:[33780,null,null,40060,null,null],
-  serpent:[33680,null,null,39960,null,null],
-  photon:[33680,null,null,39940,null,null],
-  magik:[33640,null,null,39890,null,null],
-  prowler:[33520,null,null,39760,null,null],
-  imperiosa:[33470,null,null,39700,null,null],
-  thor_janefoster:[33460,null,null,39690,null,null],
-  frankencastle:[33440,null,null,39680,null,null],
-  spiderman_supreme:[33460,null,null,39660,null,null],
-  karolinadean:[33460,null,null,39660,null,null],
-  valkyrie:[33440,null,null,39660,null,null],
-  dracula:[33440,null,null,39660,null,null],
-  bullseye:[33440,null,null,39660,null,null],
-  werewolfbynight:[33430,null,null,39660,null,null],
-  lumatrix:[33430,null,null,39650,null,null],
-  jean_grey_current:[33430,null,null,39650,null,null],
-  leader:[33420,null,null,39650,null,null],
-  enchantress:[33420,null,null,39650,null,null],
-  negasonicteenagewarhead:[33440,null,null,39640,null,null],
-  MisterKnight:[33420,null,null,39630,null,null],
-  thanos_nameless:[33400,null,null,39630,null,null],
-  omegasentinel:[33430,null,null,39620,null,null],
-  spiderwoman:[33400,null,null,39620,null,null],
-  punisher:[33390,null,null,39610,null,null],
-  countnefaria:[33390,null,null,39610,null,null],
-  scream:[33390,null,null,39600,null,null],
-  gladiator:[33390,null,null,39600,null,null],
-  cheeilth:[33380,null,null,39600,null,null],
-  absorbingman:[33380,null,null,39600,null,null],
-  cassandranova:[33380,null,null,39590,null,null],
-  bastion:[33380,null,null,39590,null,null],
-  solvarch:[33360,null,null,39590,null,null],
-  thor_ragnarok:[33370,null,null,39580,null,null],
-  nicominoru:[33370,null,null,39580,null,null],
-  phoenix:[33370,null,null,39580,null,null],
-  maker:[33370,null,null,39570,null,null],
-  northstar:[33370,null,null,39570,null,null],
-  rhino:[33360,null,null,39570,null,null],
-  captainbritain:[33350,null,null,39570,null,null],
-  betaraybill:[33340,null,null,39550,null,null],
-  dazzler:[33340,null,null,39540,null,null],
-  SheHulk_Deathless:[33330,null,null,39540,null,null],
-  silversable:[33340,null,null,39530,null,null],
-  ironheart:[33340,null,null,39530,null,null],
-  antman_future:[33320,null,null,39520,null,null],
-  moondragon:[33310,null,null,39520,null,null],
-  rocket:[33330,null,null,39500,null,null],
-  nimrod:[33300,null,null,39500,null,null],
-  kushala:[33300,null,null,39500,null,null],
-  namor:[33300,null,null,39490,null,null],
-  galan:[33290,null,null,39490,null,null],
-  SilverSamurai:[33300,null,null,39480,null,null],
-  arnimZola:[33280,null,null,39480,null,null],
-  maestro_overseer:[33270,null,null,39480,null,null],
-  titania:[33270,null,null,39470,null,null],
-  groot_king_blackorder:[33250,null,null,39470,null,null],
-  medusa:[33270,null,null,39460,null,null],
-  falcon_joaquintorres:[33270,null,null,39450,null,null],
-  jackolantern:[33270,null,null,39450,null,null],
-  cassielang:[33250,null,null,39440,null,null],
-  morbius:[33250,null,null,39430,null,null],
-  yondu:[33240,null,null,39420,null,null],
-  hulkling:[33240,null,null,39420,null,null],
-  mantis:[33240,null,null,39410,null,null],
-  isophyne:[33240,null,null,39410,null,null],
-  vox:[33230,null,null,39410,null,null],
-  sauron:[33230,null,null,39410,null,null],
-  guillotine_blackorder:[33230,null,null,39410,null,null],
-  wiccan:[33230,null,null,39400,null,null],
-  shocker:[33230,null,null,39400,null,null],
-  odin:[33220,null,null,39400,null,null],
-  apocalypse:[33220,null,null,39400,null,null],
-  modok:[33200,null,null,39400,null,null],
-  stryfe:[33210,null,null,39390,null,null],
-  red_goblin:[33210,null,null,39390,null,null],
-  shuri:[33210,null,null,39380,null,null],
-  hulk_immortal:[33200,null,null,39380,null,null],
-  deadpool_xforce:[33200,null,null,39380,null,null],
-  rintrah:[33190,null,null,39380,null,null],
-  professorx:[33210,null,null,39370,null,null],
-  deadpool_gold:[33210,null,null,39370,null,null],
-  deadpool_platinum:[33190,null,null,39370,null,null],
-  kraven:[33190,null,null,39370,null,null],
-  spiderman_stealth:[33210,null,null,39360,null,null],
-  kittypryde:[33210,null,null,39360,null,null],
-  tigra:[33200,null,null,39360,null,null],
-  shangchi:[33190,null,null,39360,null,null],
-  scorpion:[33190,null,null,39350,null,null],
-  drstrange_realm:[33180,null,null,39350,null,null],
-  mangog:[33180,null,null,39350,null,null],
-  luke_cage:[33190,null,null,39340,null,null],
-  sunspot:[33180,null,null,39340,null,null],
-  guardian:[33180,null,null,39340,null,null],
-  wong:[33170,null,null,39340,null,null],
-  skrull_super:[33170,null,null,39340,null,null],
-  dragonman:[33170,null,null,39340,null,null],
-  blackcat:[33170,null,null,39340,null,null],
-  sentinel:[33160,null,null,39330,null,null],
-  spiderman_2099:[33190,null,null,39330,null,null],
-  redguardian:[33180,null,null,39330,null,null],
-  vivvision:[33170,null,null,39330,null,null],
-  silk:[33170,null,null,39330,null,null],
-  mistyknight:[33170,null,null,39330,null,null],
-  purgatory:[33150,null,null,39320,null,null],
-  antivenom:[33150,null,null,39320,null,null],
-  black_widow_timely:[33160,null,null,39310,null,null],
-  captain_marvel_movie:[33160,null,null,39310,null,null],
-  diablo:[33150,null,null,39310,null,null],
-  terrax:[33130,null,null,39290,null,null],
-  jessica_jones:[33120,null,null,39280,null,null],
-  sentry_current:[33120,null,null,39270,null,null],
-  whitewidow:[33120,null,null,39250,null,null],
-  thing:[33080,null,null,39240,null,null],
-  nightcrawler:[33080,null,null,39210,null,null],
-  venompool:[33060,null,null,39210,null,null],
-  punisher_2099:[33050,null,null,39190,null,null],
-  longshot:[33040,null,null,39190,null,null],
-  masacre:[33040,null,null,39170,null,null],
-  guillotine_2099:[33050,null,null,39160,null,null],
-  gambit:[33020,null,null,39150,null,null],
-  antman:[33000,null,null,39140,null,null],
-  falcon:[33010,null,null,39120,null,null],
-  ironman_superior:[32960,null,null,39090,null,null],
-  daredevil_netflix:[32950,null,null,39070,null,null],
-  spider_man:[32940,null,null,39050,null,null],
-  mysterio:[32940,null,null,39040,null,null],
-  cyclops:[32910,null,null,39030,null,null],
-  hulk:[32900,null,null,39030,null,null],
-  crossbones:[32900,null,null,39020,null,null],
-  elsabloodstone:[32910,null,null,39010,null,null],
-  ebonymaw:[32910,null,null,39010,null,null],
-  havok:[32900,null,null,39010,null,null],
-  storm:[32890,null,null,39000,null,null],
-  symbiote_supreme:[32870,null,null,38980,null,null],
-  iceman:[32870,null,null,38970,null,null],
-  redSkull:[32870,null,null,38960,null,null],
-  nickfury:[32860,null,null,38950,null,null],
-  johnnystorm:[32840,null,null,38940,null,null],
-  sabretooth:[32830,null,null,38920,null,null],
-  black_panther:[32790,null,null,38880,null,null],
-  magneto:[32780,null,null,38880,null,null],
-  invisiblewoman:[32780,null,null,38870,null,null],
-  kingpin:[32760,null,null,38870,null,null],
-  moleman:[32710,null,null,38790,null,null],
-  karl_mordo:[32700,null,null,38770,null,null],
-  thanos:[32650,null,null,38740,null,null],
-  mistersinister:[32650,null,null,38730,null,null],
-  hawkeye:[32630,null,null,38700,null,null],
-  angela:[32640,null,null,38690,null,null],
-  ronin:[32620,null,null,38670,null,null],
-  killmonger:[32600,null,null,38670,null,null],
-  gwenpool:[32610,null,null,38660,null,null],
-  wolverine_weaponx:[32600,null,null,38660,null,null],
-  joefixit:[32590,null,null,38660,null,null],
-  cullobsidian:[32600,null,null,38650,null,null],
-  hood:[32590,null,null,38650,null,null],
-  blade:[32600,null,null,38640,null,null],
-  void_current:[32580,null,null,38640,null,null],
-  captainamerica_infinitywar:[32580,null,null,38640,null,null],
-  NightThrasher:[32580,null,null,38630,null,null],
-  civilwarrior:[32570,null,null,38630,null,null],
-  ultron_prime:[32560,null,null,38620,null,null],
-  karnak:[32560,null,null,38620,null,null],
-  ironman_movie:[32550,null,null,38600,null,null],
-  colossus:[32530,null,null,38590,null,null],
-  gamora:[32550,null,null,38580,null,null],
-  spiderman_morales:[32540,null,null,38580,null,null],
-  warmachine:[32530,null,null,38570,null,null],
-  omegared:[32530,null,null,38570,null,null],
-  carnage:[32540,null,null,38560,null,null],
-  domino:[32510,null,null,38550,null,null],
-  archangel:[32500,null,null,38540,null,null],
-  brother_voodoo:[32480,null,null,38520,null,null],
-  vision:[32470,null,null,38520,null,null],
-  vision_blackorder:[32470,null,null,38500,null,null],
-  x23:[32440,null,null,38470,null,null],
-  hulk_red:[32350,null,null,38370,null,null],
-  juggernaut:[32340,null,null,38340,null,null],
-  spidergwen:[32320,null,null,38320,null,null],
-  VenomTheDuck:[32280,null,null,38280,null,null],
-  hyperion:[32190,null,null,38180,null,null],
-  venom:[32100,null,null,38080,null,null],
-  hulkbuster_movie:[32050,null,null,38020,null,null],
-  kang:[32040,null,null,38000,null,null],
-  spiderman_movie:[31850,null,null,37750,null,null],
-  ultron:[31780,null,null,37690,null,null],
-  star_lord:[31480,null,null,37330,null,null],
-  shehulk:[31340,null,null,37160,null,null],
-  scarlet_witch_current:[31260,null,null,37070,null,null],
+  MisterKnight:[17630,22160,27370,33420,39630,46400],
+  NightThrasher:[17200,21610,26690,32580,38630,45220],
+  SheHulk_Deathless:[17580,22090,27300,33330,39540,46280],
+  SilverSamurai:[17560,22070,27270,33300,39480,46220],
+  VenomTheDuck:[17040,21400,26450,32280,38280,44810],
+  abomination_immortal:[17530,22030,27210,33220,39390,46100],
+  absorbingman:[17610,22120,27340,33380,39600,46350],
+  adamwarlock:[17610,22130,27330,33370,39560,46310],
+  americachavez:[17530,22020,27210,33220,39400,46120],
+  angela:[17230,21650,26740,32640,38690,45290],
+  antivenom:[17490,21970,27150,33150,39320,46030],
+  antman:[17330,21870,27030,33000,39140,45810],
+  antman_future:[17580,22090,27290,33320,39520,46260],
+  apocalypse:[17520,22020,27210,33220,39400,46120],
+  arcade:[17620,22140,27360,33410,39620,46390],
+  archangel:[17170,21570,26630,32510,38540,45110],
+  arnimZola:[17550,22050,27260,33280,39480,46210],
+  attuma:[17500,21990,27180,33180,39370,46080],
+  baronzemo:[17860,22440,27730,33850,40150,47000],
+  bastion:[17620,22140,27340,33380,39590,46340],
+  betaraybill:[17590,22100,27310,33340,39550,46300],
+  bishop:[17370,21830,26960,32910,39030,45690],
+  black_panther:[17300,21740,26860,32790,38880,45520],
+  black_panther_cw:[17550,22050,27250,33270,39460,46200],
+  black_panther_realm:[17510,22000,27180,33190,39360,46070],
+  black_widow_timely:[17500,21990,27160,33160,39310,46010],
+  blackcat:[17500,21990,27170,33170,39340,46040],
+  blade:[17200,21620,26700,32600,38640,45240],
+  blade_stellar:[17670,22200,27420,33480,39700,46470],
+  bluemarvel:[17990,22610,27940,34110,40460,47360],
+  brother_voodoo:[17140,21540,26600,32480,38520,45080],
+  bullseye:[17640,22160,27390,33440,39660,46420],
+  captain_marvel_movie:[17510,21990,27160,33160,39310,46010],
+  captainamerica_infinitywar:[17190,21600,26680,32580,38640,45220],
+  captainamerica_samwilson:[17540,22040,27230,33250,39430,46160],
+  captainbritain:[17590,22110,27320,33350,39570,46310],
+  carnage:[17180,21580,26650,32540,38560,45140],
+  cassandranova:[17610,22130,27340,33380,39590,46340],
+  cassielang:[17540,22040,27230,33250,39440,46160],
+  cheeilth:[17610,22130,27340,33380,39600,46350],
+  civilwarrior:[17180,21590,26680,32570,38630,45230],
+  colossus:[17170,21560,26650,32530,38590,45180],
+  corvusglaive:[17270,21700,26800,32720,38780,45400],
+  countnefaria:[17610,22140,27350,33390,39610,46370],
+  crossbones:[17350,21800,26950,32900,39020,45680],
+  cullobsidian:[17210,21620,26700,32600,38650,45240],
+  cyclops:[17370,21820,26960,32910,39030,45690],
+  danimoonstar:[17910,22500,27800,33940,40260,47120],
+  daredevil_netflix:[17390,21850,26990,32950,39070,45740],
+  dazzler:[17590,22100,27300,33340,39540,46280],
+  deadpool:[16890,21230,26230,32020,37980,44460],
+  deadpool_gold:[17520,22020,27200,33210,39370,46090],
+  deadpool_platinum:[17510,22000,27190,33190,39370,46090],
+  deadpool_xforce:[17520,22010,27200,33200,39380,46100],
+  destroyer:[17630,22150,27380,33420,39650,46420],
+  diablo:[17490,21980,27150,33150,39310,46020],
+  doctor_strange:[17650,22190,27430,33480,39730,46510],
+  doctorbong:[17720,22270,27530,33610,39880,46690],
+  domino:[17160,21560,26630,32510,38550,45130],
+  dracula:[17650,22180,27390,33440,39660,46420],
+  dragonman:[17500,21990,27170,33170,39340,46050],
+  drstrange_realm:[17510,22000,27180,33180,39350,46060],
+  dust:[17630,22150,27360,33410,39620,46380],
+  ebonymaw:[17380,21840,26960,32910,39010,45660],
+  elsabloodstone:[17380,21830,26960,32910,39010,45660],
+  emmafrost:[17170,21580,26660,32540,38600,45180],
+  enchantress:[17630,22150,27370,33420,39650,46410],
+  falcon:[17420,21890,27040,33010,39120,45800],
+  falcon_joaquintorres:[17560,22060,27250,33270,39450,46180],
+  frankencastle:[17640,22170,27390,33440,39680,46440],
+  galan:[17560,22060,27270,33290,39490,46230],
+  gambit:[17420,21890,27050,33020,39150,45820],
+  gamora:[17190,21590,26660,32550,38580,45160],
+  gentle:[17570,22080,27300,33330,39540,46280],
+  ghost_rider:[17710,22250,27490,33560,39810,46600],
+  gladiator:[17610,22130,27340,33390,39600,46360],
+  gorr:[17530,22030,27210,33220,39400,46120],
+  groot_king_blackorder:[17530,22030,27240,33250,39470,46200],
+  guardian:[17500,21990,27170,33180,39340,46060],
+  guillotine_2099:[17450,21930,27070,33050,39160,45840],
+  guillotine_blackorder:[17540,22030,27220,33230,39410,46130],
+  gwenpool:[17210,21620,26710,32610,38660,45260],
+  havok:[17370,21820,26950,32900,39010,45660],
+  hawkeye:[17220,21630,26730,32630,38700,45300],
+  heimdall:[17850,22430,27720,33840,40140,47000],
+  high_evolutionary:[18050,22690,28030,34230,40600,47520],
+  hitmonkey:[17530,22030,27210,33220,39380,46100],
+  hood:[17200,21610,26690,32590,38650,45250],
+  howardmech:[17290,21730,26850,32780,38880,45510],
+  hulk:[17280,21810,26950,32900,39030,45690],
+  hulk_immortal:[17500,22000,27190,33200,39380,46100],
+  hulk_red:[17060,21440,26490,32350,38370,44920],
+  hulkbuster_movie:[16910,21250,26250,32050,38020,44500],
+  hulkling:[17540,22030,27220,33240,39420,46140],
+  hyperion:[16990,21340,26370,32190,38180,44700],
+  iceman:[17350,21800,26920,32870,38970,45620],
+  imperiosa:[17660,22190,27420,33470,39700,46470],
+  invisiblewoman:[17300,21740,26850,32780,38870,45500],
+  iron_man:[17640,22170,27390,33440,39660,46420],
+  ironheart:[17600,22110,27310,33340,39530,46270],
+  ironman_infamous:[17970,22580,27890,34060,40390,47270],
+  ironman_movie:[17170,21580,26660,32550,38600,45180],
+  ironman_superior:[17390,21850,27000,32960,39090,45760],
+  isophyne:[17540,22030,27220,33240,39410,46130],
+  jackolantern:[17550,22060,27250,33270,39450,46180],
+  jean_grey_current:[17640,22160,27380,33430,39650,46420],
+  jessica_jones:[17480,21960,27130,33120,39280,45980],
+  jjj_spiderslayer:[17720,22260,27520,33590,39850,46650],
+  joefixit:[17190,21600,26700,32590,38660,45260],
+  johnnystorm:[17340,21770,26900,32840,38940,45580],
+  juggernaut:[17070,21450,26490,32340,38340,44870],
+  kang:[16900,21240,26240,32040,38000,44490],
+  karl_mordo:[17260,21680,26780,32700,38770,45380],
+  karnak:[17180,21590,26680,32560,38620,45200],
+  karolinadean:[17660,22190,27410,33460,39660,46430],
+  killmonger:[17200,21610,26700,32600,38670,45270],
+  kindred:[17640,22160,27380,33430,39640,46400],
+  kingpin:[17280,21710,26840,32760,38870,45500],
+  kittypryde:[17540,22030,27200,33210,39360,46070],
+  knull:[17520,22020,27210,33220,39400,46120],
+  korg_movie:[17320,21770,26900,32840,38950,45590],
+  kraven:[17510,22000,27190,33190,39370,46090],
+  kushala:[17570,22080,27280,33300,39500,46240],
+  ladydeathstrike:[17590,22100,27310,33340,39530,46270],
+  leader:[17630,22150,27380,33420,39650,46410],
+  lizard:[17680,22210,27450,33520,39760,46540],
+  longshot:[17430,21910,27070,33040,39190,45880],
+  luke_cage:[17520,22010,27180,33190,39340,46050],
+  lumatrix:[17630,22160,27380,33430,39650,46420],
+  madelynepryor:[17780,22340,27610,33710,39990,46810],
+  maestro:[17530,22020,27220,33230,39420,46140],
+  maestro_overseer:[17540,22040,27250,33270,39480,46220],
+  magik:[17750,22300,27550,33640,39890,46690],
+  magneto:[17290,21720,26840,32780,38880,45520],
+  maker:[17610,22120,27330,33370,39570,46320],
+  mangog:[17510,21990,27180,33180,39350,46060],
+  manthing:[17010,21500,26730,32830,39170,45850],
+  mantis:[17540,22040,27230,33240,39410,46130],
+  masacre:[17440,21920,27070,33040,39170,45850],
+  mbaku:[17640,22170,27390,33440,39660,46420],
+  medusa:[17390,22060,27250,33270,39460,46200],
+  misternegative:[17530,22020,27200,33200,39370,46080],
+  mistersinister:[17220,21640,26740,32650,38730,45340],
+  mistyknight:[17500,22000,27170,33170,39330,46040],
+  modok:[17510,22000,27200,33200,39400,46120],
+  mojo:[17450,21930,27100,33090,39260,45950],
+  moleman:[17270,21690,26800,32710,38790,45410],
+  moondragon:[17570,22080,27290,33310,39520,46260],
+  morbius:[17540,22040,27230,33250,39430,46160],
+  mrfantastic:[17500,21980,27150,33150,39310,46020],
+  mysterio:[17390,21850,26980,32940,39040,45700],
+  namor:[17580,22090,27280,33300,39490,46220],
+  negasonicteenagewarhead:[17650,22170,27380,33440,39640,46400],
+  nickfury:[17350,21800,26920,32860,38950,45600],
+  nicominoru:[17600,22110,27330,33370,39580,46330],
+  nightcrawler:[17460,21950,27100,33080,39210,45900],
+  nimrod:[17570,22080,27280,33300,39500,46240],
+  northstar:[17610,22120,27330,33370,39570,46320],
+  nova:[17510,22000,27190,33190,39360,46080],
+  odin:[17520,22020,27210,33220,39400,46120],
+  okoye:[17820,22390,27670,33780,40060,46900],
+  omegared:[17170,21570,26650,32530,38570,45140],
+  omegasentinel:[17640,22170,27380,33430,39620,46380],
+  onslaught:[18040,22680,28020,34210,40590,47510],
+  patriot:[17550,22050,27250,33270,39460,46200],
+  peniparker:[17510,22000,27180,33180,39350,46060],
+  phoenix:[17600,22120,27330,33370,39580,46330],
+  phoenix_dark:[17960,22570,27880,34040,40370,47260],
+  photon:[17760,22320,27580,33680,39940,46750],
+  phylavell:[17810,22380,27640,33750,40030,46850],
+  pixie:[17720,22260,27500,33570,39800,46590],
+  professorx:[17530,22030,27200,33210,39370,46090],
+  prowler:[17690,22220,27460,33520,39760,46540],
+  punisher:[17610,22130,27360,33390,39610,46370],
+  punisher_2099:[17440,21910,27070,33050,39190,45880],
+  purgatory:[17480,21970,27150,33150,39320,46020],
+  quicksilver:[17910,22510,27810,33950,40260,47130],
+  redSkull:[17350,21800,26920,32870,38960,45610],
+  red_goblin:[17520,22020,27200,33210,39390,46100],
+  redguardian:[17520,22020,27180,33180,39330,46030],
+  rhino:[17590,22110,27320,33360,39570,46320],
+  rintrah:[17500,21990,27180,33190,39380,46100],
+  rocket:[17590,22100,27300,33330,39500,46240],
+  ronin:[17220,21640,26720,32620,38670,45260],
+  rubythursday:[17730,22280,27530,33600,39850,46650],
+  sabretooth:[17330,21770,26890,32830,38920,45560],
+  sandman:[17560,22060,27270,33290,39480,46220],
+  sasquatch:[17490,21980,27170,33170,39360,46070],
+  sauron:[17530,22030,27220,33230,39410,46130],
+  scarlet_witch:[16500,20720,25600,31260,37070,43380],
+  scarlet_witch_current:[17520,22010,27190,33190,39360,46070],
+  scorpion:[17520,22010,27190,33190,39350,46070],
+  scream:[17620,22130,27350,33390,39600,46360],
+  sentinel:[17490,21980,27160,33160,39330,46040],
+  sentry_current:[17470,21950,27120,33120,39270,45980],
+  serpent:[17760,22320,27590,33680,39960,46780],
+  sersi:[17530,22020,27220,33230,39420,46140],
+  shangchi:[17520,22010,27190,33190,39360,46080],
+  shathra:[17950,22560,27870,34030,40360,47240],
+  shatterstar:[17900,22490,27780,33920,40230,47090],
+  shehulk:[16540,20780,25670,31340,37160,43500],
+  shocker:[17530,22030,27210,33230,39400,46130],
+  shuri:[17520,22020,27200,33210,39380,46100],
+  silk:[17500,22000,27170,33170,39330,46040],
+  silversable:[17590,22110,27310,33340,39530,46270],
+  silversurfer:[17960,22560,27860,34020,40320,47200],
+  skrull_super:[17500,21990,27170,33170,39340,46050],
+  solvarch:[17590,22100,27330,33360,39590,46340],
+  spider_man:[17380,21840,26980,32940,39050,45720],
+  spidergwen:[17050,21430,26470,32320,38320,44850],
+  spiderham:[17490,21980,27160,33160,39310,46020],
+  spiderman_2099:[17520,22020,27180,33190,39330,46040],
+  spiderman_morales:[17180,21580,26650,32540,38580,45160],
+  spiderman_movie:[16810,21120,26090,31850,37750,44190],
+  spiderman_pavitr:[17920,22520,27820,33970,40290,47160],
+  spiderman_stealth:[17540,22040,27210,33210,39360,46070],
+  spiderman_supreme:[17660,22190,27400,33460,39660,46420],
+  spiderpunk:[17700,22240,27470,33540,39760,46540],
+  spiderwoman:[17630,22150,27360,33400,39620,46370],
+  spiral:[17540,22040,27230,33240,39420,46150],
+  spot:[17600,22110,27320,33350,39560,46310],
+  star_lord:[16610,20870,25780,31480,37330,43700],
+  starlord_stellar:[17660,22180,27410,33460,39670,46440],
+  storm:[17350,21800,26940,32890,39000,45650],
+  storm_realm:[17500,21980,27150,33150,39300,46000],
+  stryfe:[17520,22020,27200,33210,39390,46100],
+  sunspot:[18680,22980,27780,33180,39340,46050],
+  symbiote_supreme:[17350,21800,26930,32870,38980,45630],
+  terrax:[17480,21960,27130,33130,39290,45990],
+  thanos:[17220,21640,26750,32650,38740,45350],
+  thanos_nameless:[17610,22130,27360,33400,39630,46390],
+  thing:[17380,21930,27090,33080,39240,45930],
+  thor_janefoster:[17660,22180,27410,33460,39690,46460],
+  thor_ragnarok:[17610,22120,27340,33370,39580,46330],
+  tigra:[17520,22020,27190,33200,39360,46070],
+  titania:[17550,22050,27250,33270,39470,46200],
+  toad:[17510,22000,27180,33190,39360,46080],
+  ultron:[16770,21070,26030,31780,37690,44120],
+  ultron_prime:[16770,21070,26030,31780,37690,44120],
+  valkyrie:[17640,22170,27390,33440,39660,46430],
+  venom:[16940,21280,26300,32100,38080,44580],
+  venompool:[17440,21910,27080,33060,39210,45900],
+  vision:[17130,21520,26600,32470,38520,45080],
+  vision_blackorder:[17130,21530,26600,32470,38500,45070],
+  vision_timely:[17430,21890,27040,33010,39140,45810],
+  vivvision:[17500,22000,27160,33170,39330,46030],
+  void_current:[17190,21600,26690,32580,38640,45230],
+  vox:[17530,22030,27220,33230,39410,46130],
+  warlock:[17490,21970,27130,33130,39280,45990],
+  warmachine:[17160,21570,26640,32530,38570,45160],
+  wave:[17810,22370,27640,33740,40000,46820],
+  werewolfbynight:[17630,22160,27380,33430,39660,46420],
+  whitetiger:[17640,22170,27380,33420,39620,46380],
+  whitewidow:[17490,21980,27130,33120,39250,45950],
+  wiccan:[17540,22040,27220,33230,39400,46120],
+  wolverine_weaponx:[17210,21620,26710,32600,38660,45250],
+  wong:[17500,21990,27170,33170,39340,46050],
+  x23:[17120,21500,26570,32440,38470,45030],
+  yelenabelova:[18050,22680,28020,34210,40580,47500],
+  yondu:[17540,22030,27220,33240,39420,46150],
 };
 
 function portraitPath(key) {
-  if (!key) return null;
-  const custom = customChampions.find(c => c.key === key);
-  if (custom?.portraitData) return custom.portraitData;
-  return `portraits/portrait_${key}.png`;
+  return key ? `portraits/portrait_${key}.png` : null;
 }
 
-// Prestige for a roster champion — 7★ R4/R5 only (that's all the source sheet covers).
+// True for a champion key that exists as a 7★ (has prestige data).
+function isSevenStar(key) { return !!PRESTIGE_7[key]; }
+
+// Prestige at a given rank/ascension for a champion key (max signature).
+// Ascension (A1 = +8%, A2 = +16%, round to nearest 10) applies only to R4/R5/R6.
+function prestigeAt(key, rank, asc) {
+  const p = PRESTIGE_7[key];
+  if (!p || !(rank >= 1 && rank <= 6)) return null;
+  let base = p[rank - 1];
+  if (base == null) return null;
+  if (rank >= 4 && asc === 'A1') base = Math.round(base * 1.08 / 10) * 10;
+  else if (rank >= 4 && asc === 'A2') base = Math.round(base * 1.16 / 10) * 10;
+  return base;
+}
+
+// Prestige for a roster champion at max signature. 7★ only, ranks 1–6.
 function champPrestige(c) {
   if (c.stars !== 7) return null;
+  return prestigeAt(c.portraitKey, Number(c.rank), c.ascension);
+}
+
+// Label like "R5" or "R5 · A2" (ascension only shown for R4/R5/R6).
+function rankAscLabel(rank, asc) {
+  let s = 'R' + rank;
+  if (Number(rank) >= 4 && (asc === 'A1' || asc === 'A2')) s += ' · ' + asc;
+  return s;
+}
+
+// Ordered prestige ladder — verified strictly increasing for every 7★.
+const RANK_LADDER = [
+  [1, null], [2, null], [3, null],
+  [4, null], [4, 'A1'], [4, 'A2'],
+  [5, null], [5, 'A1'], [5, 'A2'],
+  [6, null], [6, 'A1'], [6, 'A2'],
+];
+
+// The single next rank/ascension step up for a champion, or null if maxed / no data.
+function nextRankStep(c) {
   const p = PRESTIGE_7[c.portraitKey];
   if (!p) return null;
-  const r = Number(c.rank);
-  if (r !== 4 && r !== 5) return null;
-  const base = r === 4 ? 0 : 3;
-  const asc  = c.ascension === 'A2' ? 2 : c.ascension === 'A1' ? 1 : 0;
-  return p[base + asc] ?? p[base];
+  const valid = RANK_LADDER.filter(([r]) => p[r - 1] != null);
+  const i = valid.findIndex(([r, a]) => r === Number(c.rank) && (a || null) === (c.ascension || null));
+  if (i < 0 || i >= valid.length - 1) return null;
+  const [rank, asc] = valid[i + 1];
+  return { rank, ascension: asc, prestige: prestigeAt(c.portraitKey, rank, asc) };
+}
+
+// Personalized prestige: your top-30 champion prestige from the current roster.
+const PRESTIGE_TOP_N = 30;
+function prestigeTableHTML() {
+  const scored = champions
+    .map(c => ({ c, p: champPrestige(c) }))
+    .filter(x => x.p != null)
+    .sort((a, b) => b.p - a.p);
+
+  const fmt = v => (v == null ? '—' : v.toLocaleString());
+
+  if (scored.length === 0) {
+    return `
+      <div class="empty" style="grid-column:1/-1;">
+        <div class="empty-ring"><div class="empty-icon">📊</div></div>
+        <h2>No Prestige Yet</h2>
+        <p>Add 7★ champions (ranked R1–R6) to your roster to see your champion prestige.</p>
+      </div>`;
+  }
+
+  const top = scored.slice(0, PRESTIGE_TOP_N);
+  const avg = Math.round(top.reduce((s, x) => s + x.p, 0) / top.length);
+  const maxP = top[0].p;
+  const note = top.length < PRESTIGE_TOP_N ? `top ${top.length} of ${PRESTIGE_TOP_N}` : `top ${PRESTIGE_TOP_N}`;
+
+  const rows = top.map((x, i) => {
+    const c = x.c;
+    const pct = Math.max(6, Math.round((x.p / maxP) * 100));
+    return `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:7px 10px;text-align:right;color:var(--text-muted);font-size:0.8rem;">${i + 1}</td>
+        <td style="padding:5px 10px;">
+          <span style="display:flex;align-items:center;gap:9px;">
+            <img src="${portraitPath(c.portraitKey)}" onerror="this.style.visibility='hidden'"
+                 style="width:30px;height:30px;border-radius:6px;object-fit:cover;object-position:center top;border:1px solid var(--border2);" />
+            <span style="font-weight:600;">${escHtml(c.name)}</span>
+            <span style="font-size:0.66rem;color:var(--text-muted);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;white-space:nowrap;">${rankAscLabel(c.rank, c.ascension)}</span>
+          </span>
+        </td>
+        <td style="padding:5px 10px;width:32%;min-width:90px;">
+          <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:var(--${c.class || 'gold'});border-radius:3px;"></div>
+          </div>
+        </td>
+        <td style="padding:7px 12px;text-align:right;font-weight:700;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums;">${fmt(x.p)}</td>
+      </tr>`;
+  }).join('');
+
+  // Recommended next rank-ups — one step each, ranked by gain to the top-30 average.
+  const curSum = top.reduce((s, x) => s + x.p, 0);
+  const N = top.length;
+  const cutoff = N ? top[N - 1].p : 0;
+  const recs = [];
+  scored.forEach((x, idx) => {
+    const step = nextRankStep(x.c);
+    if (!step || step.prestige == null || step.prestige <= x.p) return;
+    let newSum;
+    if (N < PRESTIGE_TOP_N || idx < PRESTIGE_TOP_N) newSum = curSum - x.p + step.prestige;
+    else if (step.prestige > cutoff) newSum = curSum - cutoff + step.prestige;
+    else return;
+    const newAvg = Math.round(newSum / N);
+    const gainAvg = newAvg - avg;
+    if (gainAvg <= 0) return;
+    recs.push({ c: x.c, step, gainSelf: step.prestige - x.p, gainAvg, newAvg });
+  });
+  recs.sort((a, b) => b.gainAvg - a.gainAvg || b.gainSelf - a.gainSelf);
+  const planner = prestigePlannerHTML(recs.slice(0, 6), fmt);
+
+  return `
+    <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:18px;">
+      <div style="display:flex;flex-wrap:wrap;gap:14px;">
+        <div style="flex:2;min-width:240px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:18px 22px;">
+          <div style="font-size:0.66rem;text-transform:uppercase;letter-spacing:1.6px;color:var(--text-muted);font-weight:600;">Champion Prestige</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:2.9rem;font-weight:700;color:var(--gold);line-height:1.05;">${fmt(avg)}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">average of your ${note} champions · relics not included</div>
+        </div>
+        <div style="flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:18px 22px;">
+          <div style="font-size:0.66rem;text-transform:uppercase;letter-spacing:1.6px;color:var(--text-muted);font-weight:600;">7★ Champions</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:2.9rem;font-weight:700;color:var(--text);line-height:1.05;">${scored.length}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">in your roster with prestige data</div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr style="background:var(--surface2);border-bottom:1px solid var(--border2);">
+              <th style="padding:8px 10px;text-align:right;font-size:0.64rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">#</th>
+              <th style="padding:8px 10px;text-align:left;font-size:0.64rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Champion</th>
+              <th></th>
+              <th style="padding:8px 12px;text-align:right;font-size:0.64rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Prestige</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+
+      ${planner}
+
+      ${prestigeReferenceHTML()}
+    </div>`;
+}
+
+// Recommendation + forecast: the best single-step rank-ups for your prestige.
+function prestigePlannerHTML(recs, fmt) {
+  if (!recs.length) return '';
+  const chip = t => `<span style="font-size:0.66rem;color:var(--text-muted);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;white-space:nowrap;">${t}</span>`;
+  const rows = recs.map(r => `
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:7px 10px;">
+        <span style="display:flex;align-items:center;gap:9px;">
+          <img src="${portraitPath(r.c.portraitKey)}" onerror="this.style.visibility='hidden'"
+               style="width:28px;height:28px;border-radius:6px;object-fit:cover;object-position:center top;border:1px solid var(--border2);" />
+          <span style="font-weight:600;">${escHtml(r.c.name)}</span>
+        </span>
+      </td>
+      <td style="padding:7px 10px;white-space:nowrap;">
+        ${chip(rankAscLabel(r.c.rank, r.c.ascension))} <span style="color:var(--text-muted);">→</span> ${chip(rankAscLabel(r.step.rank, r.step.ascension))}
+      </td>
+      <td style="padding:7px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;">
+        <div><span style="font-weight:700;color:var(--gold);">${fmt(r.newAvg)}</span> <span style="color:#2ea043;font-size:0.74rem;font-weight:600;">+${fmt(r.gainAvg)}</span></div>
+        <div style="font-size:0.66rem;color:var(--text-muted);">champ +${fmt(r.gainSelf)}</div>
+      </td>
+    </tr>`).join('');
+  return `
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
+      <div style="padding:11px 16px;border-bottom:1px solid var(--border2);background:var(--surface2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:0.8rem;font-weight:700;">Recommended next rank-ups</span>
+        <span style="font-size:0.68rem;color:var(--text-muted);">biggest gain to your prestige, one step at a time</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead><tr style="background:var(--surface2);border-bottom:1px solid var(--border);">
+            <th style="padding:7px 10px;text-align:left;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Champion</th>
+            <th style="padding:7px 10px;text-align:left;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Next step</th>
+            <th style="padding:7px 12px;text-align:right;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">Your prestige</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// Full whole-game 7★ prestige lookup (base ranks R1–R6), collapsed by default.
+function prestigeReferenceHTML() {
+  const rows = Object.entries(PRESTIGE_7)
+    .map(([key, v]) => ({ key, name: (CHAMPION_LIST.find(c => c.key === key) || {}).name || key, v }))
+    .sort((a, b) => (b.v[4] || 0) - (a.v[4] || 0));
+  const fmt = v => (v == null ? '—' : v.toLocaleString());
+  const head = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
+  const cell = 'padding:5px 10px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;';
+  const hcell = 'padding:7px 10px;text-align:right;font-size:0.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);';
+  const body = rows.map(r => `
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:4px 10px;">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <img src="${portraitPath(r.key)}" onerror="this.style.visibility='hidden'" style="width:26px;height:26px;border-radius:5px;object-fit:cover;object-position:center top;" />
+          <span>${escHtml(r.name)}</span>
+        </span>
+      </td>
+      ${r.v.map(x => `<td style="${cell}">${fmt(x)}</td>`).join('')}
+    </tr>`).join('');
+  return `
+    <details style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;">
+      <summary style="cursor:pointer;padding:12px 16px;font-size:0.82rem;font-weight:600;color:var(--text);">Full prestige reference — all ${rows.length} champions · ascension adds +8% (A1) / +16% (A2)</summary>
+      <div style="overflow-x:auto;padding:0 8px 10px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+          <thead><tr style="background:var(--surface2);">
+            <th style="${hcell}text-align:left;">Champion</th>
+            ${head.map(h => `<th style="${hcell}">${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+    </details>`;
 }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -1657,6 +1955,7 @@ let dirHandle  = null;
 let editingId  = null;
 let saveTimer  = null;
 let showingUnplayable = false;
+let showingPrestige   = false;
 
 // IndexedDB for persisting the directory handle across sessions
 async function openDB() {
@@ -1753,6 +2052,14 @@ function setStorageMode(mode) {
   document.getElementById('settings-file-actions').style.display = mode === 'file' ? 'flex' : 'none';
 }
 
+// ── Theme toggle ─────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('mcoc-theme', dark ? 'dark' : 'light');
+  document.getElementById('btn-theme').textContent = dark ? '☀️' : '🌙';
+}
+document.getElementById('btn-theme').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+
 function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
@@ -1766,7 +2073,6 @@ let ddFiltered  = [];
 let ddFocusIdx  = -1;
 let ddDebounce  = null;
 
-CHAMPION_LIST.push(...customChampions);
 CHAMPION_LIST.sort((a, b) => a.name.localeCompare(b.name));
 let PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
 
@@ -1817,6 +2123,7 @@ function selectChampion(idx) {
   if (c.cls) pickClass(c.cls);
   document.getElementById('champ-dropdown').classList.remove('open');
   updatePortraitPreview(c.key, c.name);
+  refreshStarAvailability(true);
 }
 
 function ddKeyNav(e) {
@@ -1883,6 +2190,7 @@ function openModal(id = null) {
     setGroup('grp-ascension', 'f-ascension', ascVal);
     if (c.stars === 7) document.getElementById('ascension-group').style.display = '';
     updatePortraitPreview(c.portraitKey, c.name);
+    refreshStarAvailability(false);   // reflect availability without mutating saved data
   }
 
   document.getElementById('modal-overlay').classList.add('open');
@@ -1902,6 +2210,7 @@ function clearForm() {
   pickClass('');
   setGroup('grp-stars', 'f-stars', '');
   setGroup('grp-rank',  'f-rank',  '');
+  refreshStarAvailability(false);   // reset 7★ button to enabled for a fresh form
   const r6btn = document.querySelector('#grp-rank .opt-btn[data-val="6"]');
   if (r6btn) r6btn.style.display = 'none';
   document.getElementById('f-awakened').checked = false;
@@ -1943,7 +2252,29 @@ function pickClass(v) {
     text.style.color = 'var(--text-muted)';
   }
 }
-function pickStars(v) { setGroup('grp-stars', 'f-stars', v); onStarsChange(); }
+function pickStars(v) {
+  // Block 7★ for champions that aren't available as a 7★ yet.
+  if (Number(v) === 7) {
+    const key = document.getElementById('f-champ-key').value;
+    if (key && !isSevenStar(key)) return;
+  }
+  setGroup('grp-stars', 'f-stars', v); onStarsChange();
+}
+
+// Enable/disable the 7★ option based on the selected champion's availability.
+function refreshStarAvailability(allowDowngrade) {
+  const key = document.getElementById('f-champ-key').value;
+  const btn = document.querySelector('#grp-stars .opt-btn[data-val="7"]');
+  if (!btn) return;
+  const allowed = !key || isSevenStar(key);   // nothing chosen yet → leave enabled
+  btn.disabled = !allowed;
+  btn.style.opacity = allowed ? '' : '0.35';
+  btn.style.cursor  = allowed ? '' : 'not-allowed';
+  btn.title = allowed ? '' : 'Not available as a 7★ yet';
+  if (allowDowngrade && !allowed && document.getElementById('f-stars').value === '7') {
+    pickStars(6);   // drop an in-progress 7★ pick down to 6★
+  }
+}
 function pickRank(v)  { setGroup('grp-rank',  'f-rank',  v); onRankChange(); }
 
 // Max level per rank for 5★/6★/7★
@@ -2027,11 +2358,17 @@ function saveChampion() {
   render();
 }
 
-function toggleUnplayable() {
-  showingUnplayable = !showingUnplayable;
-  const btn = document.getElementById('btn-unplayable');
-  btn.textContent = showingUnplayable ? '← Back to Roster' : '👁 View Unplayable';
-  btn.classList.toggle('active', showingUnplayable);
+function setView(view) {
+  showingUnplayable = view === 'unplayable';
+  showingPrestige   = view === 'prestige';
+  document.getElementById('view-roster').classList.toggle('active', view === 'roster');
+  document.getElementById('view-unplayable').classList.toggle('active', view === 'unplayable');
+  document.getElementById('view-prestige').classList.toggle('active', view === 'prestige');
+  // Roster-only controls are meaningless in the other views
+  const rosterOnly = view === 'roster';
+  ['btn-filters', 'btn-select'].forEach(id => document.getElementById(id).style.display = rosterOnly ? '' : 'none');
+  document.querySelector('.util-cluster label').style.display = rosterOnly ? '' : 'none';
+  if (!rosterOnly && selectMode) toggleSelectMode();
   render();
 }
 
@@ -2076,7 +2413,6 @@ function getFiltered() {
     if (sortBy === 'stars-desc') return b.stars - a.stars;
     if (sortBy === 'rank-desc')  return rankOf(b) - rankOf(a);
     if (sortBy === 'rank-asc')   return rankOf(a) - rankOf(b);
-    if (sortBy === 'prestige-desc') return (champPrestige(b) || 0) - (champPrestige(a) || 0);
     if (sortBy === 'newest')     return seqOf(b) - seqOf(a);
     return a.name.localeCompare(b.name);
   });
@@ -2092,7 +2428,6 @@ function cardHTML(c, index = 0, animate = true) {
   const icon      = CLASS_ICONS[c.class] || '❓';
   const src       = portraitPath(c.portraitKey);
   const rankLevel = [c.rank ? `R${c.rank}` : null, c.level ? `L${c.level}` : null, c.ascension || null].filter(Boolean).join(' · ') || '—';
-  const prestige  = champPrestige(c);
   const awBadge   = c.awakened
     ? `<span class="awakened-badge awakened-yes">⚡${c.sig ? ` ${c.sig}` : ''}</span>`
     : `<span class="awakened-badge awakened-no">—</span>`;
@@ -2109,25 +2444,18 @@ function cardHTML(c, index = 0, animate = true) {
         <div class="card-portrait">
           <div class="select-check">✓</div>
           ${portraitHTML}
-          <div class="portrait-overlay">
-            <div class="stars">${starsDisplay(c.stars)}</div>
-            <div class="class-badge class-${c.class}">${icon}</div>
+          <div class="stars">${starsDisplay(c.stars)}</div>
+          <div class="class-badge class-${c.class}">${icon}</div>
+          ${c.tags?.length ? `<div class="portrait-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color};background:rgba(0,0,0,0.65)">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
+          <div class="portrait-meta">
+            ${awBadge}
+            <span class="portrait-meta-rank">${rankLevel}</span>
           </div>
         </div>
         <div class="card-body">
           <div class="champ-name">${escHtml(c.name)}</div>
-          <div class="card-meta">
-            <span class="card-meta-rank">${rankLevel}</span>
-            ${prestige ? `<span class="card-meta-prestige" title="Prestige">🏆 ${prestige.toLocaleString()}</span>` : ''}
-            ${awBadge}
-          </div>
-          ${c.tags?.length ? `<div class="card-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color}40;background:${color}18">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
           ${c.notes ? `<div class="card-notes">${escHtml(c.notes)}</div>` : ''}
         </div>
-        ${selectMode ? `<div class="card-actions">
-          <button onclick="event.stopPropagation();openModal('${c.id}')">✏️ Edit</button>
-          <button class="btn-delete" onclick="event.stopPropagation();deleteChampion('${c.id}')">🗑️ Remove</button>
-        </div>` : ''}
       </div>
     </div>`;
 }
@@ -2148,9 +2476,7 @@ function unplayableCardHTML(c) {
       <div class="card-inner">
         <div class="card-portrait">
           ${portraitHTML}
-          <div class="portrait-overlay">
-            <div class="class-badge class-${c.cls}">${icon}</div>
-          </div>
+          <div class="class-badge class-${c.cls}">${icon}</div>
         </div>
         <div class="card-body">
           <div class="champ-name">${escHtml(c.name)}</div>
@@ -2174,16 +2500,17 @@ function render() {
     return;
   }
 
+  if (showingPrestige) {
+    grid.innerHTML = prestigeTableHTML();
+    return;
+  }
+
   const list = getFiltered();
   const total    = champions.length;
   const awakened = champions.filter(c => c.awakened).length;
 
-  const top5 = champions.map(champPrestige).filter(Boolean).sort((a, b) => b - a).slice(0, 5);
-  const acctPrestige = top5.length ? Math.round(top5.reduce((s, v) => s + v, 0) / top5.length) : null;
-
   document.getElementById('stat-total').textContent    = total;
   document.getElementById('stat-awakened').textContent = awakened;
-  document.getElementById('stat-prestige').textContent = acctPrestige ? acctPrestige.toLocaleString() : '—';
   document.getElementById('showing-count').textContent = list.length;
 
   if (list.length === 0) {
@@ -2254,6 +2581,15 @@ modalOverlay.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 window.addEventListener('pageshow', () => { clearCheckboxFilters(); render(); });
+
+// Hidden admin tool: triple-click the swords logo to open the champion code generator
+let logoClicks = 0, logoClickTimer = null;
+document.querySelector('.logo-icon').addEventListener('click', () => {
+  logoClicks++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(() => { logoClicks = 0; }, 600);
+  if (logoClicks >= 3) { logoClicks = 0; openChampionDbModal(); }
+});
 document.getElementById('f-champ-search').addEventListener('blur', hideDropdown);
 ['filter-stars','filter-class','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', render));
 
@@ -2442,6 +2778,7 @@ function toggleSelectMode() {
   btn.classList.toggle('active', selectMode);
   btn.textContent = selectMode ? '✕ Cancel Select' : '☑ Select';
   document.getElementById('btn-delete-selected').classList.toggle('visible', false);
+  document.getElementById('btn-edit-selected').classList.toggle('visible', false);
   document.getElementById('selected-count').textContent = '0';
   render();
 }
@@ -2454,6 +2791,13 @@ function toggleCardSelect(id) {
   const count = selectedIds.size;
   document.getElementById('selected-count').textContent = count;
   document.getElementById('btn-delete-selected').classList.toggle('visible', count > 0);
+  document.getElementById('btn-edit-selected').classList.toggle('visible', count === 1);
+}
+
+function editSelected() {
+  if (selectedIds.size !== 1) return;
+  const [id] = selectedIds;
+  openModal(id);
 }
 
 function deleteSelected() {
@@ -2485,8 +2829,9 @@ function closeImport() {
   document.getElementById('import-overlay').style.display = 'none';
 }
 
-// ── Champion database (add new champions to the searchable list) ────────────
+// ── Champion code generator (hidden admin tool — triple-click the logo) ─────
 let cdbPortraitData = null;
+let cdbGeneratedKey = null;
 
 function openChampionDbModal() {
   document.getElementById('cdb-name').value = '';
@@ -2495,6 +2840,8 @@ function openChampionDbModal() {
   document.getElementById('cdb-portrait-preview').innerHTML = '<span>?</span>';
   setGroup('grp-cdb-class', 'cdb-class', '');
   cdbPortraitData = null;
+  cdbGeneratedKey = null;
+  document.getElementById('cdb-output').style.display = 'none';
   document.getElementById('champdb-overlay').style.display = 'flex';
 }
 
@@ -2511,8 +2858,17 @@ function cdbPortraitChange(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    cdbPortraitData = reader.result;
-    document.getElementById('cdb-portrait-preview').innerHTML = `<img src="${cdbPortraitData}" style="width:100%;height:100%;object-fit:cover;object-position:center top" />`;
+    // Normalize to PNG so the downloaded file matches the portrait_<key>.png convention
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      cdbPortraitData = canvas.toDataURL('image/png');
+      document.getElementById('cdb-portrait-preview').innerHTML = `<img src="${cdbPortraitData}" style="width:100%;height:100%;object-fit:cover;object-position:center top" />`;
+    };
+    img.src = reader.result;
   };
   reader.readAsDataURL(file);
 }
@@ -2521,7 +2877,7 @@ function slugifyChampionName(name) {
   return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 }
 
-function saveChampionDb() {
+function generateChampionDb() {
   const name = document.getElementById('cdb-name').value.trim();
   const cls  = document.getElementById('cdb-class').value;
   const unplayable = document.getElementById('cdb-unplayable').checked;
@@ -2531,22 +2887,36 @@ function saveChampionDb() {
     return;
   }
 
-  let key = slugifyChampionName(name);
-  if (CHAMPION_LIST.some(c => c.key === key)) key = `${key}_${Date.now()}`;
+  const key = slugifyChampionName(name);
+  if (CHAMPION_LIST.some(c => c.key === key)) {
+    alert(`A champion with the key "${key}" already exists — check the name.`);
+    return;
+  }
+  cdbGeneratedKey = key;
 
-  const entry = { key, name, cls };
-  if (unplayable) entry.unplayable = true;
-  if (cdbPortraitData) entry.portraitData = cdbPortraitData;
+  const safeName = name.replace(/'/g, "\\'");
+  const snippet = `  {key:'${key}',name:'${safeName}',cls:'${cls}'${unplayable ? ',unplayable:true' : ''}},`;
 
-  customChampions.push(entry);
-  saveCustomChampions();
+  document.getElementById('cdb-snippet').value = snippet;
+  document.getElementById('cdb-portrait-note').textContent = cdbPortraitData
+    ? `Save the portrait as portraits/portrait_${key}.png — the download button names it for you.`
+    : `No portrait uploaded — add portraits/portrait_${key}.png later or the card shows a fallback icon.`;
+  document.getElementById('cdb-download').style.display = cdbPortraitData ? '' : 'none';
+  document.getElementById('cdb-output').style.display = 'flex';
+}
 
-  CHAMPION_LIST.push(entry);
-  CHAMPION_LIST.sort((a, b) => a.name.localeCompare(b.name));
-  PLAYABLE_LIST = CHAMPION_LIST.filter(c => !c.unplayable);
+function cdbCopySnippet() {
+  const ta = document.getElementById('cdb-snippet');
+  ta.select();
+  navigator.clipboard?.writeText(ta.value).catch(() => document.execCommand('copy'));
+}
 
-  closeChampionDbModal();
-  render();
+function cdbDownloadPortrait() {
+  if (!cdbPortraitData || !cdbGeneratedKey) return;
+  const a = document.createElement('a');
+  a.href = cdbPortraitData;
+  a.download = `portrait_${cdbGeneratedKey}.png`;
+  a.click();
 }
 
 function importRoster() {
@@ -2577,11 +2947,12 @@ function importRoster() {
   render();
 }
 
-// Card size slider
+// Card size toggle — locked to the two verified sizes
 (function() {
-  const MIN = 80, MAX = 380, DEFAULT = 210;
+  const DEFAULT = 150;
+  const SIZES = [110, 150];
   const stored = parseInt(localStorage.getItem('cardSize'), 10);
-  let current = (stored >= MIN && stored <= MAX) ? stored : DEFAULT;
+  let current = SIZES.includes(stored) ? stored : DEFAULT;
 
   function applySize(v) {
     const portrait = Math.round(v * (170 / 210));
@@ -2589,46 +2960,46 @@ function importRoster() {
     document.documentElement.style.setProperty('--portrait-height', portrait + 'px');
     const grid = document.querySelector('.grid');
     if (grid) {
-      grid.classList.remove('size-sm', 'size-xs', 'size-tiny');
-      if (v < 110)      grid.classList.add('size-tiny');
-      else if (v < 150) grid.classList.add('size-xs');
-      else if (v < 190) grid.classList.add('size-sm');
+      grid.classList.remove('size-xs');
+      if (v === 110) grid.classList.add('size-xs');
     }
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.classList.toggle('active', Number(btn.dataset.size) === v);
+    });
   }
 
   applySize(current);
 
-  const slider = document.createElement('div');
-  slider.innerHTML = `
+  const widget = document.createElement('div');
+  widget.innerHTML = `
     <div id="size-widget" style="
       position:fixed; bottom:20px; right:20px; z-index:900;
       background:var(--surface); border:1px solid var(--border);
-      border-radius:10px; padding:10px 14px;
-      display:flex; align-items:center; gap:10px;
-      box-shadow:0 4px 16px rgba(0,0,0,0.5);
+      border-radius:10px; padding:8px 10px;
+      display:flex; align-items:center; gap:8px;
+      box-shadow:var(--panel-shadow);
     ">
       <span style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap;">Card Size</span>
-      <input id="card-size-slider" type="range" min="${MIN}" max="${MAX}" value="${current}"
-        style="width:100px;accent-color:var(--accent);cursor:pointer;" />
-      <button id="card-size-reset" title="Reset to default" style="
-        background:none;border:1px solid var(--border2);border-radius:6px;
-        color:var(--text-muted);font-size:0.7rem;padding:2px 7px;cursor:pointer;
-        transition:color 0.15s,border-color 0.15s;white-space:nowrap;">↺ Reset</button>
+      <button class="size-btn" data-size="110" style="
+        background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+        color:var(--text-muted);font-size:0.75rem;font-weight:600;padding:5px 10px;cursor:pointer;
+        transition:background 0.15s,color 0.15s,border-color 0.15s;">Small</button>
+      <button class="size-btn" data-size="150" style="
+        background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+        color:var(--text-muted);font-size:0.75rem;font-weight:600;padding:5px 10px;cursor:pointer;
+        transition:background 0.15s,color 0.15s,border-color 0.15s;">Compact</button>
     </div>`;
-  document.body.appendChild(slider);
+  document.body.appendChild(widget);
 
-  document.getElementById('card-size-slider').addEventListener('input', function() {
-    current = Number(this.value);
-    applySize(current);
-    localStorage.setItem('cardSize', current);
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      current = Number(this.dataset.size);
+      applySize(current);
+      localStorage.setItem('cardSize', current);
+    });
   });
 
-  document.getElementById('card-size-reset').addEventListener('click', function() {
-    current = DEFAULT;
-    document.getElementById('card-size-slider').value = DEFAULT;
-    applySize(DEFAULT);
-    localStorage.setItem('cardSize', DEFAULT);
-  });
+  applySize(current);
 })();
 </script>
 
