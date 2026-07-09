@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MCOC Champion Tracker</title>
+  <meta name="description" content="Track your Marvel Contest of Champions roster — champions, ranks, awakened/signature, tags, and 7★ prestige with rank-up recommendations. Free, no login; your data stays in your browser." />
+  <meta name="theme-color" content="#0c0f16" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%94%EF%B8%8F</text></svg>" />
+  <meta property="og:title" content="MCOC Champion Tracker" />
+  <meta property="og:description" content="Track your Marvel Contest of Champions roster and 7★ prestige — free, no login, data stays in your browser." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="robots" content="index, follow" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -58,6 +66,12 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Visible focus ring for keyboard users (not shown on mouse click) */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--accent) !important; outline-offset: 2px; box-shadow: none;
+    }
 
     body {
       background: var(--bg);
@@ -768,10 +782,10 @@
     </div>
     <div class="save-area">
       <span class="save-status" id="save-status">Not connected</span>
-      <button class="btn-folder" id="btn-help" onclick="openHelp()" title="How to use this site" style="padding:7px 12px;font-weight:700;">?</button>
-      <button class="btn-folder" id="btn-theme" onclick="toggleTheme()" title="Toggle light/dark mode" style="padding:7px 10px;">🌙</button>
+      <button class="btn-folder" id="btn-help" onclick="openHelp()" title="How to use this site" aria-label="Help — how to use the tracker" style="padding:7px 12px;font-weight:700;">?</button>
+      <button class="btn-folder" id="btn-theme" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle light or dark mode" style="padding:7px 10px;">🌙</button>
       <div style="position:relative;flex-shrink:0;">
-        <button class="btn-folder" id="btn-settings" onclick="toggleSettingsPanel(event)" title="Settings" style="padding:7px 10px;">⚙</button>
+        <button class="btn-folder" id="btn-settings" onclick="toggleSettingsPanel(event)" title="Settings" aria-label="Settings" style="padding:7px 10px;">⚙</button>
         <div id="settings-panel" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:220px;box-shadow:var(--panel-shadow);">
           <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Save to</div>
           <div class="storage-toggle" style="width:100%;margin-bottom:14px;">
@@ -913,42 +927,42 @@
     width:min(560px,94vw); max-height:88vh; overflow-y:auto; box-shadow:var(--panel-shadow);">
     <div style="position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border2);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;">
       <h2 style="font-family:'Rajdhani',sans-serif;font-size:1.25rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;">How to use the tracker</h2>
-      <button class="modal-close" onclick="closeHelp()">✕</button>
+      <button class="modal-close" onclick="closeHelp()" aria-label="Close">✕</button>
     </div>
     <div style="padding:20px 22px;display:flex;flex-direction:column;gap:18px;font-size:0.85rem;line-height:1.6;color:var(--text);">
 
       <div>
         <div class="help-h">🚀 Getting started</div>
-        <p class="help-p">Click <strong>+ Add</strong>, search a champion, and set their star rating, rank, level, awakened/signature, and ascension. Your roster saves automatically in this browser.</p>
+        <p class="help-p">Click <strong>+ Add</strong>, search for a champion, and set their star, rank, level, awakened/signature, and ascension. Your roster saves automatically in this browser.</p>
       </div>
 
       <div>
         <div class="help-h">💾 Keep your data safe</div>
-        <p class="help-p">Browser storage is per-device. Open <strong>⚙ Settings → Save to: File</strong> and use <strong>Save JSON</strong> to download a backup, or <strong>Load JSON</strong> to restore it on another device or browser. Chrome/Edge can also connect a folder for automatic file saves.</p>
+        <p class="help-p">Your roster is saved only in this browser, on this device. To back it up or move it, open <strong>⚙ Settings → Save to: File</strong>, then <strong>Save JSON</strong> to download it or <strong>Load JSON</strong> to restore it. On Chrome/Edge you can connect a folder to save automatically.</p>
       </div>
 
       <div>
         <div class="help-h">🔎 Views &amp; filtering</div>
-        <p class="help-p">Switch between <strong>Roster</strong>, <strong>Unplayable</strong> (bosses), and <strong>Prestige</strong> with the tabs. Use <strong>🔽 Filters</strong> to narrow by stars, class, tag, rank, awakened, and ascension, and <strong>Sort</strong> to reorder. Card size can be toggled bottom-right.</p>
+        <p class="help-p">The tabs switch between <strong>Roster</strong>, <strong>Unplayable</strong> (bosses), and <strong>Prestige</strong>. <strong>Filters</strong> narrows by stars, class, tag, rank, awakened, and ascension; <strong>Sort</strong> reorders; card size is bottom-right.</p>
       </div>
 
       <div>
         <div class="help-h">🏷 Tags</div>
-        <p class="help-p">Add your own tags (e.g. AW Defense, Arena) when editing a champion, then filter by them. Manage or delete tags from inside the Filters panel.</p>
+        <p class="help-p">Add your own tags (like AW Defense or Arena) when editing a champion, then filter by them. Manage or delete them in the Filters panel.</p>
       </div>
 
       <div>
         <div class="help-h">☑ Editing &amp; removing</div>
-        <p class="help-p">Click <strong>Select</strong> to enter manage mode. Pick one champion to reveal <strong>Edit</strong>; select any number to <strong>Delete</strong> them together.</p>
+        <p class="help-p">Click <strong>Select</strong>, then pick champions. Choose one to <strong>Edit</strong> it, or select several to <strong>Delete</strong> them together.</p>
       </div>
 
       <div>
-        <div class="help-h">🏆 Prestige — get the most from it</div>
-        <p class="help-p">The Prestige tab shows your <strong>account prestige</strong> (top-30 average of your 7★ champions). The <strong>Recommended next rank-ups</strong> table is the key tool: it ranks single rank-ups by how much each raises your account average — do them top-down for the fastest prestige growth. Expand the <strong>full reference</strong> to see every 7★, with the ones you own highlighted at their current rank.</p>
+        <div class="help-h">🏆 Prestige</div>
+        <p class="help-p">Your <strong>champion prestige</strong> is the average of your top 30 7★ champions (relics aren't counted). <strong>Recommended next rank-ups</strong> lists which single rank-up raises it the most — work down the list. <strong>Full reference</strong> shows every 7★, with the ones you own highlighted at their current rank.</p>
       </div>
 
       <div style="border-top:1px solid var(--border);padding-top:14px;font-size:0.78rem;color:var(--text-muted);">
-        <strong style="color:var(--text);">Pro tip:</strong> back up your roster with Save JSON before big changes, and re-import if anything ever looks wrong.
+        <strong style="color:var(--text);">Tip:</strong> use <strong>Save JSON</strong> to back up before big changes, and <strong>Load JSON</strong> to restore if anything looks wrong.
       </div>
     </div>
   </div>
@@ -1067,12 +1081,24 @@
 
 <div class="grid" id="grid"></div>
 
+<footer style="margin-top:40px;padding:22px 24px 78px;border-top:1px solid var(--border2);color:var(--text-muted);font-size:0.72rem;line-height:1.7;text-align:center;">
+  <div style="max-width:900px;margin:0 auto;">
+    <p style="margin:0 0 6px;">
+      <strong style="color:var(--text-muted);">MCOC Tracker</strong> is an unofficial, fan-made tool — not affiliated with, endorsed by, or sponsored by Kabam or Marvel. Marvel Contest of Champions, all champion names, and images are trademarks and copyright of their respective owners.
+    </p>
+    <p style="margin:0;">
+      Prestige data courtesy of <a href="https://mcochub.insaneskull.com/prestige" target="_blank" rel="noopener" style="color:var(--text);text-decoration:underline;">mcochub</a>
+      · Your roster is stored only in your browser — no account, no tracking, no ads.
+    </p>
+  </div>
+</footer>
+
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-header">
       <h2 id="modal-title">Add Champion</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
 
@@ -1449,9 +1475,7 @@ const CHAMPION_LIST = [
   {key:'scream',name:'Scream',cls:'cosmic'},
   {key:'scytalis',name:'Scytalis',cls:'cosmic',unplayable:true},
   {key:'sentinel',name:'Sentinel',cls:'tech'},
-  {key:'sentry_current',name:'Sentry',cls:'science'},
-  {key:'scarletsigil',name:'Scarlet Sigil',cls:'mystic'},
-  {key:'serpent',name:'Serpent',cls:'cosmic'},
+  {key:'sentry_current',name:'Sentry',cls:'science'},  {key:'serpent',name:'Serpent',cls:'cosmic'},
   {key:'sersi',name:'Sersi',cls:'cosmic'},
   {key:'shangchi',name:'Shang-Chi',cls:'skill'},
   {key:'shathra',name:'Shathra',cls:'mystic'},
@@ -1520,9 +1544,7 @@ const CHAMPION_LIST = [
   {key:'wasp',name:'Wasp',cls:'science'},
   {key:'wave',name:'Wave',cls:'science'},
   {key:'werewolfbynight',name:'Werewolf by Night',cls:'mystic'},
-  {key:'whitetiger',name:'White Tiger',cls:'mystic'},
-  {key:'whitewidow',name:'White Widow',cls:'skill'},
-  {key:'wiccan',name:'Wiccan',cls:'mystic'},
+  {key:'whitetiger',name:'White Tiger',cls:'mystic'},  {key:'wiccan',name:'Wiccan',cls:'mystic'},
   {key:'winter_soldier',name:'Winter Soldier',cls:'skill'},
   {key:'wolverine',name:'Wolverine',cls:'mutant'},
   {key:'wolverine_oldman',name:'Old Man Logan',cls:'mutant'},
@@ -1796,7 +1818,7 @@ const PRESTIGE_7 = {
   wave:[17810,22370,27640,33740,40000,46820],
   werewolfbynight:[17630,22160,27380,33430,39660,46420],
   whitetiger:[17640,22170,27380,33420,39620,46380],
-  whitewidow:[17490,21980,27130,33120,39250,45950],
+  black_widow_movie:[17490,21980,27130,33120,39250,45950],
   wiccan:[17540,22040,27220,33230,39400,46120],
   wolverine_weaponx:[17210,21620,26710,32600,38660,45250],
   wong:[17500,21990,27170,33170,39340,46050],
@@ -1888,7 +1910,7 @@ function prestigeTableHTML() {
         <td style="padding:7px 10px;text-align:right;color:var(--text-muted);font-size:0.8rem;">${i + 1}</td>
         <td style="padding:5px 10px;">
           <span style="display:flex;align-items:center;gap:9px;">
-            <img src="${portraitPath(c.portraitKey)}" onerror="this.style.visibility='hidden'"
+            <img src="${portraitPath(c.portraitKey)}" alt="${escHtml(c.name)}" onerror="this.style.visibility='hidden'"
                  style="width:30px;height:30px;border-radius:6px;object-fit:cover;object-position:center top;border:1px solid var(--border2);" />
             <span style="font-weight:600;">${escHtml(c.name)}</span>
             <span style="font-size:0.66rem;color:var(--text-muted);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;white-space:nowrap;">${rankAscLabel(c.rank, c.ascension)}</span>
@@ -1967,7 +1989,7 @@ function prestigePlannerHTML(recs, fmt) {
     <tr style="border-bottom:1px solid var(--border);">
       <td style="padding:7px 10px;">
         <span style="display:flex;align-items:center;gap:9px;">
-          <img src="${portraitPath(r.c.portraitKey)}" onerror="this.style.visibility='hidden'"
+          <img src="${portraitPath(r.c.portraitKey)}" alt="${escHtml(r.c.name)}" onerror="this.style.visibility='hidden'"
                style="width:28px;height:28px;border-radius:6px;object-fit:cover;object-position:center top;border:1px solid var(--border2);" />
           <span style="font-weight:600;">${escHtml(r.c.name)}</span>
         </span>
@@ -2049,7 +2071,7 @@ function prestigeReferenceHTML() {
       <tr style="${rowStyle}">
         <td style="padding:4px 10px;">
           <span style="display:flex;align-items:center;gap:8px;">
-            <img src="${portraitPath(r.key)}" onerror="this.style.visibility='hidden'" style="width:26px;height:26px;border-radius:5px;object-fit:cover;object-position:center top;" />
+            <img src="${portraitPath(r.key)}" alt="${escHtml(r.name)}" onerror="this.style.visibility='hidden'" style="width:26px;height:26px;border-radius:5px;object-fit:cover;object-position:center top;" />
             <span style="${nameStyle}">${escHtml(r.name)}</span>
             ${ownedTag}
           </span>
