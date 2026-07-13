@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MCOC Champion Tracker</title>
   <meta name="description" content="Track your Marvel Contest of Champions roster — champions, ranks, awakened/signature, tags, and 7★ prestige with rank-up recommendations. Free, no login; your data stays in your browser." />
-  <meta name="theme-color" content="#0c0f16" />
+  <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#06080d" media="(prefers-color-scheme: dark)" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%94%EF%B8%8F</text></svg>" />
   <meta property="og:title" content="MCOC Champion Tracker" />
   <meta property="og:description" content="Track your Marvel Contest of Champions roster and 7★ prestige — free, no login, data stays in your browser." />
@@ -152,6 +153,32 @@
     .btn-folder:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(232,48,58,0.2); }
 
     .size-btn.active { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
+
+    /* Rapid Add tiles */
+    .rapid-tile {
+      position: relative; border: 1px solid var(--border2); border-radius: 10px;
+      overflow: hidden; cursor: pointer; background: var(--surface2);
+      transition: border-color 0.12s, transform 0.12s, box-shadow 0.12s;
+    }
+    .rapid-tile:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--panel-shadow); }
+    .rapid-tile img { width: 100%; aspect-ratio: 1/1; object-fit: cover; object-position: center top; display: block; }
+    .rapid-tile .rt-name {
+      font-size: 0.62rem; font-weight: 600; text-align: center; padding: 4px 4px 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text);
+    }
+    .rapid-tile.owned { border-color: var(--gold); }
+    .rapid-tile.owned img { opacity: 0.4; }
+    .rapid-tile .rt-check {
+      position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gold); color: #000; display: none; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .rapid-tile.owned .rt-check { display: flex; }
+    .rapid-tile .rt-badge {
+      position: absolute; bottom: 22px; left: 5px; background: rgba(0,0,0,0.65); color: var(--gold-bright);
+      font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 5px; display: none;
+    }
+    .rapid-tile.owned .rt-badge { display: block; }
 
     .help-h { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: 0.5px; margin-bottom: 4px; }
     .help-p { margin: 0; color: var(--text-muted); }
@@ -536,7 +563,7 @@
       font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700;
       color: var(--text); margin: 0 0 10px; letter-spacing: 3px; text-transform: uppercase;
     }
-    .empty p { font-size: 0.88rem; color: var(--text-muted); margin: 0 0 28px; max-width: 320px; line-height: 1.6; }
+    .empty p { font-size: 0.88rem; color: var(--text-muted); margin: 0 0 28px; max-width: 380px; line-height: 1.6; }
     .empty-action {
       background: linear-gradient(135deg, var(--accent), #c0252e);
       border: none; color: #fff; font-family: 'Rajdhani', sans-serif;
@@ -545,6 +572,31 @@
       transition: box-shadow 0.2s, transform 0.15s;
     }
     .empty-action:hover { box-shadow: 0 4px 18px rgba(232,48,58,0.5); transform: translateY(-1px); }
+
+    /* Active-filter chips in the no-results state */
+    .empty-filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: -14px 0 24px; max-width: 380px; }
+    .empty-filters-label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-right: 2px; }
+    .empty-filter-chip {
+      font-size: 0.72rem; font-weight: 600; color: #6ea8fe;
+      background: rgba(110,168,254,0.12); border: 1px solid #6ea8fe55;
+      border-radius: 20px; padding: 2px 10px; white-space: nowrap;
+    }
+
+    /* First-run onboarding — three starting paths */
+    .empty-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .empty-actions .empty-action {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      width: 150px; padding: 16px 14px; letter-spacing: 0.5px;
+    }
+    .empty-actions .ea-icon { font-size: 1.5rem; line-height: 1; margin-bottom: 3px; }
+    .empty-actions .ea-label { font-size: 0.95rem; font-weight: 700; }
+    .empty-actions .ea-sub { font-family: 'Inter', sans-serif; font-size: 0.66rem; font-weight: 400; opacity: 0.85; letter-spacing: 0; text-transform: none; }
+    .empty-action-alt {
+      background: var(--surface2) !important; color: var(--text) !important;
+      border: 1px solid var(--border2) !important;
+    }
+    .empty-action-alt:hover { border-color: var(--gold) !important; box-shadow: 0 4px 18px rgba(0,0,0,0.25) !important; }
+    .empty-action-alt .ea-sub { color: var(--text-muted); opacity: 1; }
 
     /* ── Modal ── */
     .modal-overlay {
@@ -582,18 +634,70 @@
 
     .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 
-    /* Portrait preview in modal */
-    .portrait-preview-wrap { display: flex; align-items: center; gap: 14px; }
-    .portrait-preview {
-      width: 82px; height: 82px; border-radius: 10px;
+    /* Live champion header */
+    .modal-hero {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 1;
+      background: linear-gradient(180deg, var(--surface2), var(--surface));
+    }
+    .modal-hero-portrait {
+      width: 76px; height: 76px; border-radius: 12px; flex-shrink: 0;
       background: var(--surface2); border: 1px solid var(--border2);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      font-size: 1.9rem; color: var(--text-muted); position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .modal-hero-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .modal-hero-portrait::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 2; opacity: 0;
+      background: var(--hero-class-color, transparent);
+    }
+    .modal-hero[data-class]:not([data-class=""]) .modal-hero-portrait::before { opacity: 1; }
+    .modal-hero[data-class="cosmic"]   { --hero-class-color: var(--cosmic); }
+    .modal-hero[data-class="tech"]     { --hero-class-color: var(--tech); }
+    .modal-hero[data-class="mutant"]   { --hero-class-color: var(--mutant); }
+    .modal-hero[data-class="skill"]    { --hero-class-color: var(--skill); }
+    .modal-hero[data-class="science"]  { --hero-class-color: var(--science); }
+    .modal-hero[data-class="mystic"]   { --hero-class-color: var(--mystic); }
+    .modal-hero-info { flex: 1; min-width: 0; }
+    .modal-hero-name {
+      font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700;
+      color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1;
+    }
+    .modal-hero-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+    .hero-class-chip { font-size: 0.72rem; border: 1px solid var(--border2); border-radius: 5px; padding: 1px 7px; color: var(--hero-class-color, var(--text-muted)); }
+    .hero-stars { color: var(--gold); font-size: 0.9rem; font-weight: 700; }
+    .hero-rankline { font-size: 0.72rem; color: var(--gold); background: rgba(240,192,64,0.12); border-radius: 5px; padding: 1px 7px; }
+    .modal-hero .modal-close { align-self: flex-start; }
+
+    /* Right-click context menu */
+    .ctx-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 12px; border-radius: 7px; cursor: pointer;
+      font-size: 0.84rem; color: var(--text); user-select: none;
+      transition: background 0.12s;
+    }
+    .ctx-item span { width: 18px; text-align: center; }
+    .ctx-item:hover { background: var(--surface3); }
+    .ctx-item.ctx-danger { color: #e74c3c; }
+    .ctx-item.ctx-danger:hover { background: rgba(231,76,60,0.12); }
+    .ctx-item.ctx-disabled { opacity: 0.4; pointer-events: none; }
+
+    /* Awakened + signature panel */
+    .awaken-panel { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .awaken-row { display: flex; align-items: center; justify-content: space-between; cursor: pointer; text-transform: none; letter-spacing: 0; }
+
+    /* Portrait upload preview (New Champion generator) */
+    .portrait-preview-wrap { display: flex; align-items: center; gap: 14px; }
+    .portrait-preview {
+      width: 76px; height: 76px; border-radius: 10px; flex-shrink: 0;
+      background: var(--surface2); border: 1px solid var(--border2);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: var(--text-muted);
     }
     .portrait-preview img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .portrait-preview-info { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
-    .portrait-preview-info strong { color: var(--text); font-size: 0.9rem; display: block; }
+    .portrait-preview-info { flex: 1; min-width: 0; font-size: 0.8rem; color: var(--text-muted); }
 
     /* Champion search */
     .champ-search-wrap { position: relative; }
@@ -764,7 +868,7 @@
 </head>
 <body>
 <script>
-  if (localStorage.getItem('mcoc-theme') === 'dark') document.body.classList.add('dark');
+  if (localStorage.getItem('mcoc-theme') !== 'light') document.body.classList.add('dark');
 </script>
 
 <header>
@@ -796,8 +900,12 @@
             <button class="btn-unplayable btn-action-export" id="btn-export" onclick="exportRoster()" style="width:100%;justify-content:center;">💾 Save JSON</button>
             <button class="btn-unplayable btn-action-import" id="btn-import" onclick="openImport()" style="width:100%;justify-content:center;">📂 Load JSON</button>
           </div>
-          <div style="border-top:1px solid var(--border2);padding-top:12px;">
+          <div style="border-top:1px solid var(--border2);padding-top:12px;display:flex;flex-direction:column;gap:6px;">
             <button class="btn-folder" id="btn-folder" onclick="connectFolder()" style="width:100%;">📁 Connect Folder</button>
+            <button class="btn-folder" onclick="setView('unplayable')" style="width:100%;">👁 View Unplayable</button>
+          </div>
+          <div style="border-top:1px solid var(--border2);padding-top:12px;margin-top:12px;">
+            <button onclick="removeAllChampions()" style="width:100%;font-size:0.78rem;padding:7px;border-radius:8px;background:rgba(231,76,60,0.12);border:1px solid #e74c3c55;color:#e74c3c;">🗑️ Remove All Champions</button>
           </div>
         </div>
       </div>
@@ -810,7 +918,6 @@
   <!-- View switcher -->
   <div class="view-switch">
     <button class="view-btn active" id="view-roster" onclick="setView('roster')">Roster</button>
-    <button class="view-btn" id="view-unplayable" onclick="setView('unplayable')">Unplayable</button>
     <button class="view-btn" id="view-prestige" onclick="setView('prestige')">Prestige</button>
   </div>
 
@@ -897,9 +1004,53 @@
     <button class="btn-unplayable btn-action-select btn-select-mode" id="btn-select" onclick="toggleSelectMode()">☑ Select</button>
     <button class="btn-unplayable btn-edit-selected" id="btn-edit-selected" onclick="editSelected()">✏️ Edit</button>
     <button class="btn-unplayable btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()">🗑️ Delete (<span id="selected-count">0</span>)</button>
+    <button class="btn-unplayable" id="btn-rapid" onclick="openRapidAdd()" style="flex-shrink:0;border-color:#f0c04044;color:var(--gold);">⚡ Rapid Add</button>
     <button class="btn-add" onclick="openModal()" style="flex-shrink:0;margin-left:0;">+ Add</button>
   </div>
 
+</div>
+
+<!-- Rapid Add overlay -->
+<div id="rapid-overlay" style="display:none;position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.75);flex-direction:column;">
+  <div style="background:var(--surface);border-bottom:1px solid var(--border2);padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;">
+      <h2 style="font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;">⚡ Rapid Add</h2>
+      <span style="font-size:0.72rem;color:var(--text-muted);">Set defaults, then click champions you own. Refine details later on the cards.</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <span style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;">Stars</span>
+      <div class="btn-group" id="rapid-grp-stars" style="gap:4px;">
+        <button type="button" class="opt-btn" data-val="7" onclick="rapidSetStars(7)">7★</button>
+        <button type="button" class="opt-btn" data-val="6" onclick="rapidSetStars(6)">6★</button>
+        <button type="button" class="opt-btn" data-val="5" onclick="rapidSetStars(5)">5★</button>
+        <button type="button" class="opt-btn" data-val="4" onclick="rapidSetStars(4)">4★</button>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <span style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;">Rank</span>
+      <div class="btn-group" id="rapid-grp-rank" style="gap:4px;">
+        <button type="button" class="opt-btn" data-val="1" onclick="rapidSetRank(1)">R1</button>
+        <button type="button" class="opt-btn" data-val="2" onclick="rapidSetRank(2)">R2</button>
+        <button type="button" class="opt-btn" data-val="3" onclick="rapidSetRank(3)">R3</button>
+        <button type="button" class="opt-btn" data-val="4" onclick="rapidSetRank(4)">R4</button>
+        <button type="button" class="opt-btn" data-val="5" onclick="rapidSetRank(5)">R5</button>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:160px;">
+      <input type="text" id="rapid-search" placeholder="Search champions… (Enter adds top match)" autocomplete="off"
+        oninput="rapidRenderGrid()" onkeydown="rapidSearchKey(event)"
+        style="width:100%;padding:8px 12px;font-size:0.85rem;" />
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">Added <strong id="rapid-count" style="color:var(--gold);">0</strong></span>
+      <button class="btn-save" onclick="closeRapidAdd()">Done</button>
+    </div>
+  </div>
+  <div id="rapid-grid" style="flex:1;overflow-y:auto;padding:18px 22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;align-content:start;"></div>
 </div>
 
 <!-- Manage Tags modal -->
@@ -1081,6 +1232,30 @@
 
 <div class="grid" id="grid"></div>
 
+<!-- Right-click context menu -->
+<div id="ctx-menu" style="display:none;position:fixed;z-index:1200;min-width:170px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:5px;box-shadow:var(--panel-shadow);">
+  <div class="ctx-item" onclick="ctxAction('edit')"><span>✏️</span> Edit</div>
+  <div class="ctx-item" onclick="ctxAction('rankup')" id="ctx-rankup"><span>⬆️</span> Rank up</div>
+  <div class="ctx-item" onclick="ctxAction('awaken')" id="ctx-awaken"><span>⚡</span> Toggle awakened</div>
+  <div class="ctx-item" onclick="ctxAction('duplicate')"><span>⧉</span> Duplicate</div>
+  <div style="height:1px;background:var(--border2);margin:5px 6px;"></div>
+  <div class="ctx-item ctx-danger" onclick="ctxAction('remove')"><span>🗑️</span> Remove</div>
+</div>
+
+<!-- Styled alert/confirm dialog -->
+<div id="ui-dialog-overlay" onclick="if(event.target===this)uiDialogResolve(false)" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;width:min(400px,94vw);box-shadow:var(--panel-shadow);overflow:hidden;">
+    <div style="padding:18px 22px 2px;">
+      <h2 id="ui-dialog-title" style="font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text);">Confirm</h2>
+    </div>
+    <div id="ui-dialog-msg" style="padding:8px 22px 18px;font-size:0.88rem;color:var(--text-muted);line-height:1.6;white-space:pre-wrap;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;padding:0 22px 18px;">
+      <button id="ui-dialog-cancel" class="btn-cancel" onclick="uiDialogResolve(false)">Cancel</button>
+      <button id="ui-dialog-ok" class="btn-save" onclick="uiDialogResolve(true)">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <footer style="margin-top:40px;padding:22px 24px 78px;border-top:1px solid var(--border2);color:var(--text-muted);font-size:0.72rem;line-height:1.7;text-align:center;">
   <div style="max-width:900px;margin:0 auto;">
     <p style="margin:0 0 6px;">
@@ -1096,22 +1271,21 @@
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <div class="modal-header">
-      <h2 id="modal-title">Add Champion</h2>
-      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
-    </div>
-    <div class="modal-body">
-
-      <!-- Portrait preview -->
-      <div class="portrait-preview-wrap">
-        <div class="portrait-preview" id="modal-portrait-preview">
-          <span>?</span>
-        </div>
-        <div class="portrait-preview-info">
-          <strong id="modal-preview-name">Select a champion</strong><br>
-          Portrait loads automatically when you<br>pick a champion from the list below.
+    <!-- Live champion header -->
+    <div class="modal-hero" id="modal-hero" data-class="">
+      <div class="modal-hero-portrait" id="modal-portrait-preview"><span>?</span></div>
+      <div class="modal-hero-info">
+        <div class="modal-hero-name" id="modal-preview-name">Add Champion</div>
+        <div class="modal-hero-meta" id="modal-hero-meta">
+          <span class="hero-class-chip" id="hero-class-chip" style="display:none;"><span id="hero-class-icon">❓</span> <span id="hero-class-name"></span></span>
+          <span class="hero-stars" id="hero-stars" style="display:none;"></span>
+          <span class="hero-rankline" id="hero-rankline" style="display:none;"></span>
         </div>
       </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body">
 
       <!-- Champion search -->
       <div class="form-group">
@@ -1124,14 +1298,6 @@
         </div>
         <input type="hidden" id="f-champ-key" />
         <input type="hidden" id="f-name" />
-      </div>
-
-      <div class="form-group">
-        <label>Class</label>
-        <div id="class-display" style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);padding:9px 0;">
-          <span id="class-display-icon" style="font-size:1.2rem;">❓</span>
-          <span id="class-display-text">Auto-filled from champion selection</span>
-        </div>
         <input type="hidden" id="f-class" />
       </div>
 
@@ -1149,8 +1315,8 @@
         <input type="hidden" id="f-stars" />
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="form-group" style="flex:1;min-width:0;">
           <label>Rank</label>
           <div class="btn-group" id="grp-rank">
             <button type="button" class="opt-btn" data-val="1" onclick="pickRank(1)">R1</button>
@@ -1162,39 +1328,43 @@
           </div>
           <input type="hidden" id="f-rank" />
         </div>
-        <div class="form-group">
+        <div class="form-group" style="flex:0 0 68px;">
           <label for="f-level">Level</label>
-          <input type="number" id="f-level" placeholder="—" min="1" max="100" />
+          <input type="number" id="f-level" placeholder="—" min="1" max="100" style="text-align:center;" oninput="updateHero()" />
         </div>
       </div>
 
-      <div class="checkbox-row">
-        <input type="checkbox" id="f-awakened" onchange="toggleSigLevel()" />
-        <label for="f-awakened">Awakened (Duped)</label>
-      </div>
-
-      <div class="form-group" id="sig-group" style="display:none;">
-        <label>Signature Level — <span id="sig-display">1</span></label>
-        <input type="range" id="f-sig" min="1" max="200" value="1" oninput="document.getElementById('sig-display').textContent=this.value" />
-      </div>
-
-      <div class="form-group" id="ascension-group" style="display:none;">
-        <label>Ascension Level</label>
-        <div class="btn-group" id="grp-ascension">
-          <button type="button" class="opt-btn" data-val="A1" onclick="setGroup('grp-ascension','f-ascension','A1')">A1</button>
-          <button type="button" class="opt-btn" data-val="A2" onclick="setGroup('grp-ascension','f-ascension','A2')">A2</button>
+      <!-- Awakened + signature panel -->
+      <div class="awaken-panel">
+        <label class="awaken-row">
+          <span style="font-size:0.9rem;font-weight:600;color:var(--text);">⚡ Awakened <span style="color:var(--text-muted);font-weight:400;font-size:0.78rem;">(Duped)</span></span>
+          <input type="checkbox" id="f-awakened" onchange="toggleSigLevel()" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer;" />
+        </label>
+        <div id="sig-group" style="display:none;align-items:center;gap:10px;margin-top:10px;">
+          <span style="font-size:0.72rem;color:var(--text-muted);white-space:nowrap;">Signature</span>
+          <input type="range" id="f-sig" min="1" max="200" value="1" style="flex:1;" oninput="document.getElementById('sig-display').textContent=this.value;updateHero()" />
+          <span id="sig-display" style="font-size:0.85rem;color:var(--gold);font-weight:700;min-width:26px;text-align:right;">1</span>
         </div>
-        <input type="hidden" id="f-ascension" />
       </div>
 
-      <div class="form-group">
-        <label>Tags</label>
-        <div id="f-tags-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-        <div style="display:flex;gap:6px;">
-          <input id="f-tag-input" type="text" placeholder="New tag…" maxlength="30"
-            style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 9px;font-size:0.82rem;"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();addTagFromInput();}" />
-          <button type="button" class="btn-unplayable" onclick="addTagFromInput()" style="padding:5px 10px;">+ Add</button>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="form-group" id="ascension-group" style="display:none;flex:0 0 auto;">
+          <label>Ascension</label>
+          <div class="btn-group" id="grp-ascension">
+            <button type="button" class="opt-btn" data-val="A1" onclick="setGroup('grp-ascension','f-ascension','A1');updateHero()">A1</button>
+            <button type="button" class="opt-btn" data-val="A2" onclick="setGroup('grp-ascension','f-ascension','A2');updateHero()">A2</button>
+          </div>
+          <input type="hidden" id="f-ascension" />
+        </div>
+        <div class="form-group" style="flex:1;min-width:0;">
+          <label>Tags</label>
+          <div id="f-tags-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          <div style="display:flex;gap:6px;">
+            <input id="f-tag-input" type="text" placeholder="New tag…" maxlength="30"
+              style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 9px;font-size:0.82rem;"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();addTagFromInput();}" />
+            <button type="button" class="btn-unplayable" onclick="addTagFromInput()" style="padding:5px 10px;">+ Add</button>
+          </div>
         </div>
       </div>
 
@@ -1205,7 +1375,8 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveChampion()">Save Champion</button>
+      <button class="btn-unplayable" id="btn-save-another" onclick="saveChampion(true)" style="border-color:#2ecc7155;color:#2ecc71;font-weight:600;">Save + Add another</button>
+      <button class="btn-save" id="btn-save" onclick="saveChampion()">Save</button>
     </div>
   </div>
 </div>
@@ -1562,7 +1733,7 @@ const CLASS_ICONS = {cosmic:'🌌',tech:'⚙️',mutant:'🧬',skill:'🗡️',s
 
 // 7★ prestige by rank: [R1, R2, R3, R4, R5, R6] at max signature (sig 200).
 // Source: mcochub.insaneskull.com prestige data (tier 7), July 2026. null = rank not available.
-// Ascension (A1/A2, for R4/R5/R6 only) is computed in champPrestige: A1 = base×1.08, A2 = base×1.16 (round to 10).
+// Ascension (A1/A2, available at any rank) is computed in prestigeAt: A1 = base×1.08, A2 = base×1.16 (round to 10).
 // Membership in this table also defines whether a champion is available as a 7★.
 const PRESTIGE_7 = {
   MisterKnight:[17630,22160,27370,33420,39630,46400],
@@ -1835,14 +2006,14 @@ function portraitPath(key) {
 function isSevenStar(key) { return !!PRESTIGE_7[key]; }
 
 // Prestige at a given rank/ascension for a champion key (max signature).
-// Ascension (A1 = +8%, A2 = +16%, round to nearest 10) applies only to R4/R5/R6.
+// A 7★ can be ascended at any rank: A1 = +8%, A2 = +16% (round to nearest 10).
 function prestigeAt(key, rank, asc) {
   const p = PRESTIGE_7[key];
   if (!p || !(rank >= 1 && rank <= 6)) return null;
   let base = p[rank - 1];
   if (base == null) return null;
-  if (rank >= 4 && asc === 'A1') base = Math.round(base * 1.08 / 10) * 10;
-  else if (rank >= 4 && asc === 'A2') base = Math.round(base * 1.16 / 10) * 10;
+  if (asc === 'A1') base = Math.round(base * 1.08 / 10) * 10;
+  else if (asc === 'A2') base = Math.round(base * 1.16 / 10) * 10;
   return base;
 }
 
@@ -1852,30 +2023,25 @@ function champPrestige(c) {
   return prestigeAt(c.portraitKey, Number(c.rank), c.ascension);
 }
 
-// Label like "R5" or "R5 · A2" (ascension only shown for R4/R5/R6).
+// Label like "R5" or "R5 · A2". Ascension is shown whenever the champion has it,
+// at any rank — it's a real champion property that carries over on rank-up.
 function rankAscLabel(rank, asc) {
   let s = 'R' + rank;
-  if (Number(rank) >= 4 && (asc === 'A1' || asc === 'A2')) s += ' · ' + asc;
+  if (asc === 'A1' || asc === 'A2') s += ' · ' + asc;
   return s;
 }
 
-// Ordered prestige ladder — verified strictly increasing for every 7★.
-const RANK_LADDER = [
-  [1, null], [2, null], [3, null],
-  [4, null], [4, 'A1'], [4, 'A2'],
-  [5, null], [5, 'A1'], [5, 'A2'],
-  [6, null], [6, 'A1'], [6, 'A2'],
-];
-
-// The single next rank/ascension step up for a champion, or null if maxed / no data.
+// The next rank-up for a champion: R1→R2→…→R6, one rank at a time.
+// Ascension is random (never a recommended action), but it carries over on rank-up —
+// so an R4·A1 champ becomes R5·A1, and the target prestige includes that ascension.
 function nextRankStep(c) {
-  const p = PRESTIGE_7[c.portraitKey];
+  const key = c.portraitKey;
+  const p = PRESTIGE_7[key];
   if (!p) return null;
-  const valid = RANK_LADDER.filter(([r]) => p[r - 1] != null);
-  const i = valid.findIndex(([r, a]) => r === Number(c.rank) && (a || null) === (c.ascension || null));
-  if (i < 0 || i >= valid.length - 1) return null;
-  const [rank, asc] = valid[i + 1];
-  return { rank, ascension: asc, prestige: prestigeAt(c.portraitKey, rank, asc) };
+  const nextRank = Number(c.rank) + 1;
+  if (nextRank > 6 || p[nextRank - 1] == null) return null;   // maxed or no data
+  const asc = c.ascension || null;   // ascension follows the champion up
+  return { rank: nextRank, ascension: asc, prestige: prestigeAt(key, nextRank, asc) };
 }
 
 // Personalized prestige: your top-30 champion prestige from the current roster.
@@ -2138,7 +2304,7 @@ function setStatus(msg, cls = '') {
 
 async function connectFolder() {
   if (!window.showDirectoryPicker) {
-    alert('Your browser does not support folder access.\nPlease use Chrome or Edge.');
+    uiAlert('Your browser does not support folder access.\nPlease use Chrome or Edge.', 'Not Supported');
     return;
   }
   try {
@@ -2298,18 +2464,55 @@ function ddKeyNav(e) {
 function updatePortraitPreview(key, name) {
   const wrap = document.getElementById('modal-portrait-preview');
   const src  = portraitPath(key);
-  document.getElementById('modal-preview-name').textContent = name || 'Select a champion';
   if (src) {
-    wrap.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;object-position:center top" onerror="this.parentElement.innerHTML='<span style=\\'font-size:2rem\\'>?</span>'" />`;
+    wrap.innerHTML = `<img src="${src}" onerror="this.parentElement.innerHTML='<span>?</span>'" />`;
   } else {
     wrap.innerHTML = '<span>?</span>';
   }
+  updateHero();
+}
+
+// Refresh the live champion header from current form state.
+function updateHero() {
+  const hero = document.getElementById('modal-hero');
+  if (!hero) return;
+  const name  = document.getElementById('f-name').value || document.getElementById('f-champ-search').value;
+  const cls   = document.getElementById('f-class').value;
+  const stars = document.getElementById('f-stars').value;
+  const rank  = document.getElementById('f-rank').value;
+  const level = document.getElementById('f-level').value;
+  const asc   = document.getElementById('f-ascension').value;
+  const awk   = document.getElementById('f-awakened').checked;
+  const sig   = document.getElementById('f-sig').value;
+
+  hero.setAttribute('data-class', cls || '');
+  document.getElementById('modal-preview-name').textContent =
+    name || (editingId ? 'Edit Champion' : 'Add Champion');
+
+  const chip = document.getElementById('hero-class-chip');
+  if (cls) {
+    chip.style.display = '';
+    document.getElementById('hero-class-icon').textContent = CLASS_ICONS[cls] || '❓';
+    document.getElementById('hero-class-name').textContent = CLASS_NAMES[cls] || cls;
+  } else chip.style.display = 'none';
+
+  const st = document.getElementById('hero-stars');
+  if (stars) { st.style.display = ''; st.textContent = stars + '★'; } else st.style.display = 'none';
+
+  const parts = [];
+  if (rank)  parts.push('R' + rank);
+  if (level) parts.push('L' + level);
+  if (asc)   parts.push(asc);
+  if (awk)   parts.push('⚡' + (sig || 1));
+  const rl = document.getElementById('hero-rankline');
+  if (parts.length) { rl.style.display = ''; rl.textContent = parts.join(' · '); } else rl.style.display = 'none';
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function openModal(id = null) {
   editingId = id;
-  document.getElementById('modal-title').textContent = id ? 'Edit Champion' : 'Add Champion';
+  document.getElementById('btn-save-another').style.display = id ? 'none' : '';
+  document.getElementById('btn-save').textContent = id ? 'Save Changes' : 'Save';
   clearForm();
   ddFiltered = [];
   renderDropdown();
@@ -2365,15 +2568,16 @@ function clearForm() {
   document.getElementById('ascension-group').style.display = 'none';
   setGroup('grp-ascension', 'f-ascension', '');
   document.getElementById('modal-portrait-preview').innerHTML = '<span>?</span>';
-  document.getElementById('modal-preview-name').textContent   = 'Select a champion';
   modalSelectedTags = [];
   document.getElementById('f-tag-input').value = '';
   renderTagsModal();
+  updateHero();
 }
 
 function toggleSigLevel() {
   document.getElementById('sig-group').style.display =
     document.getElementById('f-awakened').checked ? 'flex' : 'none';
+  updateHero();
 }
 
 // Set the active button in a group and sync its hidden input
@@ -2387,17 +2591,7 @@ function setGroup(groupId, hiddenId, val) {
 const CLASS_NAMES = {cosmic:'Cosmic',tech:'Tech',mutant:'Mutant',skill:'Skill',science:'Science',mystic:'Mystic',universal:'Universal'};
 function pickClass(v) {
   document.getElementById('f-class').value = v || '';
-  const icon = document.getElementById('class-display-icon');
-  const text = document.getElementById('class-display-text');
-  if (v) {
-    icon.textContent = CLASS_ICONS[v] || '❓';
-    text.textContent = CLASS_NAMES[v] || v;
-    text.style.color = 'var(--text)';
-  } else {
-    icon.textContent = '❓';
-    text.textContent = 'Auto-filled from champion selection';
-    text.style.color = 'var(--text-muted)';
-  }
+  updateHero();
 }
 function pickStars(v) {
   // Block 7★ for champions that aren't available as a 7★ yet.
@@ -2426,6 +2620,19 @@ function pickRank(v)  { setGroup('grp-rank',  'f-rank',  v); onRankChange(); }
 
 // Max level per rank for 5★/6★/7★
 const RANK_LEVELS = { 1: 25, 2: 35, 3: 45, 4: 55, 5: 65 };
+
+// Unique roster id: "<seq>-<YYYY-MM-DD>"
+function newChampId() {
+  const seq = nextSeq++;
+  const d = new Date();
+  const date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `${seq}-${date}`;
+}
+
+// Level a champion auto-fills to at a given star/rank (5★/6★/7★ ranks 1–5).
+function autoLevel(stars, rank) {
+  return ([5,6,7].includes(Number(stars)) && rank >= 1 && rank <= 5) ? RANK_LEVELS[rank] : null;
+}
 
 function onStarsChange() {
   const stars = Number(document.getElementById('f-stars').value);
@@ -2466,20 +2673,21 @@ function onRankChange() {
     lvlEl.style.color  = '';
     lvlEl.style.cursor = '';
   }
+  updateHero();
 }
 
-function saveChampion() {
+function saveChampion(addAnother) {
   const name  = document.getElementById('f-name').value.trim() || document.getElementById('f-champ-search').value.trim();
   const cls   = document.getElementById('f-class').value;
   const stars = document.getElementById('f-stars').value;
 
   if (!name || !cls || !stars) {
-    alert('Please fill in Champion, Class, and Star Rating.');
+    uiAlert('Please fill in Champion, Class, and Star Rating.', 'Missing Info');
     return;
   }
 
   const data = {
-    id:         editingId || (() => { const seq = nextSeq++; const d = new Date(); const date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; return `${seq}-${date}`; })(),
+    id:         editingId || newChampId(),
     name,
     portraitKey: document.getElementById('f-champ-key').value || null,
     class:      cls,
@@ -2501,26 +2709,41 @@ function saveChampion() {
   }
 
   scheduleSave();
-  closeModal();
   render();
+
+  if (addAnother && !editingId) {
+    clearForm();
+    const search = document.getElementById('f-champ-search');
+    search.value = '';
+    search.focus();
+  } else {
+    closeModal();
+  }
 }
 
 function setView(view) {
   showingUnplayable = view === 'unplayable';
   showingPrestige   = view === 'prestige';
+  // Unplayable is accessed from Settings and has no tab; it shows neither tab active.
   document.getElementById('view-roster').classList.toggle('active', view === 'roster');
-  document.getElementById('view-unplayable').classList.toggle('active', view === 'unplayable');
   document.getElementById('view-prestige').classList.toggle('active', view === 'prestige');
   // Roster-only controls are meaningless in the other views
   const rosterOnly = view === 'roster';
   ['btn-filters', 'btn-select'].forEach(id => document.getElementById(id).style.display = rosterOnly ? '' : 'none');
   document.querySelector('.util-cluster label').style.display = rosterOnly ? '' : 'none';
   if (!rosterOnly && selectMode) toggleSelectMode();
+  if (view !== 'roster') closeSettingsPanel();
   render();
 }
 
-function deleteChampion(id) {
-  if (!confirm('Remove this champion from your roster?')) return;
+function closeSettingsPanel() {
+  const p = document.getElementById('settings-panel');
+  if (p) p.style.display = 'none';
+  settingsPanelOpen = false;
+}
+
+async function deleteChampion(id) {
+  if (!await uiConfirm('Remove this champion from your roster?', 'Remove Champion', 'Remove')) return;
   champions = champions.filter(x => x.id !== id);
   scheduleSave();
   render();
@@ -2641,9 +2864,18 @@ function render() {
 
   if (showingUnplayable) {
     const list = CHAMPION_LIST.filter(c => c.unplayable);
-    grid.innerHTML = list.length
+    const header = `<div style="grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-bottom:4px;">
+      <button class="btn-folder" onclick="setView('roster')">← Back to Roster</button>
+      <span style="font-size:0.9rem;font-weight:600;color:var(--text);">Unplayable Champions</span>
+      <span style="font-size:0.75rem;color:var(--text-muted);">Bosses &amp; non-playable — reference only</span>
+    </div>`;
+    grid.innerHTML = header + (list.length
       ? list.map(unplayableCardHTML).join('')
-      : '<div class="empty"><div class="empty-icon">🔍</div><h2>No bosses found</h2></div>';
+      : `<div class="empty">
+          <div class="empty-ring"><div class="empty-icon">🛡️</div></div>
+          <h2>No Bosses Found</h2>
+          <p>Non-playable champions and bosses will appear here for reference.</p>
+        </div>`);
     return;
   }
 
@@ -2662,16 +2894,39 @@ function render() {
 
   if (list.length === 0) {
     const isEmpty = champions.length === 0;
-    grid.innerHTML = `
-      <div class="empty">
-        <div class="empty-ring"><div class="empty-icon">${isEmpty ? '🏆' : '🔍'}</div></div>
-        <h2>${isEmpty ? 'No Champions Yet' : 'No Results Found'}</h2>
-        <p>${isEmpty ? 'Start building your roster by adding your first champion.' : 'No champions match your current filters. Try adjusting or clearing them.'}</p>
-        ${isEmpty
-          ? `<button class="empty-action" onclick="openModal()">+ Add Your First Champion</button>`
-          : `<button class="empty-action" onclick="clearCheckboxFilters();document.getElementById('filter-stars').value='';document.getElementById('filter-class').value='';document.getElementById('filter-tag').value='';render();">Clear All Filters</button>`
-        }
-      </div>`;
+    grid.innerHTML = isEmpty
+      ? `<div class="empty">
+          <div class="empty-ring"><div class="empty-icon">🏆</div></div>
+          <h2>Build Your Roster</h2>
+          <p>Track your champions, ranks, awakened status, and 7★ prestige — all saved right here in your browser. Pick a starting point:</p>
+          <div class="empty-actions">
+            <button class="empty-action" onclick="openModal()">
+              <span class="ea-icon">＋</span>
+              <span class="ea-label">Add a champion</span>
+              <span class="ea-sub">One at a time, full detail</span>
+            </button>
+            <button class="empty-action empty-action-alt" onclick="openRapidAdd()">
+              <span class="ea-icon">⚡</span>
+              <span class="ea-label">Rapid Add</span>
+              <span class="ea-sub">Click through many fast</span>
+            </button>
+            <button class="empty-action empty-action-alt" onclick="openImport()">
+              <span class="ea-icon">📂</span>
+              <span class="ea-label">Import a roster</span>
+              <span class="ea-sub">Paste an exported backup</span>
+            </button>
+          </div>
+        </div>`
+      : (() => {
+          const filters = activeFilterSummary();
+          return `<div class="empty">
+            <div class="empty-ring"><div class="empty-icon">🔍</div></div>
+            <h2>No Results Found</h2>
+            <p>0 of ${champions.length} champions match your current filters.</p>
+            ${filters.length ? `<div class="empty-filters"><span class="empty-filters-label">Filtered by</span>${filters.map(f => `<span class="empty-filter-chip">${escHtml(f)}</span>`).join('')}</div>` : ''}
+            <button class="empty-action" onclick="clearAllFilters()">Clear All Filters</button>
+          </div>`;
+        })();
     return;
   }
   grid.innerHTML = list.map((c, i) => cardHTML(c, i, !hasRenderedOnce)).join('');
@@ -2787,6 +3042,37 @@ function applyCheckboxFilters() {
   render();
 }
 
+// Reset every filter (dropdowns + checkboxes) and re-render.
+function clearAllFilters() {
+  document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  document.getElementById('filter-stars').value = '';
+  document.getElementById('filter-class').value = '';
+  document.getElementById('filter-tag').value = '';
+  updateFilterBadge();
+  render();
+}
+
+// Human-readable list of the currently active filters, for the empty state.
+function activeFilterSummary() {
+  const parts = [];
+  const stars = document.getElementById('filter-stars').value;
+  const cls   = document.getElementById('filter-class').value;
+  const tag   = document.getElementById('filter-tag').value;
+  if (stars) parts.push(stars + '★');
+  if (cls)   parts.push(CLASS_NAMES[cls] || cls);
+  if (tag)   parts.push('Tag: ' + tag);
+  const ranks = getChecked('rank').sort();
+  if (ranks.length) parts.push('R' + ranks.join(', R'));
+  const awk = getChecked('awakened');
+  if (awk.includes('yes') && !awk.includes('no')) parts.push('Awakened');
+  else if (awk.includes('no') && !awk.includes('yes')) parts.push('Unawakened');
+  const asc = getChecked('ascended');
+  if (asc.includes('yes') && !asc.includes('no')) parts.push('Ascended');
+  else if (asc.includes('no') && !asc.includes('yes')) parts.push('Unascended');
+  return parts;
+}
+
 function clearCheckboxFilters() {
   document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
@@ -2854,8 +3140,8 @@ function addTagFromInput() {
   renderTagsModal();
 }
 
-function deleteTag(name) {
-  if (!confirm(`Delete tag "${name}" from all champions?`)) return;
+async function deleteTag(name) {
+  if (!await uiConfirm(`Delete tag "${name}" from all champions?`, 'Delete Tag', 'Delete')) return;
   userTags = userTags.filter(t => t !== name);
   champions.forEach(c => { if (c.tags) c.tags = c.tags.filter(t => t !== name); });
   modalSelectedTags = modalSelectedTags.filter(t => t !== name);
@@ -2897,8 +3183,8 @@ function renderManageTags() {
   }).join('');
 }
 
-function globalDeleteTag(name) {
-  if (!confirm(`Delete tag "${name}" from all champions?`)) return;
+async function globalDeleteTag(name) {
+  if (!await uiConfirm(`Delete tag "${name}" from all champions?`, 'Delete Tag', 'Delete')) return;
   userTags = userTags.filter(t => t !== name);
   champions.forEach(c => { if (c.tags) c.tags = c.tags.filter(t => t !== name); });
   scheduleSave();
@@ -2912,6 +3198,103 @@ function syncTagFilter() {
   const cur = sel.value;
   sel.innerHTML = '<option value="">All</option>' +
     userTags.map(t => `<option value="${escHtml(t)}" ${t === cur ? 'selected' : ''}>${escHtml(t)}</option>`).join('');
+}
+
+// ── Styled alert / confirm dialogs (replace native alert/confirm) ────────────
+let uiDialogCb = null;
+function uiDialogResolve(val) {
+  document.getElementById('ui-dialog-overlay').style.display = 'none';
+  const cb = uiDialogCb; uiDialogCb = null;
+  if (cb) cb(val);
+}
+function uiDialog({ message, title = 'Confirm', okText = 'Confirm', cancel = true }) {
+  return new Promise(resolve => {
+    uiDialogCb = resolve;
+    document.getElementById('ui-dialog-title').textContent = title;
+    document.getElementById('ui-dialog-msg').textContent = message;
+    const ok = document.getElementById('ui-dialog-ok');
+    ok.textContent = okText;
+    document.getElementById('ui-dialog-cancel').style.display = cancel ? '' : 'none';
+    document.getElementById('ui-dialog-overlay').style.display = 'flex';
+    ok.focus();
+  });
+}
+function uiAlert(message, title = 'Notice')   { return uiDialog({ message, title, okText: 'OK', cancel: false }); }
+function uiConfirm(message, title = 'Confirm', okText = 'Confirm') { return uiDialog({ message, title, okText, cancel: true }); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && uiDialogCb) uiDialogResolve(false); });
+
+// ── Right-click context menu ─────────────────────────────────────────────────
+let ctxTargetId = null;
+
+document.addEventListener('contextmenu', e => {
+  const card = e.target.closest('.card[data-id]');
+  const menu = document.getElementById('ctx-menu');
+  // Only on roster champion cards, and not while in select mode
+  if (!card || selectMode || showingUnplayable || showingPrestige) { menu.style.display = 'none'; return; }
+  e.preventDefault();
+  ctxTargetId = card.dataset.id;
+  const c = champions.find(x => x.id === ctxTargetId);
+  if (!c) return;
+
+  // Contextual item states
+  const rankup = document.getElementById('ctx-rankup');
+  rankup.classList.toggle('ctx-disabled', !(Number(c.rank) >= 1 && Number(c.rank) < 6));
+  document.getElementById('ctx-awaken').innerHTML = c.awakened
+    ? '<span>⚡</span> Remove awakened' : '<span>⚡</span> Mark awakened';
+
+  menu.style.display = 'block';
+  // Position within viewport
+  const mw = 190, mh = menu.offsetHeight || 210;
+  const x = Math.min(e.clientX, window.innerWidth - mw);
+  const y = Math.min(e.clientY, window.innerHeight - mh - 8);
+  menu.style.left = x + 'px';
+  menu.style.top  = y + 'px';
+});
+
+function closeCtxMenu() {
+  document.getElementById('ctx-menu').style.display = 'none';
+  ctxTargetId = null;
+}
+document.addEventListener('click', closeCtxMenu);
+document.addEventListener('scroll', closeCtxMenu, true);
+window.addEventListener('blur', closeCtxMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtxMenu(); });
+
+async function ctxAction(action) {
+  const id = ctxTargetId;
+  closeCtxMenu();
+  const c = champions.find(x => x.id === id);
+  if (!c) return;
+
+  if (action === 'edit') {
+    openModal(id);
+  } else if (action === 'remove') {
+    if (await uiConfirm(`Remove ${c.name} from your roster?`, 'Remove Champion', 'Remove')) {
+      champions = champions.filter(x => x.id !== id);
+      scheduleSave();
+      render();
+    }
+  } else if (action === 'duplicate') {
+    const copy = { ...c, id: newChampId(), tags: [...(c.tags || [])] };
+    const idx = champions.findIndex(x => x.id === id);
+    champions.splice(idx + 1, 0, copy);
+    scheduleSave();
+    render();
+  } else if (action === 'rankup') {
+    const r = Number(c.rank);
+    if (r >= 1 && r < 6) {
+      c.rank = String(r + 1);
+      const lvl = autoLevel(c.stars, r + 1);
+      if (lvl) c.level = String(lvl);
+      scheduleSave();
+      render();
+    }
+  } else if (action === 'awaken') {
+    c.awakened = !c.awakened;
+    if (!c.awakened) c.sig = null;
+    scheduleSave();
+    render();
+  }
 }
 
 // Select mode
@@ -2947,13 +3330,116 @@ function editSelected() {
   openModal(id);
 }
 
-function deleteSelected() {
+async function deleteSelected() {
   if (!selectedIds.size) return;
-  if (!confirm(`Remove ${selectedIds.size} champion(s) from your roster?`)) return;
+  if (!await uiConfirm(`Remove ${selectedIds.size} champion(s) from your roster?`, 'Remove Champions', 'Remove')) return;
   champions = champions.filter(c => !selectedIds.has(c.id));
   selectedIds.clear();
   scheduleSave();
   toggleSelectMode();
+}
+
+async function removeAllChampions() {
+  if (!champions.length) { uiAlert('Your roster is already empty.', 'Nothing to Remove'); return; }
+  if (!await uiConfirm(`Remove ALL ${champions.length} champions from your roster?\n\nThis cannot be undone — export a backup first if you want to keep it.`, 'Remove All Champions', 'Remove All')) return;
+  if (!await uiConfirm('Are you absolutely sure? This clears your entire roster.', 'Final Confirmation', 'Yes, Clear Everything')) return;
+  champions = [];
+  selectedIds.clear();
+  scheduleSave();
+  closeSettingsPanel();
+  render();
+}
+
+// ── Rapid Add (bulk roster building) ─────────────────────────────────────────
+let rapidStars = 6, rapidRank = 1;
+const rapidSessionIds = {};  // key → roster id added during this rapid session
+
+function openRapidAdd() {
+  rapidSessionIds && Object.keys(rapidSessionIds).forEach(k => delete rapidSessionIds[k]);
+  document.getElementById('rapid-search').value = '';
+  document.getElementById('rapid-count').textContent = '0';
+  rapidHighlight('rapid-grp-stars', rapidStars);
+  rapidHighlight('rapid-grp-rank',  rapidRank);
+  rapidRenderGrid();
+  document.getElementById('rapid-overlay').style.display = 'flex';
+  document.getElementById('rapid-search').focus();
+}
+
+function closeRapidAdd() {
+  document.getElementById('rapid-overlay').style.display = 'none';
+  render();
+}
+
+// setGroup writes to a hidden input by id; the rapid pickers have no hidden input, so guard it.
+function rapidSetStars(v) { rapidStars = v; rapidHighlight('rapid-grp-stars', v); }
+function rapidSetRank(v)  { rapidRank  = v; rapidHighlight('rapid-grp-rank', v); }
+function rapidHighlight(groupId, val) {
+  document.querySelectorAll(`#${groupId} .opt-btn`).forEach(b =>
+    b.classList.toggle('active', b.dataset.val === String(val)));
+}
+
+function ownsChampion(key) {
+  return champions.some(c => c.portraitKey === key);
+}
+
+function rapidRenderGrid() {
+  const q = document.getElementById('rapid-search').value.toLowerCase().trim();
+  const list = PLAYABLE_LIST.filter(c =>
+    !q || c.name.toLowerCase().includes(q) || c.key.toLowerCase().includes(q));
+  const grid = document.getElementById('rapid-grid');
+  grid.innerHTML = list.map(c => {
+    const owned = ownsChampion(c.key);
+    const src = portraitPath(c.key);
+    return `
+      <div class="rapid-tile ${owned ? 'owned' : ''}" data-key="${c.key}" onclick="rapidToggle('${c.key}')">
+        <div class="rt-check">✓</div>
+        <div class="rt-badge">In roster</div>
+        <img src="${src}" alt="${escHtml(c.name)}" onerror="this.style.visibility='hidden'" />
+        <div class="rt-name">${escHtml(c.name)}</div>
+      </div>`;
+  }).join('') || '<div style="grid-column:1/-1;color:var(--text-muted);padding:20px;text-align:center;">No champions match.</div>';
+}
+
+function rapidToggle(key) {
+  const champ = CHAMPION_LIST.find(c => c.key === key);
+  if (!champ) return;
+
+  if (rapidSessionIds[key]) {
+    // Undo an add made in this session
+    champions = champions.filter(c => c.id !== rapidSessionIds[key]);
+    delete rapidSessionIds[key];
+  } else if (ownsChampion(key)) {
+    // Already owned before this session — leave it alone, don't risk detailed entries
+    return;
+  } else {
+    const id = newChampId();
+    champions.push({
+      id, name: champ.name, portraitKey: key, class: champ.cls,
+      stars: Number(rapidStars),
+      rank: String(rapidRank),
+      level: autoLevel(rapidStars, rapidRank) ? String(autoLevel(rapidStars, rapidRank)) : null,
+      awakened: false, sig: null, ascension: null, tags: [], notes: null,
+    });
+    rapidSessionIds[key] = id;
+  }
+
+  scheduleSave();
+  document.getElementById('rapid-count').textContent = Object.keys(rapidSessionIds).length;
+  const tile = document.querySelector(`.rapid-tile[data-key="${key}"]`);
+  if (tile) tile.classList.toggle('owned', ownsChampion(key));
+}
+
+function rapidSearchKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const first = document.querySelector('.rapid-tile');
+    if (first) {
+      const key = first.dataset.key;
+      if (!ownsChampion(key)) { rapidToggle(key); document.getElementById('rapid-search').select(); }
+    }
+  } else if (e.key === 'Escape') {
+    closeRapidAdd();
+  }
 }
 
 // Export / Import
@@ -3042,13 +3528,13 @@ function generateChampionDb() {
   const unplayable = document.getElementById('cdb-unplayable').checked;
 
   if (!name || !cls) {
-    alert('Please fill in Name and Class.');
+    uiAlert('Please fill in Name and Class.', 'Missing Info');
     return;
   }
 
   const key = slugifyChampionName(name);
   if (CHAMPION_LIST.some(c => c.key === key)) {
-    alert(`A champion with the key "${key}" already exists — check the name.`);
+    uiAlert(`A champion with the key "${key}" already exists — check the name.`, 'Duplicate Key');
     return;
   }
   cdbGeneratedKey = key;
@@ -3109,13 +3595,13 @@ function cdbDownloadPortrait() {
   a.click();
 }
 
-function importRoster() {
+async function importRoster() {
   const raw = document.getElementById('import-text').value.trim();
   let parsed;
   try {
     parsed = JSON.parse(raw);
   } catch {
-    alert('Invalid format — make sure you paste the full contents of an exported file.');
+    uiAlert('Invalid format — make sure you paste the full contents of an exported file.', 'Import Failed');
     return;
   }
   let importedChampions, importedTags;
@@ -3126,10 +3612,10 @@ function importRoster() {
     importedChampions = parsed.champions;
     importedTags = parsed.tags || [];
   } else {
-    alert('Invalid format — make sure you paste the full contents of an exported file.');
+    uiAlert('Invalid format — make sure you paste the full contents of an exported file.', 'Import Failed');
     return;
   }
-  if (!confirm(`This will replace your current ${champions.length} champion(s) with ${importedChampions.length} imported champion(s). Continue?`)) return;
+  if (!await uiConfirm(`This will replace your current ${champions.length} champion(s) with ${importedChampions.length} imported champion(s). Continue?`, 'Import Roster', 'Replace')) return;
   champions = importedChampions;
   userTags  = importedTags;
   scheduleSave();
