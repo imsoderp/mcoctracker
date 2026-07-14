@@ -932,39 +932,31 @@
         🔽 Filters<span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#e8303a;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;align-items:center;justify-content:center;"></span>
       </button>
       <div id="filter-panel" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:260px;box-shadow:var(--panel-shadow);">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-            Stars
-            <select id="filter-stars" autocomplete="off" style="font-size:0.8rem;padding:5px 8px;">
-              <option value="">All</option>
-              <option value="7">7 ★</option>
-              <option value="6">6 ★</option>
-              <option value="5">5 ★</option>
-              <option value="4">4 ★</option>
-              <option value="3">3 ★</option>
-              <option value="2">2 ★</option>
-              <option value="1">1 ★</option>
-            </select>
-          </label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-            Class
-            <select id="filter-class" autocomplete="off" style="font-size:0.8rem;padding:5px 8px;">
-              <option value="">All</option>
-              <option value="cosmic">🌌 Cosmic</option>
-              <option value="tech">⚙️ Tech</option>
-              <option value="mutant">🧬 Mutant</option>
-              <option value="skill">🗡️ Skill</option>
-              <option value="science">🧪 Science</option>
-              <option value="mystic">🔮 Mystic</option>
-            </select>
-          </label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-            Tag
-            <select id="filter-tag" autocomplete="off" style="font-size:0.8rem;padding:5px 8px;" onchange="render()">
-              <option value="">All</option>
-            </select>
-          </label>
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Stars</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="7" onchange="applyCheckboxFilters()"> 7★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="6" onchange="applyCheckboxFilters()"> 6★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="5" onchange="applyCheckboxFilters()"> 5★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="4" onchange="applyCheckboxFilters()"> 4★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="3" onchange="applyCheckboxFilters()"> 3★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="2" onchange="applyCheckboxFilters()"> 2★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="1" onchange="applyCheckboxFilters()"> 1★</label>
         </div>
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Class</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="cosmic" onchange="applyCheckboxFilters()"> 🌌 Cosmic</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="tech" onchange="applyCheckboxFilters()"> ⚙️ Tech</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="mutant" onchange="applyCheckboxFilters()"> 🧬 Mutant</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="skill" onchange="applyCheckboxFilters()"> 🗡️ Skill</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="science" onchange="applyCheckboxFilters()"> 🧪 Science</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="mystic" onchange="applyCheckboxFilters()"> 🔮 Mystic</label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:14px;">
+          Tag
+          <select id="filter-tag" autocomplete="off" style="font-size:0.8rem;padding:5px 8px;" onchange="render()">
+            <option value="">All</option>
+          </select>
+        </label>
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Rank</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
           <label class="filter-chip" data-group="rank"><input type="checkbox" value="1" onchange="applyCheckboxFilters()"> R1</label>
@@ -985,9 +977,17 @@
           <label class="filter-chip" data-group="ascended"><input type="checkbox" value="no" onchange="applyCheckboxFilters()"> Unascended</label>
         </div>
         <button onclick="openManageTags()" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:rgba(26,188,156,0.12);border:1px solid #1abc9c44;color:#1abc9c;margin-bottom:8px;">🏷 Manage Tags</button>
-        <button onclick="clearCheckboxFilters();document.getElementById('filter-stars').value='';document.getElementById('filter-class').value='';document.getElementById('filter-tag').value='';render();" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">Clear All Filters</button>
+        <button onclick="clearAllFilters()" style="width:100%;font-size:0.75rem;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);">Clear All Filters</button>
       </div>
     </div>
+    <div id="roster-search-wrap" style="position:relative;flex:0 1 240px;min-width:130px;">
+      <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:0.8rem;pointer-events:none;color:var(--text-muted);">🔍</span>
+      <input type="text" id="roster-search" placeholder="Search roster…" autocomplete="off" oninput="render()" onkeydown="if(event.key==='Escape'){this.value='';render();}"
+        style="width:100%;font-size:0.8rem;padding:6px 26px 6px 30px;border-radius:20px;" />
+      <button id="roster-search-clear" onclick="document.getElementById('roster-search').value='';render();document.getElementById('roster-search').focus();"
+        style="display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;padding:0 5px;color:var(--text-muted);font-size:0.9rem;cursor:pointer;">✕</button>
+    </div>
+
     <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:0.72rem;color:var(--text-muted);">
       Sort
       <select id="sort-by" style="font-size:0.75rem;padding:5px 8px;">
@@ -1351,8 +1351,8 @@
         <div class="form-group" id="ascension-group" style="display:none;flex:0 0 auto;">
           <label>Ascension</label>
           <div class="btn-group" id="grp-ascension">
-            <button type="button" class="opt-btn" data-val="A1" onclick="setGroup('grp-ascension','f-ascension','A1');updateHero()">A1</button>
-            <button type="button" class="opt-btn" data-val="A2" onclick="setGroup('grp-ascension','f-ascension','A2');updateHero()">A2</button>
+            <button type="button" class="opt-btn" data-val="A1" onclick="pickAscension('A1')">A1</button>
+            <button type="button" class="opt-btn" data-val="A2" onclick="pickAscension('A2')">A2</button>
           </div>
           <input type="hidden" id="f-ascension" />
         </div>
@@ -2618,6 +2618,13 @@ function refreshStarAvailability(allowDowngrade) {
 }
 function pickRank(v)  { setGroup('grp-rank',  'f-rank',  v); onRankChange(); }
 
+// Ascension is optional — clicking the active level again clears it.
+function pickAscension(v) {
+  const cur = document.getElementById('f-ascension').value;
+  setGroup('grp-ascension', 'f-ascension', cur === v ? '' : v);
+  updateHero();
+}
+
 // Max level per rank for 5★/6★/7★
 const RANK_LEVELS = { 1: 25, 2: 35, 3: 45, 4: 55, 5: 65 };
 
@@ -2729,7 +2736,7 @@ function setView(view) {
   document.getElementById('view-prestige').classList.toggle('active', view === 'prestige');
   // Roster-only controls are meaningless in the other views
   const rosterOnly = view === 'roster';
-  ['btn-filters', 'btn-select'].forEach(id => document.getElementById(id).style.display = rosterOnly ? '' : 'none');
+  ['btn-filters', 'btn-select', 'roster-search-wrap'].forEach(id => document.getElementById(id).style.display = rosterOnly ? '' : 'none');
   document.querySelector('.util-cluster label').style.display = rosterOnly ? '' : 'none';
   if (!rosterOnly && selectMode) toggleSelectMode();
   if (view !== 'roster') closeSettingsPanel();
@@ -2751,16 +2758,21 @@ async function deleteChampion(id) {
 
 // ── Filtering & sorting ───────────────────────────────────────────────────────
 function getFiltered() {
-  const starFilter  = document.getElementById('filter-stars').value;
-  const classFilter = document.getElementById('filter-class').value;
+  const starsChecked = getChecked('stars');
+  const classChecked = getChecked('class');
   const tagFilter   = document.getElementById('filter-tag').value;
   const sortBy      = document.getElementById('sort-by').value;
   const rankChecked    = getChecked('rank');
   const awakenedChecked = getChecked('awakened');
   const ascendedChecked = getChecked('ascended');
+  const searchEl  = document.getElementById('roster-search');
+  const query     = (searchEl?.value || '').toLowerCase().trim();
+  const clearBtn  = document.getElementById('roster-search-clear');
+  if (clearBtn) clearBtn.style.display = query ? '' : 'none';
   let list = [...champions];
-  if (starFilter)           list = list.filter(c => c.stars === Number(starFilter));
-  if (classFilter)          list = list.filter(c => c.class === classFilter);
+  if (query)                list = list.filter(c => c.name.toLowerCase().includes(query));
+  if (starsChecked.length)  list = list.filter(c => starsChecked.includes(String(c.stars)));
+  if (classChecked.length)  list = list.filter(c => classChecked.includes(c.class));
   if (tagFilter)            list = list.filter(c => c.tags?.includes(tagFilter));
   if (rankChecked.length)   list = list.filter(c => rankChecked.includes(String(c.rank)));
   if (awakenedChecked.length) {
@@ -2993,7 +3005,7 @@ document.querySelector('.logo-icon').addEventListener('click', () => {
   if (logoClicks >= 3) { logoClicks = 0; openChampionDbModal(); }
 });
 document.getElementById('f-champ-search').addEventListener('blur', hideDropdown);
-['filter-stars','filter-class','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', render));
+document.getElementById('sort-by').addEventListener('change', render);
 
 // ── Settings panel ───────────────────────────────────────────────────────────
 let settingsPanelOpen = false;
@@ -3042,13 +3054,12 @@ function applyCheckboxFilters() {
   render();
 }
 
-// Reset every filter (dropdowns + checkboxes) and re-render.
+// Reset every filter (chips + tag dropdown + search) and re-render.
 function clearAllFilters() {
   document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
-  document.getElementById('filter-stars').value = '';
-  document.getElementById('filter-class').value = '';
   document.getElementById('filter-tag').value = '';
+  document.getElementById('roster-search').value = '';
   updateFilterBadge();
   render();
 }
@@ -3056,11 +3067,13 @@ function clearAllFilters() {
 // Human-readable list of the currently active filters, for the empty state.
 function activeFilterSummary() {
   const parts = [];
-  const stars = document.getElementById('filter-stars').value;
-  const cls   = document.getElementById('filter-class').value;
+  const query = (document.getElementById('roster-search')?.value || '').trim();
   const tag   = document.getElementById('filter-tag').value;
-  if (stars) parts.push(stars + '★');
-  if (cls)   parts.push(CLASS_NAMES[cls] || cls);
+  if (query) parts.push(`"${query}"`);
+  const stars = getChecked('stars').sort((a, b) => b - a);
+  if (stars.length) parts.push(stars.map(s => s + '★').join(', '));
+  const classes = getChecked('class');
+  if (classes.length) parts.push(classes.map(c => CLASS_NAMES[c] || c).join(', '));
   if (tag)   parts.push('Tag: ' + tag);
   const ranks = getChecked('rank').sort();
   if (ranks.length) parts.push('R' + ranks.join(', R'));
