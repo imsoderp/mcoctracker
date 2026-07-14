@@ -205,7 +205,10 @@
       border-bottom: 1px solid var(--border2);
       padding: 10px 20px;
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
+    body.dark .controls { box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
 
     /* Segmented view switcher */
     .view-switch {
@@ -310,6 +313,11 @@
     }
     .btn-delete-selected.visible { display: block; }
     .btn-delete-selected:hover { background: rgba(231,76,60,0.3); box-shadow: 0 0 8px rgba(231,76,60,0.3); }
+    .btn-bulk { display: none; align-items: center; }
+    .btn-bulk.visible { display: flex; }
+    #btn-bulk-rankup { background: rgba(240,192,64,0.12); }
+    #btn-bulk-rankup:hover { background: rgba(240,192,64,0.22); }
+    #btn-bulk-tag:hover { background: rgba(26,188,156,0.22); }
 
     .count-badge {
       background: transparent; border: none;
@@ -448,6 +456,14 @@
       display: flex; flex-wrap: wrap; gap: 4px;
     }
 
+    /* Duplicate indicator — you own this champion at multiple tiers */
+    .dup-badge {
+      position: absolute; bottom: 7px; left: 8px; z-index: 4;
+      background: rgba(0,0,0,0.65); color: var(--gold-bright);
+      font-size: 0.62rem; font-weight: 700; padding: 1px 7px; border-radius: 5px;
+      border: 1px solid rgba(240,192,64,0.45); white-space: nowrap;
+    }
+
     /* Rank/level + awakened overlay — bottom of portrait */
     .portrait-meta {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
@@ -512,6 +528,8 @@
     }
     .filter-chip:hover { border-color: #2470c2; color: var(--text); }
     .filter-chip input[type="checkbox"] { display: none; }
+    .chip-count { margin-left: 4px; font-size: 0.62rem; font-weight: 700; opacity: 0.55; }
+    .chip-count:empty { display: none; }
     .filter-chip.active { background: rgba(36,112,194,0.1); border-color: #2470c2; color: #2470c2; }
     body.dark .filter-chip:hover { border-color: #6ea8fe; color: var(--text); }
     body.dark .filter-chip.active { background: rgba(110,168,254,0.15); border-color: #6ea8fe; color: #6ea8fe; }
@@ -670,6 +688,24 @@
     .hero-stars { color: var(--gold); font-size: 0.9rem; font-weight: 700; }
     .hero-rankline { font-size: 0.72rem; color: var(--gold); background: rgba(240,192,64,0.12); border-radius: 5px; padding: 1px 7px; }
     .modal-hero .modal-close { align-self: flex-start; }
+
+    /* Toast notifications */
+    .toast {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 10px 14px;
+      box-shadow: var(--panel-shadow); font-size: 0.85rem; color: var(--text);
+      pointer-events: auto; opacity: 0; transform: translateY(12px);
+      transition: opacity 0.2s, transform 0.2s; max-width: 90vw;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast-undo {
+      background: transparent; border: none; color: var(--accent);
+      font-weight: 700; font-size: 0.82rem; cursor: pointer; padding: 2px 4px;
+      white-space: nowrap; border-radius: 6px;
+    }
+    .toast-undo:hover { text-decoration: underline; }
+    body.dark .toast-undo { color: #ff6b6b; }
 
     /* Right-click context menu */
     .ctx-item {
@@ -934,22 +970,22 @@
       <div id="filter-panel" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px;min-width:260px;box-shadow:var(--panel-shadow);">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Stars</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="7" onchange="applyCheckboxFilters()"> 7★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="6" onchange="applyCheckboxFilters()"> 6★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="5" onchange="applyCheckboxFilters()"> 5★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="4" onchange="applyCheckboxFilters()"> 4★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="3" onchange="applyCheckboxFilters()"> 3★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="2" onchange="applyCheckboxFilters()"> 2★</label>
-          <label class="filter-chip" data-group="stars"><input type="checkbox" value="1" onchange="applyCheckboxFilters()"> 1★</label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="7" onchange="applyCheckboxFilters()"> 7★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="6" onchange="applyCheckboxFilters()"> 6★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="5" onchange="applyCheckboxFilters()"> 5★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="4" onchange="applyCheckboxFilters()"> 4★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="3" onchange="applyCheckboxFilters()"> 3★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="2" onchange="applyCheckboxFilters()"> 2★<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="stars"><input type="checkbox" value="1" onchange="applyCheckboxFilters()"> 1★<span class="chip-count"></span></label>
         </div>
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Class</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="cosmic" onchange="applyCheckboxFilters()"> 🌌 Cosmic</label>
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="tech" onchange="applyCheckboxFilters()"> ⚙️ Tech</label>
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="mutant" onchange="applyCheckboxFilters()"> 🧬 Mutant</label>
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="skill" onchange="applyCheckboxFilters()"> 🗡️ Skill</label>
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="science" onchange="applyCheckboxFilters()"> 🧪 Science</label>
-          <label class="filter-chip" data-group="class"><input type="checkbox" value="mystic" onchange="applyCheckboxFilters()"> 🔮 Mystic</label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="cosmic" onchange="applyCheckboxFilters()"> 🌌 Cosmic<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="tech" onchange="applyCheckboxFilters()"> ⚙️ Tech<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="mutant" onchange="applyCheckboxFilters()"> 🧬 Mutant<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="skill" onchange="applyCheckboxFilters()"> 🗡️ Skill<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="science" onchange="applyCheckboxFilters()"> 🧪 Science<span class="chip-count"></span></label>
+          <label class="filter-chip" data-group="class"><input type="checkbox" value="mystic" onchange="applyCheckboxFilters()"> 🔮 Mystic<span class="chip-count"></span></label>
         </div>
         <label style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:14px;">
           Tag
@@ -1003,6 +1039,11 @@
 
     <button class="btn-unplayable btn-action-select btn-select-mode" id="btn-select" onclick="toggleSelectMode()">☑ Select</button>
     <button class="btn-unplayable btn-edit-selected" id="btn-edit-selected" onclick="editSelected()">✏️ Edit</button>
+    <button class="btn-unplayable btn-bulk" id="btn-bulk-rankup" onclick="bulkRankUp()" style="border-color:#f0c04055;color:var(--gold);">⬆️ Rank Up</button>
+    <div class="btn-bulk" id="btn-bulk-tag-wrap" style="position:relative;">
+      <button class="btn-unplayable" id="btn-bulk-tag" onclick="toggleBulkTagMenu(event)" style="border-color:#1abc9c55;color:#1abc9c;">🏷 Tag</button>
+      <div id="bulk-tag-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:9999;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px;min-width:220px;box-shadow:var(--panel-shadow);"></div>
+    </div>
     <button class="btn-unplayable btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()">🗑️ Delete (<span id="selected-count">0</span>)</button>
     <button class="btn-unplayable" id="btn-rapid" onclick="openRapidAdd()" style="flex-shrink:0;border-color:#f0c04044;color:var(--gold);">⚡ Rapid Add</button>
     <button class="btn-add" onclick="openModal()" style="flex-shrink:0;margin-left:0;">+ Add</button>
@@ -2708,6 +2749,7 @@ function saveChampion(addAnother) {
     notes:      document.getElementById('f-notes').value.trim() || null,
   };
 
+  const wasEditing = !!editingId;
   if (editingId) {
     const idx = champions.findIndex(x => x.id === editingId);
     champions[idx] = data;
@@ -2717,6 +2759,7 @@ function saveChampion(addAnother) {
 
   scheduleSave();
   render();
+  showToast(wasEditing ? `Updated ${data.name}` : `Added ${data.name}`);
 
   if (addAnother && !editingId) {
     clearForm();
@@ -2750,10 +2793,14 @@ function closeSettingsPanel() {
 }
 
 async function deleteChampion(id) {
+  const idx = champions.findIndex(x => x.id === id);
+  if (idx < 0) return;
   if (!await uiConfirm('Remove this champion from your roster?', 'Remove Champion', 'Remove')) return;
-  champions = champions.filter(x => x.id !== id);
+  const removed = champions[idx];
+  champions.splice(idx, 1);
   scheduleSave();
   render();
+  showToast(`Removed ${removed.name}`, () => { champions.splice(idx, 0, removed); scheduleSave(); render(); });
 }
 
 // ── Filtering & sorting ───────────────────────────────────────────────────────
@@ -2804,11 +2851,12 @@ function getFiltered() {
 // ── Card HTML ─────────────────────────────────────────────────────────────────
 function starsDisplay(n) { return `${n}★`; }
 
-function cardHTML(c, index = 0, animate = true) {
+function cardHTML(c, index = 0, animate = true, dupCount = 0) {
   const delay     = animate ? Math.min(index * 40, 600) : 0;
   const animStyle = animate ? `--card-delay:${delay}ms` : 'animation:none';
   const icon      = CLASS_ICONS[c.class] || '❓';
   const src       = portraitPath(c.portraitKey);
+  const dupBadge  = dupCount > 1 ? `<div class="dup-badge" title="You own ${dupCount} of this champion">⧉ ${dupCount}</div>` : '';
   const rankLevel = [c.rank ? `R${c.rank}` : null, c.level ? `L${c.level}` : null, c.ascension || null].filter(Boolean).join(' · ') || '—';
   const awBadge   = c.awakened
     ? `<span class="awakened-badge awakened-yes">⚡${c.sig ? ` ${c.sig}` : ''}</span>`
@@ -2829,6 +2877,7 @@ function cardHTML(c, index = 0, animate = true) {
           <div class="stars">${starsDisplay(c.stars)}</div>
           <div class="class-badge class-${c.class}">${icon}</div>
           ${c.tags?.length ? `<div class="portrait-tags">${c.tags.map(t => { const color = tagColor(t); return `<span class="card-tag" style="color:${color};border-color:${color};background:rgba(0,0,0,0.65)">${escHtml(t)}</span>`; }).join('')}</div>` : ''}
+          ${dupBadge}
           <div class="portrait-meta">
             ${awBadge}
             <span class="portrait-meta-rank">${rankLevel}</span>
@@ -2868,11 +2917,31 @@ function unplayableCardHTML(c) {
     </div>`;
 }
 
+// Show roster counts on the star/class filter chips.
+function updateFilterCounts() {
+  const starCounts = {}, classCounts = {};
+  champions.forEach(c => {
+    starCounts[c.stars]  = (starCounts[c.stars]  || 0) + 1;
+    classCounts[c.class] = (classCounts[c.class] || 0) + 1;
+  });
+  document.querySelectorAll('#filter-panel .filter-chip[data-group="stars"]').forEach(chip => {
+    const v = chip.querySelector('input').value;
+    const span = chip.querySelector('.chip-count');
+    if (span) span.textContent = starCounts[v] || '';
+  });
+  document.querySelectorAll('#filter-panel .filter-chip[data-group="class"]').forEach(chip => {
+    const v = chip.querySelector('input').value;
+    const span = chip.querySelector('.chip-count');
+    if (span) span.textContent = classCounts[v] || '';
+  });
+}
+
 // ── Render ────────────────────────────────────────────────────────────────────
 let hasRenderedOnce = false;
 function render() {
   const grid = document.getElementById('grid');
   syncTagFilter();
+  updateFilterCounts();
 
   if (showingUnplayable) {
     const list = CHAMPION_LIST.filter(c => c.unplayable);
@@ -2941,7 +3010,10 @@ function render() {
         })();
     return;
   }
-  grid.innerHTML = list.map((c, i) => cardHTML(c, i, !hasRenderedOnce)).join('');
+  // Count roster copies per champion (across the whole roster, not just filtered)
+  const dupMap = {};
+  champions.forEach(c => { if (c.portraitKey) dupMap[c.portraitKey] = (dupMap[c.portraitKey] || 0) + 1; });
+  grid.innerHTML = list.map((c, i) => cardHTML(c, i, !hasRenderedOnce, dupMap[c.portraitKey] || 0)).join('');
   hasRenderedOnce = true;
 }
 
@@ -2994,6 +3066,23 @@ modalOverlay.addEventListener('click', e => {
   if (e.target.id === 'modal-overlay' && overlayMousedownTarget?.id === 'modal-overlay') closeModal();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeHelp(); } });
+
+// Global keyboard shortcuts (ignored while typing or when an overlay is open)
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const el = document.activeElement;
+  if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT')) return;
+  // Bail if any modal/overlay is currently open
+  const anyOpen = document.getElementById('modal-overlay').classList.contains('open')
+    || ['rapid-overlay','import-overlay','champdb-overlay','manage-tags-overlay','help-overlay','ui-dialog-overlay']
+         .some(id => document.getElementById(id).style.display !== 'none' && document.getElementById(id).style.display !== '');
+  if (anyOpen) return;
+  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openModal(); }
+  else if (e.key === '/') {
+    const s = document.getElementById('roster-search');
+    if (s && s.offsetParent !== null) { e.preventDefault(); s.focus(); }
+  }
+});
 window.addEventListener('pageshow', () => { clearCheckboxFilters(); render(); });
 
 // Hidden admin tool: triple-click the swords logo to open the champion code generator
@@ -3005,7 +3094,16 @@ document.querySelector('.logo-icon').addEventListener('click', () => {
   if (logoClicks >= 3) { logoClicks = 0; openChampionDbModal(); }
 });
 document.getElementById('f-champ-search').addEventListener('blur', hideDropdown);
-document.getElementById('sort-by').addEventListener('change', render);
+document.getElementById('sort-by').addEventListener('change', function() {
+  localStorage.setItem('mcoc-sort', this.value);
+  render();
+});
+// Restore saved sort preference before the first render
+(function() {
+  const s = localStorage.getItem('mcoc-sort');
+  const sb = document.getElementById('sort-by');
+  if (s && sb && [...sb.options].some(o => o.value === s)) sb.value = s;
+})();
 
 // ── Settings panel ───────────────────────────────────────────────────────────
 let settingsPanelOpen = false;
@@ -3236,6 +3334,29 @@ function uiAlert(message, title = 'Notice')   { return uiDialog({ message, title
 function uiConfirm(message, title = 'Confirm', okText = 'Confirm') { return uiDialog({ message, title, okText, cancel: true }); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && uiDialogCb) uiDialogResolve(false); });
 
+// ── Toast notifications ──────────────────────────────────────────────────────
+function showToast(msg, undoFn) {
+  const host = document.getElementById('toast-host');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span>${escHtml(msg)}</span>`;
+  if (undoFn) {
+    const btn = document.createElement('button');
+    btn.className = 'toast-undo';
+    btn.textContent = '↩ Undo';
+    btn.onclick = () => { undoFn(); dismissToast(toast); };
+    toast.appendChild(btn);
+  }
+  host.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  toast._timer = setTimeout(() => dismissToast(toast), undoFn ? 5000 : 2600);
+}
+function dismissToast(toast) {
+  clearTimeout(toast._timer);
+  toast.classList.remove('show');
+  setTimeout(() => toast.remove(), 220);
+}
+
 // ── Right-click context menu ─────────────────────────────────────────────────
 let ctxTargetId = null;
 
@@ -3283,9 +3404,12 @@ async function ctxAction(action) {
     openModal(id);
   } else if (action === 'remove') {
     if (await uiConfirm(`Remove ${c.name} from your roster?`, 'Remove Champion', 'Remove')) {
-      champions = champions.filter(x => x.id !== id);
+      const idx = champions.findIndex(x => x.id === id);
+      const removed = champions[idx];
+      champions.splice(idx, 1);
       scheduleSave();
       render();
+      showToast(`Removed ${removed.name}`, () => { champions.splice(idx, 0, removed); scheduleSave(); render(); });
     }
   } else if (action === 'duplicate') {
     const copy = { ...c, id: newChampId(), tags: [...(c.tags || [])] };
@@ -3293,6 +3417,7 @@ async function ctxAction(action) {
     champions.splice(idx + 1, 0, copy);
     scheduleSave();
     render();
+    showToast(`Duplicated ${c.name}`);
   } else if (action === 'rankup') {
     const r = Number(c.rank);
     if (r >= 1 && r < 6) {
@@ -3322,6 +3447,9 @@ function toggleSelectMode() {
   btn.textContent = selectMode ? '✕ Cancel Select' : '☑ Select';
   document.getElementById('btn-delete-selected').classList.toggle('visible', false);
   document.getElementById('btn-edit-selected').classList.toggle('visible', false);
+  document.getElementById('btn-bulk-rankup').classList.toggle('visible', false);
+  document.getElementById('btn-bulk-tag-wrap').classList.toggle('visible', false);
+  document.getElementById('bulk-tag-menu').style.display = 'none';
   document.getElementById('selected-count').textContent = '0';
   render();
 }
@@ -3335,6 +3463,9 @@ function toggleCardSelect(id) {
   document.getElementById('selected-count').textContent = count;
   document.getElementById('btn-delete-selected').classList.toggle('visible', count > 0);
   document.getElementById('btn-edit-selected').classList.toggle('visible', count === 1);
+  document.getElementById('btn-bulk-rankup').classList.toggle('visible', count > 0);
+  document.getElementById('btn-bulk-tag-wrap').classList.toggle('visible', count > 0);
+  if (!count) document.getElementById('bulk-tag-menu').style.display = 'none';
 }
 
 function editSelected() {
@@ -3345,22 +3476,98 @@ function editSelected() {
 
 async function deleteSelected() {
   if (!selectedIds.size) return;
-  if (!await uiConfirm(`Remove ${selectedIds.size} champion(s) from your roster?`, 'Remove Champions', 'Remove')) return;
+  const n = selectedIds.size;
+  if (!await uiConfirm(`Remove ${n} champion(s) from your roster?`, 'Remove Champions', 'Remove')) return;
+  const removed = champions.filter(c => selectedIds.has(c.id));
   champions = champions.filter(c => !selectedIds.has(c.id));
   selectedIds.clear();
   scheduleSave();
   toggleSelectMode();
+  showToast(`Removed ${n} champion${n !== 1 ? 's' : ''}`, () => { champions.push(...removed); scheduleSave(); render(); });
 }
+
+function bulkRankUp() {
+  if (!selectedIds.size) return;
+  let n = 0;
+  champions.forEach(c => {
+    if (!selectedIds.has(c.id)) return;
+    const r = Number(c.rank);
+    if (r >= 1 && r < 6) {
+      c.rank = String(r + 1);
+      const lvl = autoLevel(c.stars, r + 1);
+      if (lvl) c.level = String(lvl);
+      n++;
+    }
+  });
+  if (n) { scheduleSave(); render(); showToast(`Ranked up ${n} champion${n !== 1 ? 's' : ''}`); }
+  else showToast('None could rank up (already maxed)');
+}
+
+function toggleBulkTagMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('bulk-tag-menu');
+  if (menu.style.display === 'block') { menu.style.display = 'none'; return; }
+  renderBulkTagMenu();
+  menu.style.display = 'block';
+}
+
+function renderBulkTagMenu() {
+  const menu = document.getElementById('bulk-tag-menu');
+  const tagsHtml = userTags.length
+    ? userTags.map(t => { const color = tagColor(t); return `<button class="btn-unplayable" onclick="bulkApplyTag('${escHtml(t)}')" style="font-size:0.72rem;padding:3px 9px;border-color:${color}66;color:${color};margin:2px;">${escHtml(t)}</button>`; }).join('')
+    : '<span style="font-size:0.72rem;color:var(--text-muted);">No tags yet — add one below.</span>';
+  menu.innerHTML = `
+    <div style="font-size:0.66rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;font-weight:600;">Apply tag to ${selectedIds.size} selected</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:10px;">${tagsHtml}</div>
+    <div style="display:flex;gap:6px;">
+      <input id="bulk-tag-input" type="text" placeholder="New tag…" maxlength="30" style="flex:1;min-width:0;font-size:0.8rem;padding:5px 9px;" onkeydown="if(event.key==='Enter'){event.preventDefault();bulkApplyNewTag();}" />
+      <button class="btn-unplayable" onclick="bulkApplyNewTag()" style="padding:5px 10px;">+ Add</button>
+    </div>`;
+  const input = document.getElementById('bulk-tag-input');
+  if (input) input.focus();
+}
+
+function bulkApplyTag(name) {
+  let n = 0;
+  champions.forEach(c => {
+    if (!selectedIds.has(c.id)) return;
+    c.tags = c.tags || [];
+    if (!c.tags.includes(name)) { c.tags.push(name); n++; }
+  });
+  scheduleSave();
+  render();
+  document.getElementById('bulk-tag-menu').style.display = 'none';
+  showToast(`Tagged ${n} champion${n !== 1 ? 's' : ''} "${name}"`);
+}
+
+function bulkApplyNewTag() {
+  const input = document.getElementById('bulk-tag-input');
+  const name  = input.value.trim();
+  if (!name) return;
+  if (!userTags.includes(name)) { userTags.push(name); userTags.sort(); syncTagFilter(); }
+  bulkApplyTag(name);
+}
+
+// Close bulk-tag menu on outside click
+document.addEventListener('click', e => {
+  const menu = document.getElementById('bulk-tag-menu');
+  if (menu && menu.style.display === 'block' && !e.target.closest('#btn-bulk-tag-wrap')) {
+    menu.style.display = 'none';
+  }
+});
 
 async function removeAllChampions() {
   if (!champions.length) { uiAlert('Your roster is already empty.', 'Nothing to Remove'); return; }
-  if (!await uiConfirm(`Remove ALL ${champions.length} champions from your roster?\n\nThis cannot be undone — export a backup first if you want to keep it.`, 'Remove All Champions', 'Remove All')) return;
+  if (!await uiConfirm(`Remove ALL ${champions.length} champions from your roster?\n\nExport a backup first if you want to keep it.`, 'Remove All Champions', 'Remove All')) return;
   if (!await uiConfirm('Are you absolutely sure? This clears your entire roster.', 'Final Confirmation', 'Yes, Clear Everything')) return;
+  const backup = champions;
+  const n = backup.length;
   champions = [];
   selectedIds.clear();
   scheduleSave();
   closeSettingsPanel();
   render();
+  showToast(`Cleared ${n} champions`, () => { champions = backup; scheduleSave(); render(); });
 }
 
 // ── Rapid Add (bulk roster building) ─────────────────────────────────────────
@@ -3634,6 +3841,7 @@ async function importRoster() {
   scheduleSave();
   closeImport();
   render();
+  showToast(`Imported ${importedChampions.length} champions`);
 }
 
 // Card size toggle — locked to the two verified sizes
@@ -3700,6 +3908,8 @@ async function importRoster() {
   box-shadow:0 2px 10px rgba(0,0,0,0.4);
   pointer-events:none;
 ">Showing <span id="showing-count" style="color:var(--text);font-weight:700;">0</span></div>
+
+<div id="toast-host" style="position:fixed;bottom:64px;left:50%;transform:translateX(-50%);z-index:2500;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;"></div>
 
 </body>
 </html>
