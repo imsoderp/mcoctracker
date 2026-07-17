@@ -1,6 +1,11 @@
 # Local Claude Code config — not part of the site
 .claude/
+
+# Local version backups — not part of the deployed site
 archive/
+
+# Personal roster data (created if you connect this folder for file-mode saves)
+champions.json
 
 # OS junk
 Thumbs.db
